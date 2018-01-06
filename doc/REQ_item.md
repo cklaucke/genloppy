@@ -21,6 +21,8 @@
 
 The inherited *BaseItem*'s timestamp indicates the begin of the merge operation.
 
+*MergeItem* SHALL calculate the difference between the timestamps of the operation's end and begin. It SHALL be stored as duration.
+
 # R-ITEM-005: UnmergeItem #
 *MergeItem* SHALL inherit *PackageItem*.
 
