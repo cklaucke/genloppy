@@ -1,10 +1,10 @@
-__author__ = "cklaucke"
-
 """
 Provides log entry specific item classes
 
 realizes: R-ITEM-001
 """
+
+__author__ = "cklaucke"
 
 
 class BaseItem:
