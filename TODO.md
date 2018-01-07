@@ -9,3 +9,22 @@
 *   pretend improvement: consider most recent merge of pkg
 *   new feature: cache results of emerge.log parsing
 *   analyze what *genlop* does to check for log corruption
+*   add all sync types beside sync and git (*genlop*'s git pattern will not work since the git sync module was obviously refactored)
+
+original genlop patterns:
+merge begin
+```
+^([0-9]{10})\:  \>\>\> emerge .*?\) $pattern
+```
+merge end
+```
+^([0-9]{10})\:  ::: completed .*?\) $pattern to \/
+```
+unmerge
+```
+^([0-9]{10})\:  \>\>\> unmerge success: ($pattern.*)
+```
+sync
+```
+^(.*?)\: \=\=\= Sync completed
+```
