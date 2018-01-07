@@ -23,13 +23,15 @@ The parse method SHALL raise an exception if more than one regular expression ma
 The parser SHALL parse *merges*. A *merge* is a "stateful" entry.
 The parser SHALL look for *merge begin* using the following pattern
 ```
-???
+^[0-9]+: {2}>>> emerge \([0-9]+ of [0-9]+\) [a-z0-9-]+/.*(?=-[0-9])-[^\s]+ to .*$
+ ^~~~~~ timestamp        ^~~~~~ n  ^~~~~~ m ^~~~~~~~~~~~~ atom base ^~~~~~ atom version
 ```
-If the pattern matches, the associated callback SHALL save timestamp, atom base, atom version and count.
+If the pattern matches, the associated callback SHALL save timestamp, atom base, atom version and count (n and m).
 
 Furthermore, the parser SHALL look for *merge end* using the following pattern
 ```
-???
+^[0-9]+: {2}::: completed emerge \([0-9]+ of [0-9]+\) [a-z0-9-]+/.*(?=-[0-9])-[^\s]+ to .*$
+ ^~~~~~ timestamp                  ^~~~~~ n  ^~~~~~ m ^~~~~~~~~~~~~ atom base ^~~~~~ atom version
 ```
 If the pattern matches, the associated callback SHALL check against the saved values atom base, atom version and count from *merge begin*. If they match, the callback SHALL return a *MergeItem* initialized with the timestamps of merge begin and merge end, the atom base and the atom version. Otherwise the entry SHALL be ignored.
 
@@ -40,13 +42,15 @@ The parser SHALL always look for both patterns. The following inconsistencies SH
 # R-PARSER-ELOG-005: Mode unmerge #
 The parser SHALL parse *unmerges*. The parser SHALL look for *unmerge* using the following pattern
 ```
-???
+^[0-9]+: {2}>>> unmerge success: [a-z0-9-]+/.*(?=-[0-9])-[^\s]+
+ ^~~~~~ timestamp                ^~~~~~~~~~~~~ atom base ^~~~~~ atom version
 ```
 If the pattern matches, the associated callback SHALL return an *UnmergeItem* initialized with the timestamp, the atom base and the atom version.
 
 # R-PARSER-ELOG-006: Mode sync #
 The parser SHALL parse *syncs*. The parser SHALL look for *sync* using the following pattern
 ```
-???
+^[0-9]+: === Sync completed for .*$
+ ^~~~~~ timestamp                ^~ repository name
 ```
 If the pattern matches, the associated callback SHALL return a *SyncItem* initialized with the timestamp and the repository name.
