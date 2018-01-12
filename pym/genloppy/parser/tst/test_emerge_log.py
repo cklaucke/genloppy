@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 __author__ = "cklaucke"
 
 
@@ -7,7 +5,7 @@ from genloppy.parser.emerge_log import EmergeLogParser
 from genloppy.item import MergeItem, SyncItem, UnmergeItem
 
 from io import StringIO
-from re import compile
+from re import compile as re_compile
 
 import nose.tools
 
@@ -52,16 +50,29 @@ ELOG_BEGIN_END_MISMATCH2 = """1507735226:  >>> emerge (13 of 37) sys-devel/gcc-c
 
 def test_01a_elog_good_mode_any():
     """
+    Tests that after subscribing the parser returns items for a proper emerge log.
+
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
     tests: R-PARSER-ELOG-004
     tests: R-PARSER-ELOG-005
     tests: R-PARSER-ELOG-006
+    tests: R-PARSER-ELOG-007
+    tests: R-PARSER-ELOG-009
     """
     good_elog = StringIO(ELOG_GOOD)
 
     elp = EmergeLogParser()
-    items = list(elp.parse(good_elog))
+    items = []
+
+    def collect_items(_item):
+        items.append(_item)
+
+    elp.subscribe(collect_items, "merge")
+    elp.subscribe(collect_items, "unmerge")
+    elp.subscribe(collect_items, "sync")
+    elp.parse(good_elog)
+
     assert len(items) == 6
 
     item = items[0]
@@ -105,16 +116,22 @@ def test_01a_elog_good_mode_any():
 
 def test_01b_elog_good_mode_merge():
     """
+    Tests that after subscribing to 'merge'
+    the parser returns MergeItems for a proper emerge log.
+
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
     tests: R-PARSER-ELOG-004
-    tests: R-PARSER-ELOG-005
-    tests: R-PARSER-ELOG-006
+    tests: R-PARSER-ELOG-007
+    tests: R-PARSER-ELOG-009
     """
     good_elog = StringIO(ELOG_GOOD)
 
     elp = EmergeLogParser()
-    items = list(elp.parse(good_elog, mode='merge'))
+    items = []
+    elp.subscribe(items.append, "merge")
+    elp.parse(good_elog)
+
     assert len(items) == 2
 
     item = items[0]
@@ -136,16 +153,22 @@ def test_01b_elog_good_mode_merge():
 
 def test_01c_elog_good_mode_unmerge():
     """
+    Tests that after subscribing to 'unmerge'
+    the parser returns UnmergeItems for a proper emerge log.
+
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
-    tests: R-PARSER-ELOG-004
     tests: R-PARSER-ELOG-005
-    tests: R-PARSER-ELOG-006
+    tests: R-PARSER-ELOG-007
+    tests: R-PARSER-ELOG-009
     """
     good_elog = StringIO(ELOG_GOOD)
 
     elp = EmergeLogParser()
-    items = list(elp.parse(good_elog, mode='unmerge'))
+    items = []
+    elp.subscribe(items.append, "unmerge")
+    elp.parse(good_elog)
+
     assert len(items) == 2
 
     item = items[0]
@@ -163,16 +186,22 @@ def test_01c_elog_good_mode_unmerge():
 
 def test_01d_elog_good_mode_sync():
     """
+    Tests that after subscribing to 'sync' the parser
+    returns SyncItems for a proper emerge log.
+
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
-    tests: R-PARSER-ELOG-004
-    tests: R-PARSER-ELOG-005
     tests: R-PARSER-ELOG-006
+    tests: R-PARSER-ELOG-007
+    tests: R-PARSER-ELOG-009
     """
     good_elog = StringIO(ELOG_GOOD)
 
     elp = EmergeLogParser()
-    items = list(elp.parse(good_elog, mode='sync'))
+    items = []
+    elp.subscribe(items.append, "sync")
+    elp.parse(good_elog)
+
     assert len(items) == 2
 
     item = items[0]
@@ -186,46 +215,233 @@ def test_01d_elog_good_mode_sync():
     assert item.repo_name == "gentoo"
 
 
+def test_01e_elog_good_no_subscriptions():
+    """
+    Tests that an exception is raised when
+    trying to parse without subscribing.
+
+    tests: R-PARSER-ELOG-001
+    tests: R-PARSER-ELOG-003
+    """
+    good_elog = StringIO(ELOG_GOOD)
+
+    elp = EmergeLogParser()
+
+    with nose.tools.assert_raises(RuntimeError):
+        elp.parse(good_elog)
+
+
 def test_02_elp_malformed_patterns():
     """
+    Tests that the parser raises an exception,
+    if more than one regular expression matches for a single line.
+
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
     """
     good_elog = StringIO(ELOG_GOOD)
 
     class MalformedEmergeLogParser(EmergeLogParser):
-        MERGE_BEGIN_PATTERN = compile("^([0-9]+).*$")
-        MERGE_END_PATTERN = compile("^([0-9][0-9]*).*$")
+        MERGE_BEGIN_PATTERN = re_compile("^([0-9]+).*$")
+        MERGE_END_PATTERN = re_compile("^([0-9][0-9]*).*$")
 
     melp = MalformedEmergeLogParser()
+    items = []
+    melp.subscribe(items.append, "merge")
 
     with nose.tools.assert_raises(RuntimeError):
-        list(melp.parse(good_elog))
+        melp.parse(good_elog)
 
 
 def test_03_elog_incomplete_entries():
     """
+    Tests that log entries are ignored if emerge log has
+    - a merge begin without a merge end, or
+    - a merge end without a merge begin.
+
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-004
     """
     elp = EmergeLogParser()
 
     incomplete_elog = StringIO(ELOG_END_WO_BEGIN)
-    assert len(list(elp.parse(incomplete_elog))) == 0
+    items = []
+    elp.subscribe(items.append, "merge")
+    elp.parse(incomplete_elog)
+    assert not items
 
     incomplete_elog = StringIO(ELOG_BEGIN_WO_END)
-    assert len(list(elp.parse(incomplete_elog))) == 0
+    items = []
+    elp.parse(incomplete_elog)
+    assert not items
 
 
 def test_04_elog_mismatched_entries():
     """
+    Tests that log entries are ignored if atom base, atom version and count
+    from merge begin and merge end do not match.
+
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-004
     """
     elp = EmergeLogParser()
 
     incomplete_elog = StringIO(ELOG_BEGIN_END_MISMATCH1)
-    assert len(list(elp.parse(incomplete_elog))) == 0
+    items = []
+    elp.subscribe(items.append, "merge")
+    elp.parse(incomplete_elog)
+    assert not items
 
     incomplete_elog = StringIO(ELOG_BEGIN_END_MISMATCH2)
-    assert len(list(elp.parse(incomplete_elog))) == 0
+    items = []
+    elp.parse(incomplete_elog)
+    assert not items
+
+
+def test_05_subscribe_unknown_mode():
+    """
+    Tests that an exception is raised if trying to subscribe to an unknown mode.
+
+    tests: R-PARSER-ELOG-001
+    tests: R-PARSER-ELOG-007
+    """
+    elp = EmergeLogParser()
+
+    with nose.tools.assert_raises(RuntimeError):
+        elp.subscribe(lambda x: x, "void")
+
+
+def test_06a_unsubscribe_invalid_modes():
+    """
+    Tests that an exception is raised if trying
+    to unsubscribe from a mode which was not subscribed to or is unknown.
+
+    tests: R-PARSER-ELOG-001
+    tests: R-PARSER-ELOG-008
+    """
+    elp = EmergeLogParser()
+
+    with nose.tools.assert_raises(RuntimeError):
+        elp.unsubscribe(lambda x: x, "merge")
+
+    with nose.tools.assert_raises(RuntimeError):
+        elp.unsubscribe(lambda x: x, "void")
+
+
+def test_06b_unsubscribe_unknown_callback_specific_mode():
+    """
+    Tests that an exception is raised if trying
+    to unsubscribe an unknown callback from a specific mode.
+
+    tests: R-PARSER-ELOG-001
+    tests: R-PARSER-ELOG-008
+    """
+    elp = EmergeLogParser()
+
+    elp.subscribe(lambda x: x, "merge")
+
+    with nose.tools.assert_raises(RuntimeError):
+        elp.unsubscribe(lambda x: x, "merge")
+
+
+def test_06c_unsubscribe_unknown_callback():
+    """
+    Tests that an exception is raised if trying to unsubscribe an unknown callback.
+
+    tests: R-PARSER-ELOG-001
+    tests: R-PARSER-ELOG-008
+    """
+    elp = EmergeLogParser()
+
+    elp.subscribe(lambda x: x, "merge")
+
+    with nose.tools.assert_raises(RuntimeError):
+        elp.unsubscribe(lambda x: x)
+
+
+def test_07a_subscribe_unsubscribe():
+    """
+    Tests that subscribing and unsubscribing work as expected:
+    - subscribe to two modes
+    - parse returns items for both modes
+    - unsubscribe one mode
+    - parse returns items for one mode only
+
+    tests: R-PARSER-ELOG-001
+    tests: R-PARSER-ELOG-007
+    tests: R-PARSER-ELOG-008
+    """
+    good_elog = StringIO(ELOG_GOOD)
+
+    elp = EmergeLogParser()
+
+    class ItemCollector:
+        def __init__(self):
+            self.items = []
+
+        def __call__(self, _item):
+            self.items.append(_item)
+
+    mic = ItemCollector()
+    uic = ItemCollector()
+
+    elp.subscribe(mic, "merge")
+    elp.subscribe(uic, "unmerge")
+    elp.parse(good_elog)
+
+    assert len(mic.items) == 2
+    for _item in mic.items:
+        assert isinstance(_item, MergeItem)
+    assert len(uic.items) == 2
+    for _item in uic.items:
+        assert isinstance(_item, UnmergeItem)
+
+    mic.items.clear()
+    uic.items.clear()
+
+    elp.unsubscribe(uic)
+
+    good_elog = StringIO(ELOG_GOOD)
+    elp.parse(good_elog)
+
+    assert len(mic.items) == 2
+    for _item in mic.items:
+        assert isinstance(_item, MergeItem)
+    assert not uic.items
+
+
+def test_07b_multiple_subscribes():
+    """
+    Tests that subscribing and unsubscribing work as expected:
+    - subscribe to the same mode w/ two different callbacks
+    - parse returns items for both callbacks
+    - unsubscribing succeeds
+
+    tests: R-PARSER-ELOG-001
+    tests: R-PARSER-ELOG-007
+    tests: R-PARSER-ELOG-008
+    """
+    good_elog = StringIO(ELOG_GOOD)
+
+    elp = EmergeLogParser()
+
+    class ItemCollector:
+        def __init__(self):
+            self.items = []
+
+        def __call__(self, _item):
+            self.items.append(_item)
+
+    mic1 = ItemCollector()
+    mic2 = ItemCollector()
+
+    elp.subscribe(mic1, "merge")
+    elp.subscribe(mic2, "merge")
+    elp.parse(good_elog)
+    elp.unsubscribe(mic1, "merge")
+    elp.unsubscribe(mic2, "merge")
+
+    assert len(mic1.items) == 2
+    for _item in mic1.items:
+        assert isinstance(_item, MergeItem)
+    assert mic1.items == mic2.items

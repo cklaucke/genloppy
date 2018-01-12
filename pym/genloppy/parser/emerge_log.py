@@ -20,6 +20,32 @@ class EmergeLogParser:
     realizes: R-PARSER-ELOG-004
     """
 
+    class Subscription:
+        """
+        Holds and manages callbacks for a given pattern callback map.
+        """
+        def __init__(self, pattern_callbacks):
+            self._pattern_callbacks = pattern_callbacks
+            self._callbacks = []
+
+        @property
+        def pattern_callbacks(self):
+            """Returns the pattern callbacks dict."""
+            return self._pattern_callbacks
+
+        @property
+        def callbacks(self):
+            """Returns the subscription callbacks."""
+            return self._callbacks
+
+        def add_callback(self, callback):
+            """Adds a callback to the subscription."""
+            self._callbacks.append(callback)
+
+        def remove_callback(self, callback):
+            """Removes a callback from the subscription."""
+            self._callbacks.remove(callback)
+
     # for specification see https://dev.gentoo.org/~ulm/pms/head/pms.html
     CATEGORY_PATTERN = r"[A-Za-z0-9_][A-Za-z0-9+_.-]*"
     PACKAGE_NAME_PATTERN = r"[A-Za-z0-9_][A-Za-z0-9+_-]*"
@@ -57,17 +83,57 @@ class EmergeLogParser:
             }
         }
 
+        self.subscriptions = {}
+
         self.current_merge_begin_match = None
 
-    def get_pattern_callbacks(self, mode):
-        """Return pattern callbacks for a given mode."""
-        if mode == "any":
-            pattern_callbacks = {}
-            for d in self._modes.values():
-                pattern_callbacks.update(d)
+    def subscribe(self, callback, mode):
+        """Subscribes the callback for a given mode.
+
+        realizes: R-PARSER-ELOG-007"""
+        if mode not in self._modes.keys():
+            raise RuntimeError("Cannot subscribe to unknown mode '{}'.".format(mode))
+
+        subscription = self.subscriptions.get(mode)
+
+        if not subscription:
+            subscription = EmergeLogParser.Subscription(self._modes[mode])
+            self.subscriptions[mode] = subscription
+
+        subscription.add_callback(callback)
+
+    def unsubscribe(self, callback, mode=None):
+        """Unsubscribes the callback from a given mode.
+
+        realizes: R-PARSER-ELOG-008"""
+        def _unsubscribe(_callback, _mode):
+            if _callback not in self.subscriptions[_mode].callbacks:
+                raise RuntimeError("Cannot unsubscribe! '{}' not found in subscriptions for mode {}."
+                                   .format(_callback, _mode))
+
+            self.subscriptions[_mode].remove_callback(_callback)
+
+        modes_found = []
+        if mode:
+            if mode not in self._modes.keys() or mode not in self.subscriptions:
+                raise RuntimeError("Cannot unsubscribe to unknown or unsubscribed mode '{}'.".format(mode))
+
+            _unsubscribe(callback, mode)
+            modes_found.append(mode)
         else:
-            pattern_callbacks = self._modes[mode]
-        return pattern_callbacks
+            for subscription_mode, subscription in self.subscriptions.items():
+                if callback in subscription.callbacks:
+                    modes_found.append(subscription_mode)
+                    _unsubscribe(callback, subscription_mode)
+
+            if not modes_found:
+                raise RuntimeError("Cannot unsubscribe! '{}' not found in any subscription."
+                                   .format(callback))
+
+        # clean-up subscriptions
+        for subscription_mode in modes_found:
+            if not self.subscriptions[subscription_mode].callbacks:
+                self.subscriptions.pop(subscription_mode)
 
     def merge_begin_log_entry(self, match):
         """Save the current match to be processed by a corresponding
@@ -110,26 +176,33 @@ class EmergeLogParser:
                            match.group('atom_base'),
                            match.group('atom_version'))
 
-    def parse(self, stream, mode='any'):
+    def parse(self, stream):
         """Parse a given stream for items using the defined patterns and callbacks.
 
-        realizes: R-PARSER-ELOG-003"""
-        pattern_callbacks = self.get_pattern_callbacks(mode)
-
+        realizes: R-PARSER-ELOG-003
+        realizes: R-PARSER-ELOG-009"""
         self.current_merge_begin_match = None
 
-        for line in stream:
+        if not self.subscriptions:
+            raise RuntimeError("No subscription provided.")
+
+        def process_entry(_line):
             matched = False
-
             # always iterate through all patterns to detect corrupt log files
-            for pattern, callback in pattern_callbacks.items():
-                match = pattern.match(line)
+            for subscription in self.subscriptions.values():
+                for pattern, pattern_callback in subscription.pattern_callbacks.items():
+                    match = pattern.match(_line)
 
-                if match:
-                    if matched:
-                        raise RuntimeError("Pattern malformed. More than one pattern matched at a time.")
+                    if match:
+                        if matched:
+                            raise RuntimeError("Pattern malformed. More than one pattern matched at a time.")
 
-                    matched = True
-                    result = callback(match)
-                    if result:
-                        yield result
+                        matched = True
+                        result = pattern_callback(match)
+
+                        if result:
+                            for subscription_callback in subscription.callbacks:
+                                subscription_callback(result)
+
+        for line in stream:
+            process_entry(line)
