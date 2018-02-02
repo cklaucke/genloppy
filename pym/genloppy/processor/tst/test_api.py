@@ -15,10 +15,9 @@ def test_01_processor_interface():
     tests: R-PROCESSOR-API-003
     tests: R-PROCESSOR-API-004
     """
-    i = Interface()
+    nose.tools.assert_true(hasattr(Interface, "callbacks"))
+    nose.tools.assert_true(hasattr(Interface, "pre_process"))
+    nose.tools.assert_true(hasattr(Interface, "post_process"))
 
-    for method in [i.callbacks,
-                   i.pre_process,
-                   i.post_process]:
-        with nose.tools.assert_raises(NotImplementedError):
-            method()
+    with nose.tools.assert_raises(NotImplementedError):
+        Interface()
