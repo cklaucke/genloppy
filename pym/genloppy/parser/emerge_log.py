@@ -1,13 +1,3 @@
-"""
-Provides parser for emerge logs
-
-realizes: R-PARSER-ELOG-001
-"""
-
-__author__ = "cklaucke"
-
-from genloppy.item import MergeItem, SyncItem, UnmergeItem
-
 import re
 
 
@@ -147,15 +137,15 @@ class EmergeLogParser:
         merge begin entry was found beforehand.
 
         realizes: R-PARSER-ELOG-004"""
-        item = None
+        item = {}
 
         if self.current_merge_begin_match:
             # consistency check: count, atom and version shall match
             if self.current_merge_begin_match.groups()[1:] == match.groups()[1:]:
-                item = MergeItem(int(self.current_merge_begin_match.group('timestamp')),
-                                 int(match.group('timestamp')),
-                                 self.current_merge_begin_match.group('atom_base'),
-                                 self.current_merge_begin_match.group('atom_version'))
+                item.update(timestamp_begin=int(self.current_merge_begin_match.group('timestamp')),
+                            timestamp_end=int(match.group('timestamp')),
+                            name=self.current_merge_begin_match.group('atom_base'),
+                            version=self.current_merge_begin_match.group('atom_version'))
 
         self.current_merge_begin_match = None
         return item
@@ -165,16 +155,17 @@ class EmergeLogParser:
         """Process sync entry match and return an item.
 
         realizes: R-PARSER-ELOG-006"""
-        return SyncItem(int(match.group('timestamp')), match.group('repo_name'))
+        return dict(timestamp=int(match.group('timestamp')),
+                    repo_name=match.group('repo_name'))
 
     @staticmethod
     def unmerge_log_entry(match):
         """Process unmerge entry match.
 
         realizes: R-PARSER-ELOG-005"""
-        return UnmergeItem(int(match.group('timestamp')),
-                           match.group('atom_base'),
-                           match.group('atom_version'))
+        return dict(timestamp=int(match.group('timestamp')),
+                    name=match.group('atom_base'),
+                    version=match.group('atom_version'))
 
     def parse(self, stream):
         """Parse a given stream for items using the defined patterns and callbacks.

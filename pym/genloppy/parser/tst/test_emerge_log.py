@@ -1,8 +1,4 @@
-__author__ = "cklaucke"
-
-
 from genloppy.parser.emerge_log import EmergeLogParser
-from genloppy.item import MergeItem, SyncItem, UnmergeItem
 
 from io import StringIO
 from re import compile as re_compile
@@ -76,48 +72,40 @@ def test_01a_elog_good_mode_any():
     assert len(items) == 6
 
     item = items[0]
-    assert isinstance(item, SyncItem)
-    assert item.timestamp == 1507734360
-    assert item.repo_name == "gentoo"
+    assert item["timestamp"] == 1507734360
+    assert item["repo_name"] == "gentoo"
 
     item = items[1]
-    assert isinstance(item, UnmergeItem)
-    assert item.timestamp == 1507735236
-    assert item.name == "sys-devel/gcc-config"
-    assert item.version == "1.7.3"
+    assert item["timestamp"] == 1507735236
+    assert item["name"] == "sys-devel/gcc-config"
+    assert item["version"] == "1.7.3"
 
     item = items[2]
-    assert isinstance(item, MergeItem)
-    assert item.timestamp == 1507735226
-    assert item.timestamp_end == 1507735239
-    assert item.duration == 13
-    assert item.name == "sys-devel/gcc-config"
-    assert item.version == "1.8-r1"
+    assert item["timestamp_begin"] == 1507735226
+    assert item["timestamp_end"] == 1507735239
+    assert item["name"] == "sys-devel/gcc-config"
+    assert item["version"] == "1.8-r1"
 
     item = items[3]
-    assert isinstance(item, UnmergeItem)
-    assert item.timestamp == 1507735248
-    assert item.name == "app-laptop/laptop-mode-tools"
-    assert item.version == "1.70"
+    assert item["timestamp"] == 1507735248
+    assert item["name"] == "app-laptop/laptop-mode-tools"
+    assert item["version"] == "1.70"
 
     item = items[4]
-    assert isinstance(item, MergeItem)
-    assert item.timestamp == 1507735239
-    assert item.timestamp_end == 1507735250
-    assert item.duration == 11
-    assert item.name == "app-laptop/laptop-mode-tools"
-    assert item.version == "1.71"
+    assert item["timestamp_begin"] == 1507735239
+    assert item["timestamp_end"] == 1507735250
+    assert item["name"] == "app-laptop/laptop-mode-tools"
+    assert item["version"] == "1.71"
 
     item = items[5]
-    assert isinstance(item, SyncItem)
-    assert item.timestamp == 1508345663
-    assert item.repo_name == "gentoo"
+    assert item["timestamp"] == 1508345663
+    assert item["repo_name"] == "gentoo"
 
 
 def test_01b_elog_good_mode_merge():
     """
     Tests that after subscribing to 'merge'
-    the parser returns MergeItems for a proper emerge log.
+    the parser returns dict for a proper emerge log.
 
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
@@ -135,26 +123,22 @@ def test_01b_elog_good_mode_merge():
     assert len(items) == 2
 
     item = items[0]
-    assert isinstance(item, MergeItem)
-    assert item.timestamp == 1507735226
-    assert item.timestamp_end == 1507735239
-    assert item.duration == 13
-    assert item.name == "sys-devel/gcc-config"
-    assert item.version == "1.8-r1"
+    assert item["timestamp_begin"] == 1507735226
+    assert item["timestamp_end"] == 1507735239
+    assert item["name"] == "sys-devel/gcc-config"
+    assert item["version"] == "1.8-r1"
 
     item = items[1]
-    assert isinstance(item, MergeItem)
-    assert item.timestamp == 1507735239
-    assert item.timestamp_end == 1507735250
-    assert item.duration == 11
-    assert item.name == "app-laptop/laptop-mode-tools"
-    assert item.version == "1.71"
+    assert item["timestamp_begin"] == 1507735239
+    assert item["timestamp_end"] == 1507735250
+    assert item["name"] == "app-laptop/laptop-mode-tools"
+    assert item["version"] == "1.71"
 
 
 def test_01c_elog_good_mode_unmerge():
     """
     Tests that after subscribing to 'unmerge'
-    the parser returns UnmergeItems for a proper emerge log.
+    the parser returns dict for a proper emerge log.
 
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
@@ -172,22 +156,20 @@ def test_01c_elog_good_mode_unmerge():
     assert len(items) == 2
 
     item = items[0]
-    assert isinstance(item, UnmergeItem)
-    assert item.timestamp == 1507735236
-    assert item.name == "sys-devel/gcc-config"
-    assert item.version == "1.7.3"
+    assert item["timestamp"] == 1507735236
+    assert item["name"] == "sys-devel/gcc-config"
+    assert item["version"] == "1.7.3"
 
     item = items[1]
-    assert isinstance(item, UnmergeItem)
-    assert item.timestamp == 1507735248
-    assert item.name == "app-laptop/laptop-mode-tools"
-    assert item.version == "1.70"
+    assert item["timestamp"] == 1507735248
+    assert item["name"] == "app-laptop/laptop-mode-tools"
+    assert item["version"] == "1.70"
 
 
 def test_01d_elog_good_mode_sync():
     """
     Tests that after subscribing to 'sync' the parser
-    returns SyncItems for a proper emerge log.
+    returns dict for a proper emerge log.
 
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
@@ -205,14 +187,12 @@ def test_01d_elog_good_mode_sync():
     assert len(items) == 2
 
     item = items[0]
-    assert isinstance(item, SyncItem)
-    assert item.timestamp == 1507734360
-    assert item.repo_name == "gentoo"
+    assert item["timestamp"] == 1507734360
+    assert item["repo_name"] == "gentoo"
 
     item = items[1]
-    assert isinstance(item, SyncItem)
-    assert item.timestamp == 1508345663
-    assert item.repo_name == "gentoo"
+    assert item["timestamp"] == 1508345663
+    assert item["repo_name"] == "gentoo"
 
 
 def test_01e_elog_good_no_subscriptions():
@@ -391,10 +371,11 @@ def test_07a_subscribe_unsubscribe():
 
     assert len(mic.items) == 2
     for _item in mic.items:
-        assert isinstance(_item, MergeItem)
+        nose.tools.assert_true("timestamp_begin" in _item.keys())
+        nose.tools.assert_true("timestamp_end" in _item.keys())
     assert len(uic.items) == 2
     for _item in uic.items:
-        assert isinstance(_item, UnmergeItem)
+        nose.tools.assert_true("timestamp" in _item.keys())
 
     mic.items.clear()
     uic.items.clear()
@@ -406,7 +387,8 @@ def test_07a_subscribe_unsubscribe():
 
     assert len(mic.items) == 2
     for _item in mic.items:
-        assert isinstance(_item, MergeItem)
+        nose.tools.assert_true("timestamp_begin" in _item.keys())
+        nose.tools.assert_true("timestamp_end" in _item.keys())
     assert not uic.items
 
 
@@ -443,5 +425,6 @@ def test_07b_multiple_subscribes():
 
     assert len(mic1.items) == 2
     for _item in mic1.items:
-        assert isinstance(_item, MergeItem)
+        nose.tools.assert_true("timestamp_begin" in _item.keys())
+        nose.tools.assert_true("timestamp_end" in _item.keys())
     assert mic1.items == mic2.items
