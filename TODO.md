@@ -10,6 +10,7 @@
 *   new feature: cache results of emerge.log parsing
 *   analyze what *genlop* does to check for log corruption
 *   add all sync types beside sync and git (*genlop*'s git pattern will not work since the git sync module was obviously refactored)
+*   provide alternative command line interface (tool w/ sub-command style like git; set of tools w/ reduced functionality like standard unix tools)
 
 original genlop patterns:
 merge begin
