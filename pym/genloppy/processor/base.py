@@ -1,18 +1,12 @@
-"""
-Provides a base processor implementation
-
-realizes: R-PROCESSOR-BASE-001
-"""
-
-__author__ = "cklaucke"
-
-
-from genloppy.processor import Interface as ProcessorInterface
+from genloppy.processor.api import Interface as ProcessorInterface
 
 
 class Base(ProcessorInterface):
-    """Base processor implementation"""
-    def __init__(self):
+    """Base processor implementation
+
+    realizes: R-PROCESSOR-BASE-001
+    """
+    def __init__(self, **kwargs):
         self._callbacks = {}
 
     @property

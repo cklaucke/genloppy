@@ -428,3 +428,13 @@ def test_07b_multiple_subscribes():
         nose.tools.assert_true("timestamp_begin" in _item.keys())
         nose.tools.assert_true("timestamp_end" in _item.keys())
     assert mic1.items == mic2.items
+
+
+def test_08_optional_configuration():
+    """
+    Tests that parser allows for optional configuration of filters.
+
+    tests: R-PARSER-ELOG-010
+    """
+    elp = EmergeLogParser()
+    elp.configure(foo="bar")
