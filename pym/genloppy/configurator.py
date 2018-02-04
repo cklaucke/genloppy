@@ -72,93 +72,67 @@ class CommandLine:
     ]
 
     def __init__(self, arguments):
+        self.arguments = arguments
         self.argument_parser = argparse.ArgumentParser()
         self.configure_arguments()
 
-        self._processor_name = None
-
-        self.parsed_arguments = self.argument_parser.parse_args(arguments)
-        self.determine_configuration()
+        self._processor_configuration = {}
+        self._parser_configuration = {}
+        self._output_configuration = {}
 
     def configure_arguments(self):
         """Configures arguments."""
         for args, kwargs in self.ARGUMENTS:
             self.argument_parser.add_argument(*args, **kwargs)
 
-    def determine_configuration(self):
+    def parse_arguments(self):
         """
-        Sanity-checks and evaluates parsed arguments and derives configuration.
+        Parses, sanity-checks and evaluates arguments and derives configuration.
 
         realizes: R-CONF-CLI-006
         """
-        args = self.parsed_arguments
+        parsed_args = self.argument_parser.parse_args(self.arguments)
 
-        if not args.sub_commands:
+        if not parsed_args.sub_commands:
             raise KeyError("At least one sub-command argument needed.")
-        elif len(args.sub_commands) == 1:
-            processor_name = args.sub_commands[0]
-        elif set(args.sub_commands) == {self.PROCESSORS.MERGE, self.PROCESSORS.UNMERGE}:
+        elif len(parsed_args.sub_commands) == 1:
+            processor_name = parsed_args.sub_commands[0]
+        elif set(parsed_args.sub_commands) == {self.PROCESSORS.MERGE, self.PROCESSORS.UNMERGE}:
             processor_name = self.PROCESSORS.MERGE_UNMERGE
         else:
             raise KeyError("Not more than one sub-command allowed (except 'merge' and 'unmerge').")
 
-        if args.query and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_QUERY:
+        if parsed_args.query and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_QUERY:
             raise KeyError("Query flag '-q' not allowed for '{}'.".format(processor_name))
 
-        if (args.name or args.search) and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_NAME:
+        if (parsed_args.name or parsed_args.search) and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_NAME:
             raise KeyError("Package name(s) or search arguments '-s' not allowed for '{}'.".format(processor_name))
 
-        if not (args.name or args.search) and processor_name in self.PROCESSORS.PROCESSORS_REQUIRE_NAME:
+        if not (parsed_args.name or parsed_args.search) and processor_name in self.PROCESSORS.PROCESSORS_REQUIRE_NAME:
             raise KeyError("At least one package name(s) or search arguments '-s' required for '{}'."
                            .format(processor_name))
 
-        date_count = len(args.date) if args.date else 0
+        date_count = len(parsed_args.date) if parsed_args.date else 0
         if date_count > 2:
             raise KeyError("Up to two dates ('--date') may be given. Got {}.".format(date_count))
 
-        self._processor_name = processor_name
+        self._processor_configuration.update(name=processor_name, query=parsed_args.query)
+        self._parser_configuration.update(file_names=parsed_args.logfile,
+                                          package_names=parsed_args.name if parsed_args.name else None,
+                                          search_reg_exps=parsed_args.search,
+                                          case_sensitive=parsed_args.case_sensitive,
+                                          dates=parsed_args.date)
+        self._output_configuration.update(gmt=parsed_args.gmt,
+                                          nocolor=parsed_args.nocolor)
 
     @property
-    def names(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.name if self.parsed_arguments.name else None
+    def parser_configuration(self):
+        return self._parser_configuration
 
     @property
-    def processor_name(self):
-        """realizes: R-CONF-CLI-007"""
-        return self._processor_name
+    def processor_configuration(self):
+        return self._processor_configuration
 
     @property
-    def file_names(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.logfile
-
-    @property
-    def dates(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.date
-
-    @property
-    def search_reg_exp(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.search
-
-    @property
-    def gmt(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.gmt
-
-    @property
-    def nocolor(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.nocolor
-
-    @property
-    def query(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.query
-
-    @property
-    def case_sensitive(self):
-        """realizes: R-CONF-CLI-007"""
-        return self.parsed_arguments.case_sensitive
+    def output_configuration(self):
+        return self._output_configuration

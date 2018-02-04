@@ -77,6 +77,13 @@ class EmergeLogParser:
 
         self.current_merge_begin_match = None
 
+    def configure(self, **kwargs):
+        """Configures optional parser filters
+
+        realizes: R-PARSER-LOG-010
+        """
+        pass
+
     def subscribe(self, callback, mode):
         """Subscribes the callback for a given mode.
 

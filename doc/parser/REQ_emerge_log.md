@@ -87,3 +87,13 @@ The `unsubscribe` method SHALL raise an exception if
 
 # R-PARSER-ELOG-009: Calling subscriber callbacks #
 If a log entry matched for a mode, the parser SHALL notify the mode's subscribers by calling the callback providing the resulting dictionary.
+
+# R-PARSER-ELOG-010: Allow for optional configuration of filters #
+The parser SHALL provide means to allow for optional configuration of filters.
+
+It SHALL provide at least the following filters:
+-   filtering the packages through names,
+-   filtering the packages through regular expressions,
+-   filtering the date span.
+
+It SHALL be configurable whether the filtering for packages is case-sensitive or not.
