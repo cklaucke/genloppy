@@ -9,3 +9,6 @@ The processor API SHALL provide a method returning a dict of modes and associate
 
 # R-PROCESSOR-API-004: Provide a post-processing interface #
 The processor API SHALL provide a method for post-processing. The method SHALL be named `post_process`.
+
+# R-PROCESSOR-API-005: Allow for optional arguments on initialization #
+The processor API SHALL allow for optional arguments on initialization.
