@@ -279,7 +279,7 @@ def test_04d_three_date_arguments_rejected():
 
 def test_05a_flag_arguments_accepted():
     """
-    Tests that global flag arguments 'gmt', 'nocolor'
+    Tests that global flag arguments 'gmt', 'color'
     and 'case sensitive' are accepted.
 
     tests: R-CONF-CLI-005
@@ -347,7 +347,7 @@ def test_07a_get_default_configuration():
                                  dict(name=processor.MERGE, query=False))
     nose.tools.assert_dict_equal(c.output_configuration,
                                  dict(gmt=False,
-                                      nocolor=False))
+                                      color=True))
 
 
 def test_07b_get_configurations():
@@ -360,43 +360,43 @@ def test_07b_get_configurations():
         (["-l", "pkg"],
          dict(file_names=None, package_names=["pkg"], search_reg_exps=None, case_sensitive=False, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=False, nocolor=False)),
+         dict(gmt=False, color=True)),
         (["-l", "pkg", "pkg2"],
          dict(file_names=None, package_names=["pkg", "pkg2"], search_reg_exps=None, case_sensitive=False, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=False, nocolor=False)),
+         dict(gmt=False, color=True)),
         (["-l", "-f", "file1", "-f", "file2"],
          dict(file_names=["file1", "file2"], package_names=None, search_reg_exps=None, case_sensitive=False, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=False, nocolor=False)),
+         dict(gmt=False, color=True)),
         (["-l", "--date", "1", "--date", "1337"],
          dict(file_names=None, package_names=None, search_reg_exps=None, case_sensitive=False, dates=["1", "1337"]),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=False, nocolor=False)),
+         dict(gmt=False, color=True)),
         (["-l", "--search", ".*", "-s", "foo[a-z]+"],
          dict(file_names=None, package_names=None, search_reg_exps=[".*", "foo[a-z]+"], case_sensitive=False, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=False, nocolor=False)),
+         dict(gmt=False, color=True)),
         (["-l", "-g"],
          dict(file_names=None, package_names=None, search_reg_exps=None, case_sensitive=False, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=True, nocolor=False)),
+         dict(gmt=True, color=True)),
         (["-l", "-n"],
          dict(file_names=None, package_names=None, search_reg_exps=None, case_sensitive=False, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=False, nocolor=True)),
+         dict(gmt=False, color=False)),
         (["-l", "--gmt", "--nocolor"],
          dict(file_names=None, package_names=None, search_reg_exps=None, case_sensitive=False, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=True, nocolor=True)),
+         dict(gmt=True, color=False)),
         (["-t", "-q", "cat/pkg"],
          dict(file_names=None, package_names=["cat/pkg"], search_reg_exps=None, case_sensitive=False, dates=None),
          dict(name=processor.TIME, query=True),
-         dict(gmt=False, nocolor=False)),
+         dict(gmt=False, color=True)),
         (["-l", "-S"],
          dict(file_names=None, package_names=None, search_reg_exps=None, case_sensitive=True, dates=None),
          dict(name=processor.MERGE, query=False),
-         dict(gmt=False, nocolor=False)),
+         dict(gmt=False, color=True)),
     ]
 
     for args, expected_parser_configuration, expected_processor_configuration, \

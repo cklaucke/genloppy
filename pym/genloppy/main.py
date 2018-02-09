@@ -51,7 +51,7 @@ class Main:
                                             dates=None)
         allowed_processor_configuration = dict(query=False)
         allowed_output_configuration = dict(gmt=False,
-                                            nocolor=True)
+                                            color=False)
 
         config_compare(self.configurator.parser_configuration, allowed_parser_configuration)
         config_compare(self.configurator.processor_configuration, allowed_processor_configuration)

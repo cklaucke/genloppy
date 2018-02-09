@@ -62,7 +62,7 @@ class CommandLine:
         # flags
         (['-g', '--gmt'], dict(action='store_true',
                                help='sets the display time format to GMT/UTC')),
-        (['-n', '--nocolor'], dict(action='store_true',
+        (['-n', '--nocolor'], dict(dest='color', action='store_false', default=True,
                                    help='disables the colored output')),
         (['-q'], dict(dest='query', action='store_true',
                       help='queries the gentoo.linuxhowtos.org database '
@@ -123,7 +123,7 @@ class CommandLine:
                                           case_sensitive=parsed_args.case_sensitive,
                                           dates=parsed_args.date)
         self._output_configuration.update(gmt=parsed_args.gmt,
-                                          nocolor=parsed_args.nocolor)
+                                          color=parsed_args.color)
 
     @property
     def parser_configuration(self):
