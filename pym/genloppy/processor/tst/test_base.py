@@ -1,4 +1,4 @@
-from genloppy.processor.base import Base
+from genloppy.processor.base import Base, BaseOutput
 
 import nose.tools
 
@@ -24,3 +24,15 @@ def test_01_base_processor():
 
     b.pre_process()
     b.post_process()
+
+
+def test_02_base_output_processor():
+    """
+    Tests the processor API of the base processor.
+    tests: R-PROCESSOR-BASE-OUTPUT-001"""
+    class MockOutput:
+        pass
+    m = MockOutput()
+    b = BaseOutput(output=m)
+    nose.tools.assert_equal(b.output, m)
+
