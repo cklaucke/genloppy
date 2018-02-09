@@ -4,8 +4,9 @@
 # R-MAIN-002: Main class execution #
 The main function SHALL
 1. parse arguments and determine the configuration to use,
-2. setup the desired processor using the configuration,
+2. setup the desired processor using the configuration and the given output handler,
 3. setup the parser for emerge logs using the configuration and subscribe the callbacks retrieved from the processor,
-4. do the processor's pre-processing,
-5. let the parser for emerge logs parse `/var/log/emerge.log`,
-6. do the processor's post-processing.
+4. configure the output handler,
+5. do the processor's pre-processing,
+6. let the parser for emerge logs parse `/var/log/emerge.log`,
+7. do the processor's post-processing.

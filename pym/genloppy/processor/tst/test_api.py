@@ -16,8 +16,7 @@ def test_01_processor_interface():
     nose.tools.assert_true(hasattr(Interface, "pre_process"))
     nose.tools.assert_true(hasattr(Interface, "post_process"))
 
-    Interface()
-    i = Interface(optional="argument")
+    i = Interface()
 
     with nose.tools.assert_raises(NotImplementedError):
         cb = i.callbacks

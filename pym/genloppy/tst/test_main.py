@@ -1,5 +1,6 @@
 import genloppy.main
-from genloppy.processor.base import Base as ProcessorBase
+from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
+from genloppy.output import Interface
 
 import nose.tools
 from os import unlink
@@ -35,7 +36,7 @@ def test_01_main_execution():
         def output_configuration(self):
             return self._output_configuration
 
-    class MockProcessor(ProcessorBase):
+    class MockProcessor(ProcessorBaseOutput):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
             self.kwargs = kwargs
@@ -79,11 +80,16 @@ def test_01_main_execution():
             for callback, _ in self.subscriptions:
                 callback(None)
 
+    class MockOutput(Interface):
+        def configure(self, **kwargs):
+            pass
+
     nose.tools.assert_equal(genloppy.main.DEFAULT_ELOG_FILE, "/var/log/emerge.log")
 
     mock_configurator = MockConfigurator()
     mock_processor_factory = MockProcessorFactory()
     mock_elog_parser = MockEmergeLogParser()
+    mock_output = MockOutput()
 
     content = "1337\nalpha\n"
     temp_file = None
@@ -94,7 +100,8 @@ def test_01_main_execution():
         genloppy.main.DEFAULT_ELOG_FILE = temp_file.name
         m = genloppy.main.Main(configurator=mock_configurator,
                                processor_factory=mock_processor_factory,
-                               elog_parser=mock_elog_parser)
+                               elog_parser=mock_elog_parser,
+                               output=mock_output)
         m.run()
     finally:
         if temp_file:
@@ -111,7 +118,7 @@ def test_01_main_execution():
     nose.tools.assert_equal(mock_processor_factory.created_processors[0][0], "mock")
 
     mock_processor = mock_processor_factory.created_processors[0][1]
-    nose.tools.assert_dict_equal(mock_processor.kwargs, dict(feature="42"))
+    nose.tools.assert_dict_equal(mock_processor.kwargs, dict(output=mock_output, feature="42"))
     nose.tools.assert_equal(mock_processor.call_order, ["pre_process", "process(None)", "post_process"])
 
 

@@ -4,9 +4,6 @@ class Interface:
 
     realizes: R-PROCESSOR-API-001
     """
-    def __init__(self, **kwargs):
-        pass
-
     @property
     def callbacks(self):
         """Returns a dict of modes and associated callbacks to be subscribed.

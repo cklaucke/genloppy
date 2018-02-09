@@ -9,6 +9,9 @@ class Base(ProcessorInterface):
     def __init__(self, **kwargs):
         self._callbacks = {}
 
+    def _add_callbacks(self, **kwargs):
+        self._callbacks.update(kwargs)
+
     @property
     def callbacks(self):
         """Returns a empty dict of modes and associated callbacks to be subscribed.
@@ -27,3 +30,11 @@ class Base(ProcessorInterface):
 
         realizes: R-PROCESSOR-BASE-004"""
         pass
+
+
+class BaseOutput(Base):
+    """Implements a base processor that supports output.
+    realizes: R-PROCESSOR-BASE-OUTPUT-001"""
+    def __init__(self, output, **kwargs):
+        super().__init__(**kwargs)
+        self.output = output
