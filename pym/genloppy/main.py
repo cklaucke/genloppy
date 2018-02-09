@@ -2,6 +2,7 @@
 import sys
 
 from genloppy.configurator import CommandLine as CommandLineConfigurator
+from genloppy.output import Output
 from genloppy.parser.emerge_log import EmergeLogParser
 from genloppy.processor import ProcessorFactory
 
@@ -15,16 +16,17 @@ class Main:
 
     realizes: R-MAIN-001
     """
-    def __init__(self, configurator, processor_factory, elog_parser):
+    def __init__(self, configurator, processor_factory, elog_parser, output):
         self.configurator = configurator
         self.processor_factory = processor_factory
         self.elog_parser = elog_parser
+        self.output = output
         self.processor = None
 
     def create_processor(self):
         processor_configuration = dict(self.configurator.processor_configuration)
         processor_name = processor_configuration.pop("name")
-        self.processor = self.processor_factory.create(processor_name, **processor_configuration)
+        self.processor = self.processor_factory.create(processor_name, output=self.output, **processor_configuration)
 
     def setup_parser(self):
         parser_configuration = dict(self.configurator.parser_configuration)
@@ -33,6 +35,8 @@ class Main:
         for mode, callback in self.processor.callbacks.items():
             self.elog_parser.subscribe(callback, mode)
 
+    def configure_output(self):
+        self.output.configure(**self.configurator.output_configuration)
 
     def _config_feature_check(self):
         """Checks for configuration feature availability."""
@@ -68,6 +72,7 @@ class Main:
         self._config_feature_check()
         self.create_processor()
         self.setup_parser()
+        self.configure_output()
 
         self.processor.pre_process()
         with open(DEFAULT_ELOG_FILE) as f:
@@ -78,7 +83,8 @@ class Main:
 def main(argv):
     m = Main(configurator=CommandLineConfigurator(argv),
              processor_factory=ProcessorFactory(),
-             elog_parser=EmergeLogParser())
+             elog_parser=EmergeLogParser(),
+             output=Output())
     m.run()
 
 
