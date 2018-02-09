@@ -26,11 +26,15 @@ class Output(Interface):
         self.color = True
         self.tz = None
 
-    def configure(self, color=True, utc=False):
+    def configure(self, **kwargs):
         """Configures the appearance of the output.
         realizes: R-OUTPUT-004"""
-        self.color = color
-        self.tz = timezone.utc if utc else None
+        color = kwargs.get("color")
+        if color is not None:
+            self.color = color
+        utc = kwargs.get("utc")
+        if utc is not None:
+            self.tz = timezone.utc if utc else None
 
     def _format_date(self, timestamp):
         """Formats dates.
