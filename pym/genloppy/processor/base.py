@@ -9,6 +9,9 @@ class Base(ProcessorInterface):
     def __init__(self, **kwargs):
         self._callbacks = {}
 
+    def _add_callbacks(self, **kwargs):
+        self._callbacks.update(kwargs)
+
     @property
     def callbacks(self):
         """Returns a empty dict of modes and associated callbacks to be subscribed.

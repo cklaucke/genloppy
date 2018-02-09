@@ -1,7 +1,6 @@
-__author__ = "cklaucke"
-
-
 from genloppy.processor.base import Base
+
+import nose.tools
 
 
 def test_01_base_processor():
@@ -15,9 +14,13 @@ def test_01_base_processor():
     """
     b = Base()
 
-    callbacks = b.callbacks
-    assert not callbacks
-    assert isinstance(callbacks, dict)
+    nose.tools.assert_dict_equal(b.callbacks, {})
+
+    def bar():
+        pass
+
+    b._add_callbacks(foo=bar)
+    nose.tools.assert_dict_equal(b.callbacks, dict(foo=bar))
 
     b.pre_process()
     b.post_process()
