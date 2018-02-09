@@ -1,0 +1,44 @@
+from datetime import datetime, timezone
+
+
+class Interface:
+    """Provides the output API
+    realizes: R-OUTPUT-API-001"""
+
+    def configure(self, **kwargs):
+        """Configures the output.
+        realizes: R-OUTPUT-API-002"""
+        raise NotImplementedError
+
+    def message(self, message):
+        """"Outputs a message
+        realizes: R-OUTPUT-API-003"""
+        raise NotImplementedError
+
+
+class Output(Interface):
+    """Provides the output implementation
+    realizes: R-OUTPUT-001
+    realizes: R-OUTPUT-002"""
+    DATE_FORMAT = "{0:%c}"
+
+    def __init__(self):
+        self.color = True
+        self.tz = None
+
+    def configure(self, color=True, utc=False):
+        """Configures the appearance of the output.
+        realizes: R-OUTPUT-004"""
+        self.color = color
+        self.tz = timezone.utc if utc else None
+
+    def _format_date(self, timestamp):
+        """Formats dates.
+        realizes: R-OUTPUT-005"""
+        return self.DATE_FORMAT.format(datetime.fromtimestamp(int(timestamp), tz=self.tz))
+
+    def message(self, message):
+        """"Prints a message
+        realizes: R-OUTPUT-006"""
+        print(message)
+
