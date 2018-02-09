@@ -60,7 +60,7 @@ class CommandLine:
                                   help='takes regular expression(s) as value to be used for package searches')),
 
         # flags
-        (['-g', '--gmt'], dict(action='store_true',
+        (['-g', '--gmt'], dict(dest='utc', action='store_true',
                                help='sets the display time format to GMT/UTC')),
         (['-n', '--nocolor'], dict(dest='color', action='store_false', default=True,
                                    help='disables the colored output')),
@@ -122,7 +122,7 @@ class CommandLine:
                                           search_reg_exps=parsed_args.search,
                                           case_sensitive=parsed_args.case_sensitive,
                                           dates=parsed_args.date)
-        self._output_configuration.update(gmt=parsed_args.gmt,
+        self._output_configuration.update(utc=parsed_args.utc,
                                           color=parsed_args.color)
 
     @property

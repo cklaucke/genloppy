@@ -50,7 +50,7 @@ class Main:
                                             case_sensitive=False,
                                             dates=None)
         allowed_processor_configuration = dict(query=False)
-        allowed_output_configuration = dict(gmt=False,
+        allowed_output_configuration = dict(utc=False,
                                             color=False)
 
         config_compare(self.configurator.parser_configuration, allowed_parser_configuration)
