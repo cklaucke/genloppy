@@ -24,6 +24,7 @@ def test_01_provided_api():
     nose.tools.assert_true(hasattr(Interface, "configure"))
     nose.tools.assert_true(hasattr(Interface, "message"))
     nose.tools.assert_true(hasattr(Interface, "merge_item"))
+    nose.tools.assert_true(hasattr(Interface, "unmerge_item"))
 
     i = Interface()
 
@@ -33,8 +34,9 @@ def test_01_provided_api():
     with nose.tools.assert_raises(NotImplementedError):
         i.message(None)
 
-    with nose.tools.assert_raises(NotImplementedError):
-        i.merge_item(None, None, None)
+    for method in [i.merge_item, i.unmerge_item]:
+        with nose.tools.assert_raises(NotImplementedError):
+            method(None, None, None)
 
 
 def test_02a_configurable_output():
@@ -90,3 +92,19 @@ def test_04_output_merge_item():
 
     mock_format_date.assert_called_once_with(ts)
     mock.assert_called_with(5 * " " + " >>> " + name + "-" + version)
+
+
+def test_05_output_unmerge_item():
+    """Tests that a unmerge item is outputted.
+    tests: R-OUTPUT-002
+    tests: R-OUTPUT-008"""
+    with patch.object(Output, '_format_date', return_value="") as mock_format_date:
+        out = Output()
+        ts = 0
+        name = "cat/package"
+        version = "1.33.7"
+        with patch('builtins.print') as mock:
+            out.unmerge_item(ts, name, version)
+
+    mock_format_date.assert_called_once_with(ts)
+    mock.assert_called_with(5 * " " + " <<< " + name + "-" + version)

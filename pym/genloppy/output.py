@@ -20,6 +20,11 @@ class Interface:
         realizes: R-OUTPUT-API-004"""
         raise NotImplementedError
 
+    def unmerge_item(self, timestamp, name, version):
+        """Outputs a unmerge item
+        realizes: R-OUTPUT-API-005"""
+        raise NotImplementedError
+
 
 class Output(Interface):
     """Provides the output implementation
@@ -27,6 +32,7 @@ class Output(Interface):
     realizes: R-OUTPUT-002"""
     DATE_FORMAT = "{0:%c}"
     MERGE_FORMAT = 5 * " " + "{} >>> {}-{}"
+    UNMERGE_FORMAT = 5 * " " + "{} <<< {}-{}"
 
     def __init__(self):
         self.color = True
@@ -48,11 +54,16 @@ class Output(Interface):
         return self.DATE_FORMAT.format(datetime.fromtimestamp(int(timestamp), tz=self.tz))
 
     def message(self, message):
-        """"Prints a message
+        """Prints a message
         realizes: R-OUTPUT-006"""
         print(message)
 
     def merge_item(self, timestamp, name, version):
-        """"Prints a merge item
+        """Prints a merge item
         realizes: R-OUTPUT-007"""
         print(self.MERGE_FORMAT.format(self._format_date(timestamp), name, version))
+
+    def unmerge_item(self, timestamp, name, version):
+        """Prints a unmerge item
+        realizes: R-OUTPUT-008"""
+        print(self.UNMERGE_FORMAT.format(self._format_date(timestamp), name, version))
