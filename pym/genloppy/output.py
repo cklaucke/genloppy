@@ -11,8 +11,13 @@ class Interface:
         raise NotImplementedError
 
     def message(self, message):
-        """"Outputs a message
+        """Outputs a message
         realizes: R-OUTPUT-API-003"""
+        raise NotImplementedError
+
+    def merge_item(self, timestamp, name, version):
+        """Outputs a merge item
+        realizes: R-OUTPUT-API-004"""
         raise NotImplementedError
 
 
@@ -21,6 +26,7 @@ class Output(Interface):
     realizes: R-OUTPUT-001
     realizes: R-OUTPUT-002"""
     DATE_FORMAT = "{0:%c}"
+    MERGE_FORMAT = 5 * " " + "{} >>> {}-{}"
 
     def __init__(self):
         self.color = True
@@ -46,3 +52,7 @@ class Output(Interface):
         realizes: R-OUTPUT-006"""
         print(message)
 
+    def merge_item(self, timestamp, name, version):
+        """"Prints a merge item
+        realizes: R-OUTPUT-007"""
+        print(self.MERGE_FORMAT.format(self._format_date(timestamp), name, version))
