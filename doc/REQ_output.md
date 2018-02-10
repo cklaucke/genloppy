@@ -8,6 +8,11 @@ The output API SHALL provide a method to configure the output. The method SHALL 
 The output API SHALL provide a method to output a message. The method SHALL be named `message` and take one argument:
 -   the message to be outputted.
 
+# R-OUTPUT-API-004: Merge item output #
+The output API SHALL provide a method to output a merge item. The method SHALL be named `merge_item` and take three arguments:
+-   the timestamp,
+-   the atom's name,
+-   the atom's version.
 
 
 # R-OUTPUT-001: Provide an configurable output implementation #
@@ -38,3 +43,17 @@ Otherwise, dates SHALL be printed in local time.
 The output implementation SHALL print the message as given.
 
 *   related to: R-OUTPUT-API-003
+
+# R-OUTPUT-007: Merge item output #
+The output implementation SHALL print
+1. five (5) spaces
+2. the timestamp as formatted date
+3. the separator `>>>` preceded and succeeded by a space
+4. the atom's name and version separated by a `-`
+
+Ex.
+```
+     Thu Nov 23 01:43:04 2017 >>> sys-devel/gcc-6.4.0
+```
+
+*   related to: R-OUTPUT-API-004
