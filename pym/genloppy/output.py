@@ -11,7 +11,7 @@ class Interface:
         raise NotImplementedError
 
     def message(self, message):
-        """"Outputs a message
+        """Outputs a message
         realizes: R-OUTPUT-API-003"""
         raise NotImplementedError
 
