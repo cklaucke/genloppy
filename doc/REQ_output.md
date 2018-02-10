@@ -14,6 +14,12 @@ The output API SHALL provide a method to output a merge item. The method SHALL b
 -   the atom's name,
 -   the atom's version.
 
+# R-OUTPUT-API-005: Unmerge item output #
+The output API SHALL provide a method to output an unmerge item. The method SHALL be named `unmerge_item` and take three arguments:
+-   the timestamp,
+-   the atom's name,
+-   the atom's version.
+
 
 # R-OUTPUT-001: Provide an configurable output implementation #
 *genloppy* SHALL provide a configurable output implementation.
@@ -57,3 +63,17 @@ Ex.
 ```
 
 *   related to: R-OUTPUT-API-004
+
+# R-OUTPUT-008: Unmerge item output #
+The output implementation SHALL print
+1. five (5) spaces
+2. the timestamp as formatted date
+3. the separator `<<<` preceded and succeeded by a space
+4. the atom's name and version separated by a `-`
+
+Ex.
+```
+     Sun Nov 26 15:35:30 2017 <<< sys-devel/gcc-5.4.0-r3
+```
+
+*   related to: R-OUTPUT-API-005
