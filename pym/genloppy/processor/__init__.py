@@ -1,4 +1,5 @@
 from genloppy.processor.api import Interface
+from genloppy.processor.merge import Merge
 
 # processor names
 # TODO: may also be provided by the processing class itself
@@ -29,7 +30,7 @@ PROCESSORS_ALLOW_QUERY = {CURRENT, PRETEND, TIME}
 PROCESSORS = {
     CURRENT: Interface,
     INFO: Interface,
-    MERGE: Interface,
+    MERGE: Merge,
     MERGE_UNMERGE: Interface,
     PRETEND: Interface,
     SYNC: Interface,
