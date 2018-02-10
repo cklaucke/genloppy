@@ -54,16 +54,16 @@ class Output(Interface):
         return self.DATE_FORMAT.format(datetime.fromtimestamp(int(timestamp), tz=self.tz))
 
     def message(self, message):
-        """"Prints a message
+        """Prints a message
         realizes: R-OUTPUT-006"""
         print(message)
 
     def merge_item(self, timestamp, name, version):
-        """"Prints a merge item
+        """Prints a merge item
         realizes: R-OUTPUT-007"""
         print(self.MERGE_FORMAT.format(self._format_date(timestamp), name, version))
 
     def unmerge_item(self, timestamp, name, version):
-        """"Prints a unmerge item
+        """Prints a unmerge item
         realizes: R-OUTPUT-008"""
         print(self.UNMERGE_FORMAT.format(self._format_date(timestamp), name, version))
