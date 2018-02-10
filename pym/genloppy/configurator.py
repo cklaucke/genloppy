@@ -1,7 +1,3 @@
-"""
-Provides configurators
-"""
-
 import argparse
 
 import genloppy.processor
