@@ -1,6 +1,7 @@
 from genloppy.processor.api import Interface
 from genloppy.processor.merge import Merge
 from genloppy.processor.unmerge import Unmerge
+from genloppy.processor.merge_unmerge import MergeUnmerge
 
 # processor names
 # TODO: may also be provided by the processing class itself
@@ -32,7 +33,7 @@ PROCESSORS = {
     CURRENT: Interface,
     INFO: Interface,
     MERGE: Merge,
-    MERGE_UNMERGE: Interface,
+    MERGE_UNMERGE: MergeUnmerge,
     PRETEND: Interface,
     SYNC: Interface,
     TIME: Interface,
