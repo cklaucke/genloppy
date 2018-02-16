@@ -20,6 +20,10 @@ The output API SHALL provide a method to output an unmerge item. The method SHAL
 -   the atom's name,
 -   the atom's version.
 
+# R-OUTPUT-API-006: Sync item output #
+The output API SHALL provide a method to output a sync item. The method SHALL be named `sync_item` and take one argument:
+-   the timestamp.
+
 
 # R-OUTPUT-001: Provide an configurable output implementation #
 *genloppy* SHALL provide a configurable output implementation.
@@ -77,3 +81,16 @@ Ex.
 ```
 
 *   related to: R-OUTPUT-API-005
+
+# R-OUTPUT-009: Sync item output #
+The output implementation SHALL print
+1. five (5) spaces
+2. `rsync'ed at >>>` succeeded by a space
+3. the timestamp as formatted date
+
+Ex.
+```
+     rsync'ed at >>> Wed Jan  4 21:13:23 CET 2017
+```
+
+*   related to: R-OUTPUT-API-006
