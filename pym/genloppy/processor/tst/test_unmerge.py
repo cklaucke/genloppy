@@ -12,7 +12,7 @@ def test_01_base_output_subclass():
 
 
 def test_02_pre_processing():
-    """Tests that unmerge processor prints the specified header.
+    """Tests that unmerge processor calls message with the expected pre-processing text.
     test: R-PROCESSOR-UNMERGE-002"""
     m = MagicMock()
     unmerge = Unmerge(output=m)
@@ -28,7 +28,7 @@ def test_03_callback_added():
 
 
 def test_04_post_processing():
-    """Tests that unmerge processor prints the specified trailer.
+    """Tests that unmerge processor calls message with the expected post-processing text.
     test: R-PROCESSOR-UNMERGE-004"""
     m = MagicMock()
     unmerge = Unmerge(output=m)
@@ -37,7 +37,7 @@ def test_04_post_processing():
 
 
 def test_05_processing():
-    """Tests that unmerge processor prints the specified trailer.
+    """Tests that unmerge processor calls unmerge_item with the expected parameters.
     test: R-PROCESSOR-UNMERGE-005"""
     m = MagicMock()
     unmerge = Unmerge(output=m)
