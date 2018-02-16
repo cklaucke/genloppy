@@ -25,6 +25,11 @@ class Interface:
         realizes: R-OUTPUT-API-005"""
         raise NotImplementedError
 
+    def sync_item(self, timestamp):
+        """Outputs a sync item
+        realizes: R-OUTPUT-API-006"""
+        raise NotImplementedError
+
 
 class Output(Interface):
     """Provides the output implementation
@@ -33,6 +38,7 @@ class Output(Interface):
     DATE_FORMAT = "{0:%c}"
     MERGE_FORMAT = 5 * " " + "{} >>> {}-{}"
     UNMERGE_FORMAT = 5 * " " + "{} <<< {}-{}"
+    SYNC_FORMAT = 5 * " " + "rsync'ed at >>> {}"
 
     def __init__(self):
         self.color = True
@@ -67,3 +73,8 @@ class Output(Interface):
         """Prints a unmerge item
         realizes: R-OUTPUT-008"""
         print(self.UNMERGE_FORMAT.format(self._format_date(timestamp), name, version))
+
+    def sync_item(self, timestamp):
+        """Prints a sync item
+        realizes: R-OUTPUT-009"""
+        print(self.SYNC_FORMAT.format(self._format_date(timestamp)))
