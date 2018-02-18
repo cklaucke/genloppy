@@ -81,7 +81,7 @@ class Main:
 
 
 def main(argv):
-    m = Main(configurator=CommandLineConfigurator(argv),
+    m = Main(configurator=CommandLineConfigurator(argv[1:]),
              processor_factory=ProcessorFactory(),
              elog_parser=EmergeLogParser(),
              output=Output())
@@ -89,4 +89,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])          # pragma: no cover
+    main(sys.argv)          # pragma: no cover

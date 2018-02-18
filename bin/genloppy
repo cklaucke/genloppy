@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+
+"""genloppy is a Python implementation of genlop which primarily analyzes
+emerge log files.
+"""
+
+import sys
+
+# This block ensures that ^C interrupts are handled quietly.
+try:
+    import signal
+
+
+    def exit_handler(signum, frame):
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        print()
+        sys.exit(1)
+
+
+    signal.signal(signal.SIGINT, exit_handler)
+    signal.signal(signal.SIGTERM, exit_handler)
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+except KeyboardInterrupt:
+    print()
+    sys.exit(1)
+
+from genloppy.main import main
+
+main(sys.argv)
