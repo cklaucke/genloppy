@@ -2,7 +2,6 @@ import genloppy.main
 from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
 from genloppy.output import Interface
 
-import nose.tools
 from os import unlink
 from tempfile import NamedTemporaryFile
 from unittest.mock import patch, call
@@ -14,6 +13,7 @@ def test_01_main_execution():
 
     tests: R-MAIN-002
     """
+
     class MockConfigurator:
         def __init__(self):
             self._parser_configuration = dict(filter="all", file_names=None)
@@ -84,7 +84,7 @@ def test_01_main_execution():
         def configure(self, **kwargs):
             pass
 
-    nose.tools.assert_equal(genloppy.main.DEFAULT_ELOG_FILE, "/var/log/emerge.log")
+    assert genloppy.main.DEFAULT_ELOG_FILE == "/var/log/emerge.log"
 
     mock_configurator = MockConfigurator()
     mock_processor_factory = MockProcessorFactory()
@@ -107,19 +107,19 @@ def test_01_main_execution():
         if temp_file:
             unlink(temp_file.name)
 
-    nose.tools.assert_equal(mock_configurator.parse_arguments_calls, 1)
+    assert mock_configurator.parse_arguments_calls == 1
 
-    nose.tools.assert_dict_equal(mock_elog_parser.kwargs, dict(filter="all"))
-    nose.tools.assert_equal(len(mock_elog_parser.subscriptions), 1)
-    nose.tools.assert_equal(mock_elog_parser.parse_called_count, 1)
-    nose.tools.assert_equal(mock_elog_parser.content, content)
+    assert mock_elog_parser.kwargs == dict(filter="all")
+    assert len(mock_elog_parser.subscriptions) == 1
+    assert mock_elog_parser.parse_called_count == 1
+    assert mock_elog_parser.content == content
 
-    nose.tools.assert_equal(len(mock_processor_factory.created_processors), 1)
-    nose.tools.assert_equal(mock_processor_factory.created_processors[0][0], "mock")
+    assert len(mock_processor_factory.created_processors) == 1
+    assert mock_processor_factory.created_processors[0][0] == "mock"
 
     mock_processor = mock_processor_factory.created_processors[0][1]
-    nose.tools.assert_dict_equal(mock_processor.kwargs, dict(output=mock_output, feature="42"))
-    nose.tools.assert_equal(mock_processor.call_order, ["pre_process", "process(None)", "post_process"])
+    assert mock_processor.kwargs == dict(output=mock_output, feature="42")
+    assert mock_processor.call_order == ["pre_process", "process(None)", "post_process"]
 
 
 def test_02_main_function():
@@ -131,6 +131,6 @@ def test_02_main_function():
 
     with patch('genloppy.main.Main') as mock:
         genloppy.main.main([])
-        nose.tools.assert_equal(len(mock.mock_calls), 2)
-        nose.tools.assert_equal(mock.mock_calls[0][0], "")
-        nose.tools.assert_equal(mock.mock_calls[1], call().run())
+        assert len(mock.mock_calls) == 2
+        assert mock.mock_calls[0][0] == ""
+        assert mock.mock_calls[1] == call().run()

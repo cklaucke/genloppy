@@ -5,7 +5,7 @@ from time import tzset
 
 from genloppy.output import Interface, Output
 
-import nose.tools
+import pytest
 from unittest.mock import patch
 
 # since output of dates is locale-aware, only C/POSIX is tested here
@@ -24,25 +24,25 @@ def test_01_provided_api():
     tests: R-OUTPUT-API-005
     tests: R-OUTPUT-API-006"""
 
-    nose.tools.assert_true(hasattr(Interface, "configure"))
-    nose.tools.assert_true(hasattr(Interface, "message"))
-    nose.tools.assert_true(hasattr(Interface, "merge_item"))
-    nose.tools.assert_true(hasattr(Interface, "unmerge_item"))
-    nose.tools.assert_true(hasattr(Interface, "sync_item"))
+    assert hasattr(Interface, "configure")
+    assert hasattr(Interface, "message")
+    assert hasattr(Interface, "merge_item")
+    assert hasattr(Interface, "unmerge_item")
+    assert hasattr(Interface, "sync_item")
 
     i = Interface()
 
-    with nose.tools.assert_raises(NotImplementedError):
+    with pytest.raises(NotImplementedError):
         i.configure()
 
     # methods w/ one argument
     for method in [i.message, i.sync_item]:
-        with nose.tools.assert_raises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             method(None)
 
     # methods w/ three arguments
     for method in [i.merge_item, i.unmerge_item]:
-        with nose.tools.assert_raises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             method(None, None, None)
 
 
@@ -53,24 +53,24 @@ def test_02a_configurable_output():
     tests: R-OUTPUT-004
     """
     out = Output()
-    nose.tools.assert_equal(out.color, True)
-    nose.tools.assert_equal(out.tz, None)
+    assert out.color == True
+    assert out.tz == None
     out.configure(color=False)
-    nose.tools.assert_equal(out.color, False)
+    assert out.color == False
     out.configure(utc=True)
-    nose.tools.assert_equal(out.tz, timezone.utc)
+    assert out.tz == timezone.utc
 
 
 def test_02b_output_date_formatting():
     """Tests that dates are formatted according to the current locale (here POSIX).
     tests: R-OUTPUT-005"""
     out = Output()
-    nose.tools.assert_equal(out._format_date(0), "Wed Dec 31 19:00:00 1969")
+    assert out._format_date(0) == "Wed Dec 31 19:00:00 1969"
     out.configure(utc=True)
-    nose.tools.assert_equal(out._format_date(0), "Thu Jan  1 00:00:00 1970")
-    nose.tools.assert_equal(out._format_date("1342421337"), "Mon Jul 16 06:48:57 2012")
+    assert out._format_date(0) == "Thu Jan  1 00:00:00 1970"
+    assert out._format_date("1342421337") == "Mon Jul 16 06:48:57 2012"
     out.configure(utc=False)
-    nose.tools.assert_equal(out._format_date("1342421337"), "Mon Jul 16 02:48:57 2012")
+    assert out._format_date("1342421337") == "Mon Jul 16 02:48:57 2012"
 
 
 def test_03_output_message():

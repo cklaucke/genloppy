@@ -1,6 +1,6 @@
 from genloppy.processor import Interface
 
-import nose.tools
+import pytest
 
 
 def test_01_processor_interface():
@@ -12,14 +12,14 @@ def test_01_processor_interface():
     tests: R-PROCESSOR-API-003
     tests: R-PROCESSOR-API-004
     """
-    nose.tools.assert_true(hasattr(Interface, "callbacks"))
-    nose.tools.assert_true(hasattr(Interface, "pre_process"))
-    nose.tools.assert_true(hasattr(Interface, "post_process"))
+    assert hasattr(Interface, "callbacks")
+    assert hasattr(Interface, "pre_process")
+    assert hasattr(Interface, "post_process")
 
     i = Interface()
 
-    with nose.tools.assert_raises(NotImplementedError):
+    with pytest.raises(NotImplementedError):
         cb = i.callbacks
     for method in [i.pre_process, i.post_process]:
-        with nose.tools.assert_raises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             method()

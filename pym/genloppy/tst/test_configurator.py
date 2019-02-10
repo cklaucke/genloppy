@@ -1,7 +1,7 @@
 from genloppy.configurator import CommandLine
 import genloppy.processor as processor
 
-import nose.tools
+import pytest
 
 
 def test_01_positional_arguments_accepted():
@@ -107,19 +107,19 @@ def test_02d_sub_command_arguments_with_unexpected_name_rejected():
     sub_commands_short = ["-c", "-p", "-r", "-v"]
 
     for sub_command in sub_commands_long:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine([sub_command, "pkg"]).parse_arguments()
 
     for sub_command in sub_commands_long:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine([sub_command, "--search", "regex"]).parse_arguments()
 
     for sub_command in sub_commands_short:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine([sub_command, "pkg"]).parse_arguments()
 
     for sub_command in sub_commands_short:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine([sub_command, "-s", "regex"]).parse_arguments()
 
 
@@ -137,11 +137,11 @@ def test_02e_sub_command_arguments_with_missing_name_rejected():
     sub_commands_short = ["-i", "-t"]
 
     for sub_command in sub_commands_long:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine([sub_command]).parse_arguments()
 
     for sub_command in sub_commands_short:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine([sub_command]).parse_arguments()
 
 
@@ -151,7 +151,7 @@ def test_02f_missing_sub_command_rejected():
 
     tests: R-CONF-CLI-006
     """
-    with nose.tools.assert_raises(KeyError):
+    with pytest.raises(KeyError):
         CommandLine([]).parse_arguments()
 
 
@@ -172,11 +172,11 @@ def test_02h_forbidden_combination_of_sub_command_rejected():
 
     tests: R-CONF-CLI-006
     """
-    with nose.tools.assert_raises(KeyError):
+    with pytest.raises(KeyError):
         CommandLine(["--list", "--time", "pkg"]).parse_arguments()
-    with nose.tools.assert_raises(KeyError):
+    with pytest.raises(KeyError):
         CommandLine(["--pretend", "-u"]).parse_arguments()
-    with nose.tools.assert_raises(KeyError):
+    with pytest.raises(KeyError):
         CommandLine(["-c", "-t", "pkg"]).parse_arguments()
 
 
@@ -186,13 +186,13 @@ def test_02i_sub_command_help_accepted():
 
     tests: R-CONF-CLI-003
     """
-    with nose.tools.assert_raises(SystemExit) as cm:
+    with pytest.raises(SystemExit) as excinfo:
         CommandLine(["--help"]).parse_arguments()
-    assert cm.exception.code == 0
+    assert excinfo.value.code == 0
 
-    with nose.tools.assert_raises(SystemExit):
+    with pytest.raises(SystemExit) as excinfo:
         CommandLine(["-h"]).parse_arguments()
-    assert cm.exception.code == 0
+    assert excinfo.value.code == 0
 
 
 def test_03_unknown_arguments_rejected():
@@ -202,13 +202,13 @@ def test_03_unknown_arguments_rejected():
     tests: R-CONF-CLI-006
     """
 
-    with nose.tools.assert_raises(SystemExit) as cm:
+    with pytest.raises(SystemExit) as excinfo:
         CommandLine(["--magic"]).parse_arguments()
-    assert cm.exception.code != 0
+    assert excinfo.value.code != 0
 
-    with nose.tools.assert_raises(SystemExit) as cm:
+    with pytest.raises(SystemExit) as excinfo:
         CommandLine(["-m"]).parse_arguments()
-    assert cm.exception.code != 0
+    assert excinfo.value.code != 0
 
 
 def test_04a_key_value_arguments_accepted():
@@ -239,14 +239,14 @@ def test_04b_missing_value_for_key_value_arguments():
     key_value_short = ["-f", "-s"]
 
     for key_value in key_value_long:
-        with nose.tools.assert_raises(SystemExit) as cm:
+        with pytest.raises(SystemExit) as excinfo:
             CommandLine(["-l", key_value]).parse_arguments()
-        assert cm.exception.code != 0
+        assert excinfo.value.code != 0
 
     for key_value in key_value_short:
-        with nose.tools.assert_raises(SystemExit) as cm:
+        with pytest.raises(SystemExit) as excinfo:
             CommandLine(["-l", key_value]).parse_arguments()
-        assert cm.exception.code != 0
+        assert excinfo.value.code != 0
 
 
 def test_04c_multiple_key_value_arguments_accepted():
@@ -273,8 +273,8 @@ def test_04d_three_date_arguments_rejected():
     tests: R-CONF-CLI-006
     """
 
-    with nose.tools.assert_raises(KeyError):
-        CommandLine(["-l"] + 3*["--date", "5"]).parse_arguments()
+    with pytest.raises(KeyError):
+        CommandLine(["-l"] + 3 * ["--date", "5"]).parse_arguments()
 
 
 def test_05a_flag_arguments_accepted():
@@ -320,12 +320,12 @@ def test_05c_flag_query_argument_rejected():
     """
     sub_commands = ["-i", "-l", "-u"]
     for sub_command in sub_commands:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine(["-q", sub_command, "pkg"]).parse_arguments()
 
     sub_commands = ["-r", "-v"]
     for sub_command in sub_commands:
-        with nose.tools.assert_raises(KeyError):
+        with pytest.raises(KeyError):
             CommandLine(["-q", sub_command]).parse_arguments()
 
 
@@ -337,17 +337,14 @@ def test_07a_get_default_configuration():
     """
     c = CommandLine(["-l"])
     c.parse_arguments()
-    nose.tools.assert_dict_equal(c.parser_configuration,
-                                 dict(file_names=None,
-                                      package_names=None,
-                                      search_reg_exps=None,
-                                      case_sensitive=False,
-                                      dates=None))
-    nose.tools.assert_dict_equal(c.processor_configuration,
-                                 dict(name=processor.MERGE, query=False))
-    nose.tools.assert_dict_equal(c.output_configuration,
-                                 dict(utc=False,
-                                      color=True))
+    assert c.parser_configuration == dict(file_names=None,
+                                          package_names=None,
+                                          search_reg_exps=None,
+                                          case_sensitive=False,
+                                          dates=None)
+    assert c.processor_configuration == dict(name=processor.MERGE, query=False)
+    assert c.output_configuration == dict(utc=False,
+                                          color=True)
 
 
 def test_07b_get_configurations():
@@ -366,7 +363,8 @@ def test_07b_get_configurations():
          dict(name=processor.MERGE, query=False),
          dict(utc=False, color=True)),
         (["-l", "-f", "file1", "-f", "file2"],
-         dict(file_names=["file1", "file2"], package_names=None, search_reg_exps=None, case_sensitive=False, dates=None),
+         dict(file_names=["file1", "file2"], package_names=None, search_reg_exps=None, case_sensitive=False,
+              dates=None),
          dict(name=processor.MERGE, query=False),
          dict(utc=False, color=True)),
         (["-l", "--date", "1", "--date", "1337"],
@@ -374,7 +372,8 @@ def test_07b_get_configurations():
          dict(name=processor.MERGE, query=False),
          dict(utc=False, color=True)),
         (["-l", "--search", ".*", "-s", "foo[a-z]+"],
-         dict(file_names=None, package_names=None, search_reg_exps=[".*", "foo[a-z]+"], case_sensitive=False, dates=None),
+         dict(file_names=None, package_names=None, search_reg_exps=[".*", "foo[a-z]+"], case_sensitive=False,
+              dates=None),
          dict(name=processor.MERGE, query=False),
          dict(utc=False, color=True)),
         (["-l", "-g"],
@@ -400,9 +399,9 @@ def test_07b_get_configurations():
     ]
 
     for args, expected_parser_configuration, expected_processor_configuration, \
-            expected_output_configuration in conf_test:
-                c = CommandLine(args)
-                c.parse_arguments()
-                nose.tools.assert_dict_equal(c.parser_configuration, expected_parser_configuration)
-                nose.tools.assert_dict_equal(c.processor_configuration, expected_processor_configuration)
-                nose.tools.assert_dict_equal(c.output_configuration, expected_output_configuration)
+        expected_output_configuration in conf_test:
+        c = CommandLine(args)
+        c.parse_arguments()
+        assert c.parser_configuration == expected_parser_configuration
+        assert c.processor_configuration == expected_processor_configuration
+        assert c.output_configuration == expected_output_configuration
