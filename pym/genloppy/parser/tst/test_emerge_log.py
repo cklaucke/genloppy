@@ -3,7 +3,7 @@ from genloppy.parser.emerge_log import EmergeLogParser
 from io import StringIO
 from re import compile as re_compile
 
-import nose.tools
+import pytest
 
 ELOG_GOOD = """1507734360: === Sync completed for gentoo
 1507734361:  *** terminating.
@@ -207,7 +207,7 @@ def test_01e_elog_good_no_subscriptions():
 
     elp = EmergeLogParser()
 
-    with nose.tools.assert_raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         elp.parse(good_elog)
 
 
@@ -229,7 +229,7 @@ def test_02_elp_malformed_patterns():
     items = []
     melp.subscribe(items.append, "merge")
 
-    with nose.tools.assert_raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         melp.parse(good_elog)
 
 
@@ -287,7 +287,7 @@ def test_05_subscribe_unknown_mode():
     """
     elp = EmergeLogParser()
 
-    with nose.tools.assert_raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         elp.subscribe(lambda x: x, "void")
 
 
@@ -301,10 +301,10 @@ def test_06a_unsubscribe_invalid_modes():
     """
     elp = EmergeLogParser()
 
-    with nose.tools.assert_raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         elp.unsubscribe(lambda x: x, "merge")
 
-    with nose.tools.assert_raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         elp.unsubscribe(lambda x: x, "void")
 
 
@@ -320,7 +320,7 @@ def test_06b_unsubscribe_unknown_callback_specific_mode():
 
     elp.subscribe(lambda x: x, "merge")
 
-    with nose.tools.assert_raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         elp.unsubscribe(lambda x: x, "merge")
 
 
@@ -335,7 +335,7 @@ def test_06c_unsubscribe_unknown_callback():
 
     elp.subscribe(lambda x: x, "merge")
 
-    with nose.tools.assert_raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         elp.unsubscribe(lambda x: x)
 
 
@@ -371,11 +371,11 @@ def test_07a_subscribe_unsubscribe():
 
     assert len(mic.items) == 2
     for _item in mic.items:
-        nose.tools.assert_true("timestamp_begin" in _item.keys())
-        nose.tools.assert_true("timestamp_end" in _item.keys())
+        assert "timestamp_begin" in _item.keys()
+        assert "timestamp_end" in _item.keys()
     assert len(uic.items) == 2
     for _item in uic.items:
-        nose.tools.assert_true("timestamp" in _item.keys())
+        assert "timestamp" in _item.keys()
 
     mic.items.clear()
     uic.items.clear()
@@ -387,8 +387,8 @@ def test_07a_subscribe_unsubscribe():
 
     assert len(mic.items) == 2
     for _item in mic.items:
-        nose.tools.assert_true("timestamp_begin" in _item.keys())
-        nose.tools.assert_true("timestamp_end" in _item.keys())
+        assert "timestamp_begin" in _item.keys()
+        assert "timestamp_end" in _item.keys()
     assert not uic.items
 
 
@@ -425,8 +425,8 @@ def test_07b_multiple_subscribes():
 
     assert len(mic1.items) == 2
     for _item in mic1.items:
-        nose.tools.assert_true("timestamp_begin" in _item.keys())
-        nose.tools.assert_true("timestamp_end" in _item.keys())
+        assert "timestamp_begin" in _item.keys()
+        assert "timestamp_end" in _item.keys()
     assert mic1.items == mic2.items
 
 

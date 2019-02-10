@@ -1,6 +1,5 @@
 import genloppy.processor
 
-import nose.tools
 from unittest.mock import MagicMock
 
 
@@ -15,4 +14,4 @@ def test_01_processor_factory():
     pf = genloppy.processor.ProcessorFactory()
     processor = pf.create("mock")
 
-    nose.tools.assert_is_instance(processor, MagicMock)
+    assert isinstance(processor, MagicMock)
