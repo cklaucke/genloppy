@@ -6,9 +6,9 @@ from genloppy.processor.unmerge import Unmerge
 class MergeUnmerge(BaseOutput):
     """List merge and unmerge processor implementation
     realizes: R-PROCESSOR-MERGE-UNMERGE-001
+    realizes: R-PROCESSOR-MERGE-UNMERGE-002
     """
     HEADER = " * packages merged and unmerged:\n"
-    TRAILER = ""
 
     def __init__(self, **kwargs):
         """Adds callbacks from 'merge' and 'unmerge'.
@@ -18,13 +18,3 @@ class MergeUnmerge(BaseOutput):
         self._unmerge = Unmerge(**kwargs)
         self._add_callbacks(**self._merge.callbacks)
         self._add_callbacks(**self._unmerge.callbacks)
-
-    def pre_process(self):
-        """Prints header.
-        realizes: R-PROCESSOR-MERGE-UNMERGE-002"""
-        self.output.message(self.HEADER)
-
-    def post_process(self):
-        """Prints trailer.
-        realizes: R-PROCESSOR-MERGE-UNMERGE-004"""
-        self.output.message(self.TRAILER)

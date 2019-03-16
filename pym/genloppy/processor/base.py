@@ -35,6 +35,19 @@ class Base(ProcessorInterface):
 class BaseOutput(Base):
     """Implements a base processor that supports output.
     realizes: R-PROCESSOR-BASE-OUTPUT-001"""
+    HEADER = ""
+    TRAILER = ""
+
     def __init__(self, output, **kwargs):
         super().__init__(**kwargs)
         self.output = output
+
+    def pre_process(self):
+        """Prints header.
+        realizes: R-PROCESSOR-BASE-OUTPUT-002"""
+        self.output.message(self.HEADER)
+
+    def post_process(self):
+        """Prints trailer.
+        realizes: R-PROCESSOR-BASE-OUTPUT-003"""
+        self.output.message(self.TRAILER)
