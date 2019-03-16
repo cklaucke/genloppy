@@ -28,7 +28,7 @@ def test_03_callback_added():
 
 def test_04_post_processing():
     """Tests that merge processor calls message with the expected post-processing text.
-    test: R-PROCESSOR-MERGE-004"""
+    test: R-PROCESSOR-MERGE-002"""
     m = MagicMock()
     merge = Merge(output=m)
     merge.post_process()
@@ -37,7 +37,7 @@ def test_04_post_processing():
 
 def test_05_processing():
     """Tests that merge processor calls merge_item with the expected parameters.
-    test: R-PROCESSOR-MERGE-005"""
+    test: R-PROCESSOR-MERGE-004"""
     m = MagicMock()
     merge = Merge(output=m)
     info = dict(timestamp_end=1337, name="cat/package", version="3.2.1")

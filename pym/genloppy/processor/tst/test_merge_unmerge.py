@@ -37,7 +37,7 @@ def test_03_callback_added():
 
 def test_04_post_processing():
     """Tests that merge and unmerge processor calls message with the expected post-processing text.
-    test: R-PROCESSOR-MERGE-UNMERGE-004"""
+    test: R-PROCESSOR-MERGE-UNMERGE-002"""
     m = MagicMock()
     merge_unmerge = MergeUnmerge(output=m)
     merge_unmerge.post_process()

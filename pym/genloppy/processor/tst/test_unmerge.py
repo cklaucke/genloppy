@@ -28,7 +28,7 @@ def test_03_callback_added():
 
 def test_04_post_processing():
     """Tests that unmerge processor calls message with the expected post-processing text.
-    test: R-PROCESSOR-UNMERGE-004"""
+    test: R-PROCESSOR-UNMERGE-002"""
     m = MagicMock()
     unmerge = Unmerge(output=m)
     unmerge.post_process()
@@ -37,7 +37,7 @@ def test_04_post_processing():
 
 def test_05_processing():
     """Tests that unmerge processor calls unmerge_item with the expected parameters.
-    test: R-PROCESSOR-UNMERGE-005"""
+    test: R-PROCESSOR-UNMERGE-004"""
     m = MagicMock()
     unmerge = Unmerge(output=m)
     info = dict(timestamp=1337, name="cat/package", version="3.2.1")
