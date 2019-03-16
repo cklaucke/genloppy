@@ -21,6 +21,10 @@ merge end
 ```
 ^([0-9]{10})\:  ::: completed .*?\) $pattern to \/
 ```
+pretend
+```
+^\[e.*\] (.*?)\/(.*?)(\-[0-9])/
+```
 unmerge
 ```
 ^([0-9]{10})\:  \>\>\> unmerge success: ($pattern.*)

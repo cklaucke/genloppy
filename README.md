@@ -1,6 +1,6 @@
 # genloppy: README #
 
-*genloppy* is intended to be a drop in replacement for [genlop](https://github.com/gentoo-perl/genlop)
+*genloppy* aims to be a drop in replacement for [genlop](https://github.com/gentoo-perl/genlop)
 
 ## Overview ##
 
@@ -31,7 +31,7 @@ Detailed features include:
 
 *genloppy* shall use **python3**.
 -   [ ] define minor version of **python3**
--   [ ] see if **python2.7** can be supported (use six?)
+-   [ ] see if **python2.7** can be supported (use six?; probably not worth the effort since **python2.7** has its last rite end of 2019)
 
 *genloppy* shall buffer parser output only if necessary (e.g. for upgrade time estimation), otherwise parser output shall be processed directly.
 
