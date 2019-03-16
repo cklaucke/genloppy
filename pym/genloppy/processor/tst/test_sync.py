@@ -28,7 +28,7 @@ def test_03_callback_added():
 
 def test_04_post_processing():
     """Tests that sync processor calls message with the expected post-processing text.
-    test: R-PROCESSOR-SYNC-004"""
+    test: R-PROCESSOR-SYNC-002"""
     m = MagicMock()
     sync = Sync(output=m)
     sync.post_process()
@@ -37,7 +37,7 @@ def test_04_post_processing():
 
 def test_05_processing():
     """Tests that sync processor calls sync_item with the expected parameters.
-    test: R-PROCESSOR-SYNC-005"""
+    test: R-PROCESSOR-SYNC-004"""
     m = MagicMock()
     sync = Sync(output=m)
     info = dict(timestamp=1337)
