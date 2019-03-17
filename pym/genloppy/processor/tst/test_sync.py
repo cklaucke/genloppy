@@ -1,7 +1,7 @@
-from genloppy.processor.sync import Sync
-from genloppy.processor.base import BaseOutput
-
 from unittest.mock import MagicMock, call
+
+from genloppy.processor.base import BaseOutput
+from genloppy.processor.sync import Sync
 
 
 def test_01_base_output_subclass():

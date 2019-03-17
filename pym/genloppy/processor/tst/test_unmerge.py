@@ -1,7 +1,7 @@
-from genloppy.processor.unmerge import Unmerge
-from genloppy.processor.base import BaseOutput
-
 from unittest.mock import MagicMock, call
+
+from genloppy.processor.base import BaseOutput
+from genloppy.processor.unmerge import Unmerge
 
 
 def test_01_base_output_subclass():
@@ -40,8 +40,8 @@ def test_05_processing():
     test: R-PROCESSOR-UNMERGE-004"""
     m = MagicMock()
     unmerge = Unmerge(output=m)
-    info = dict(timestamp=1337, name="cat/package", version="3.2.1")
+    info = dict(timestamp=1337, atom_base="cat/package", atom_version="3.2.1")
     unmerge.process(info)
     assert m.method_calls == [call.unmerge_item(info["timestamp"],
-                                                info["name"],
-                                                info["version"])]
+                                                info["atom_base"],
+                                                info["atom_version"])]

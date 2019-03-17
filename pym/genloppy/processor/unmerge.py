@@ -14,7 +14,7 @@ class Unmerge(BaseOutput):
         super().__init__(**kwargs)
         self._add_callbacks(unmerge=self.process)
 
-    def process(self, item):
+    def process(self, properties):
         """Prints unmerge information.
         realizes: R-PROCESSOR-UNMERGE-004"""
-        self.output.unmerge_item(item["timestamp"], item["name"], item["version"])
+        self.output.unmerge_item(properties["timestamp"], properties["atom_base"], properties["atom_version"])

@@ -10,12 +10,12 @@ The list merge processor SHALL set
 *   related to: R-PROCESSOR-API-002
 
 # R-PROCESSOR-MERGE-003: Callbacks #
-The list merge processor SHALL add a callback `process` for `merge` log entries.
+The list merge processor SHALL add a callback `process` for entry type `merge_end`.
 
 *   related to: R-PROCESSOR-API-003
 
 # R-PROCESSOR-MERGE-004: Process callback implementation #
-On retrieving a `merge` log entry the process callback SHALL call `merge_item` of its associated output implementation with
--   `timestamp_end` as `timestamp`,
--   `name` as `name`,
--   `version` as `version`.
+On retrieving a `merge_end` log entry the process callback SHALL call `merge_item` of its associated output implementation with
+-   `timestamp` as `timestamp`,
+-   `atom_base` as `name`,
+-   `atom_version` as `version`.

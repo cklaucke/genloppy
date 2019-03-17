@@ -70,13 +70,13 @@ class CommandLine:
     def __init__(self, arguments):
         self.arguments = arguments
         self.argument_parser = argparse.ArgumentParser()
-        self.configure_arguments()
+        self._configure_arguments()
 
         self._processor_configuration = {}
         self._parser_configuration = {}
         self._output_configuration = {}
 
-    def configure_arguments(self):
+    def _configure_arguments(self):
         """Configures arguments."""
         for args, kwargs in self.ARGUMENTS:
             self.argument_parser.add_argument(*args, **kwargs)

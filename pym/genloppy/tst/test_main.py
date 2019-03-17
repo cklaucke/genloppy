@@ -1,10 +1,10 @@
-import genloppy.main
-from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
-from genloppy.output import Interface
-
 from os import unlink
 from tempfile import NamedTemporaryFile
 from unittest.mock import patch, call
+
+import genloppy.main
+from genloppy.output import Interface
+from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
 
 
 def test_01_main_execution():
@@ -40,7 +40,7 @@ def test_01_main_execution():
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
             self.kwargs = kwargs
-            self._callbacks.update(merge=self.process)
+            self._callbacks.update(merge_begin=self.process)
             self.call_order = []
 
         def pre_process(self):
@@ -64,31 +64,45 @@ def test_01_main_execution():
     class MockEmergeLogParser:
         def __init__(self):
             self.kwargs = None
-            self.subscriptions = []
+            self._handler = None
             self.parse_called_count = 0
             self.content = None
 
         def configure(self, **kwargs):
             self.kwargs = kwargs
 
-        def subscribe(self, callback, mode):
-            self.subscriptions.append((callback, mode))
+        @property
+        def handler(self):
+            return self._handler
+
+        @handler.setter
+        def handler(self, handler):
+            self._handler = handler
 
         def parse(self, f):
             self.parse_called_count += 1
             self.content = f.read()
-            for callback, _ in self.subscriptions:
-                callback(None)
+
+    class MockEntryHandler:
+        def __init__(self):
+            self.registrations = []
+
+        def register_listener(self, callback, entry_type):
+            self.registrations.append((callback, entry_type))
 
     class MockOutput(Interface):
+        def __init__(self):
+            self.kwargs = None
+
         def configure(self, **kwargs):
-            pass
+            self.kwargs = kwargs
 
     assert genloppy.main.DEFAULT_ELOG_FILE == "/var/log/emerge.log"
 
     mock_configurator = MockConfigurator()
     mock_processor_factory = MockProcessorFactory()
     mock_elog_parser = MockEmergeLogParser()
+    mock_entry_handler = MockEntryHandler()
     mock_output = MockOutput()
 
     content = "1337\nalpha\n"
@@ -101,25 +115,40 @@ def test_01_main_execution():
         m = genloppy.main.Main(configurator=mock_configurator,
                                processor_factory=mock_processor_factory,
                                elog_parser=mock_elog_parser,
+                               entry_handler=mock_entry_handler,
                                output=mock_output)
         m.run()
     finally:
         if temp_file:
             unlink(temp_file.name)
 
+    # test that parse_arguments() is exactly called once
     assert mock_configurator.parse_arguments_calls == 1
 
-    assert mock_elog_parser.kwargs == dict(filter="all")
-    assert len(mock_elog_parser.subscriptions) == 1
-    assert mock_elog_parser.parse_called_count == 1
-    assert mock_elog_parser.content == content
-
-    assert len(mock_processor_factory.created_processors) == 1
-    assert mock_processor_factory.created_processors[0][0] == "mock"
-
+    # assert that processor factory created a processor instance
     mock_processor = mock_processor_factory.created_processors[0][1]
+
+    # test that processor_configuration is forwarded correctly
     assert mock_processor.kwargs == dict(output=mock_output, feature="42")
-    assert mock_processor.call_order == ["pre_process", "process(None)", "post_process"]
+    # test that pre_process() and post_process() were called once in that order
+    assert mock_processor.call_order == ["pre_process", "post_process"]
+
+    # test that parser_configuration is forwarded correctly
+    assert mock_elog_parser.kwargs == dict(filter="all")
+    # test that parse() is called exactly once
+    assert mock_elog_parser.parse_called_count == 1
+    # test that the input stream is forwarded correctly
+    assert mock_elog_parser.content == content
+    # test that the entry handler is set correctly
+    assert mock_elog_parser.handler == mock_entry_handler
+
+    # test that entry handler got exactly one registration
+    assert len(mock_entry_handler.registrations) == 1
+    # test that process of mock processor was registered
+    assert mock_entry_handler.registrations[0][0] == mock_processor.process
+
+    # test that output_configuration is forwarded correctly
+    assert mock_output.kwargs == dict(format="special")
 
 
 def test_02_main_function():

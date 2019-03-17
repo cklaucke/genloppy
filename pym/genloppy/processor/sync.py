@@ -13,7 +13,7 @@ class Sync(BaseOutput):
         super().__init__(**kwargs)
         self._add_callbacks(sync=self.process)
 
-    def process(self, item):
+    def process(self, properties):
         """Prints sync information.
         realizes: R-PROCESSOR-SYNC-004"""
-        self.output.sync_item(item["timestamp"])
+        self.output.sync_item(properties["timestamp"])

@@ -10,12 +10,12 @@ The list unmerge processor SHALL set
 *   related to: R-PROCESSOR-API-002
 
 # R-PROCESSOR-UNMERGE-003: Callbacks #
-The list unmerge processor SHALL add a callback `process` for `unmerge` log entries.
+The list unmerge processor SHALL add a callback `process` for entry type `unmerge`.
 
 *   related to: R-PROCESSOR-API-003
 
 # R-PROCESSOR-UNMERGE-004: Process callback implementation #
 On retrieving a `unmerge` log entry the process callback SHALL call `unmerge_item` of its associated output implementation with
 -   `timestamp` as `timestamp`,
--   `name` as `name`,
--   `version` as `version`.
+-   `atom_base` as `name`,
+-   `atom_version` as `version`.

@@ -4,8 +4,8 @@ import sys
 from genloppy.configurator import CommandLine as CommandLineConfigurator
 from genloppy.output import Output
 from genloppy.parser.emerge_log import EmergeLogParser
+from genloppy.parser.entry_handler import EntryHandler
 from genloppy.processor import ProcessorFactory
-
 
 DEFAULT_ELOG_FILE = "/var/log/emerge.log"
 
@@ -16,26 +16,29 @@ class Main:
 
     realizes: R-MAIN-001
     """
-    def __init__(self, configurator, processor_factory, elog_parser, output):
+
+    def __init__(self, configurator, processor_factory, elog_parser, entry_handler, output):
         self.configurator = configurator
         self.processor_factory = processor_factory
         self.elog_parser = elog_parser
+        self.entry_handler = entry_handler
         self.output = output
         self.processor = None
 
-    def create_processor(self):
+    def _create_processor(self):
         processor_configuration = dict(self.configurator.processor_configuration)
         processor_name = processor_configuration.pop("name")
         self.processor = self.processor_factory.create(processor_name, output=self.output, **processor_configuration)
 
-    def setup_parser(self):
+    def _setup_parser(self):
         parser_configuration = dict(self.configurator.parser_configuration)
         parser_configuration.pop("file_names")
         self.elog_parser.configure(**parser_configuration)
-        for mode, callback in self.processor.callbacks.items():
-            self.elog_parser.subscribe(callback, mode)
+        self.elog_parser.handler = self.entry_handler
+        for entry_type, callback in self.processor.callbacks.items():
+            self.entry_handler.register_listener(callback, entry_type)
 
-    def configure_output(self):
+    def _configure_output(self):
         self.output.configure(**self.configurator.output_configuration)
 
     def _config_feature_check(self):
@@ -70,9 +73,9 @@ class Main:
         """
         self.configurator.parse_arguments()
         self._config_feature_check()
-        self.create_processor()
-        self.setup_parser()
-        self.configure_output()
+        self._create_processor()
+        self._setup_parser()
+        self._configure_output()
 
         self.processor.pre_process()
         with open(DEFAULT_ELOG_FILE) as f:
@@ -81,12 +84,18 @@ class Main:
 
 
 def main(argv):
-    m = Main(configurator=CommandLineConfigurator(argv[1:]),
-             processor_factory=ProcessorFactory(),
-             elog_parser=EmergeLogParser(),
-             output=Output())
+    runtime = dict(
+        configurator=CommandLineConfigurator(argv[1:]),
+        processor_factory=ProcessorFactory(),
+        elog_parser=EmergeLogParser(),
+        entry_handler=None,
+        output=Output()
+    )
+    entry_types = runtime["elog_parser"].entry_types
+    runtime.update(entry_handler=EntryHandler(entry_types=entry_types))
+    m = Main(**runtime)
     m.run()
 
 
 if __name__ == "__main__":
-    main(sys.argv)          # pragma: no cover
+    main(sys.argv)  # pragma: no cover
