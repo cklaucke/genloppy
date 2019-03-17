@@ -1,7 +1,7 @@
-from genloppy.processor.merge_unmerge import MergeUnmerge, Merge, Unmerge
-from genloppy.processor.base import BaseOutput
-
 from unittest.mock import MagicMock, call
+
+from genloppy.processor.base import BaseOutput
+from genloppy.processor.merge_unmerge import MergeUnmerge, Merge, Unmerge
 
 
 def test_01a_base_output_subclass():
@@ -31,7 +31,7 @@ def test_03_callback_added():
     """Tests that merge and unmerge processor added callbacks from merge and unmerge processor.
     tests: R-PROCESSOR-MERGE-UNMERGE-003"""
     merge_unmerge = MergeUnmerge(output=None)
-    assert merge_unmerge.callbacks == dict(merge=merge_unmerge._merge.process,
+    assert merge_unmerge.callbacks == dict(merge_end=merge_unmerge._merge.process,
                                            unmerge=merge_unmerge._unmerge.process)
 
 

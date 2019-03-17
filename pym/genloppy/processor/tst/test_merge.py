@@ -1,7 +1,7 @@
-from genloppy.processor.merge import Merge
-from genloppy.processor.base import BaseOutput
-
 from unittest.mock import MagicMock, call
+
+from genloppy.processor.base import BaseOutput
+from genloppy.processor.merge import Merge
 
 
 def test_01_base_output_subclass():
@@ -23,7 +23,7 @@ def test_03_callback_added():
     """Tests that merge processor added 'process' to callbacks for 'merge'.
     tests: R-PROCESSOR-MERGE-003"""
     merge = Merge(output=None)
-    assert merge.callbacks == dict(merge=merge.process)
+    assert merge.callbacks == dict(merge_end=merge.process)
 
 
 def test_04_post_processing():
@@ -40,8 +40,8 @@ def test_05_processing():
     test: R-PROCESSOR-MERGE-004"""
     m = MagicMock()
     merge = Merge(output=m)
-    info = dict(timestamp_end=1337, name="cat/package", version="3.2.1")
+    info = dict(timestamp=1337, atom_base="cat/package", atom_version="3.2.1")
     merge.process(info)
-    assert m.method_calls == [call.merge_item(info["timestamp_end"],
-                                              info["name"],
-                                              info["version"])]
+    assert m.method_calls == [call.merge_item(info["timestamp"],
+                                              info["atom_base"],
+                                              info["atom_version"])]

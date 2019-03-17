@@ -12,9 +12,9 @@ class Merge(BaseOutput):
         """Adds callback for 'merge'.
         realizes: R-PROCESSOR-MERGE-003"""
         super().__init__(**kwargs)
-        self._add_callbacks(merge=self.process)
+        self._add_callbacks(merge_end=self.process)
 
-    def process(self, item):
+    def process(self, properties):
         """Prints merge information.
         realizes: R-PROCESSOR-MERGE-004"""
-        self.output.merge_item(item["timestamp_end"], item["name"], item["version"])
+        self.output.merge_item(properties["timestamp"], properties["atom_base"], properties["atom_version"])
