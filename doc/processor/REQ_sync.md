@@ -10,7 +10,7 @@ The list merge and unmerge processor SHALL set
 *   related to: R-PROCESSOR-API-002
 
 # R-PROCESSOR-SYNC-003: Callbacks #
-The list sync processor SHALL add a callback `process` for `sync` log entries.
+The list sync processor SHALL add a callback `process` for entry type `sync`.
 
 *   related to: R-PROCESSOR-API-003
 
