@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import signal
 import sys
 
 from genloppy.configurator import CommandLine as CommandLineConfigurator
@@ -98,4 +99,5 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL) # pragma: no cover
     main(sys.argv)  # pragma: no cover
