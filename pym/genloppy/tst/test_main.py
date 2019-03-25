@@ -61,10 +61,10 @@ def test_01_main_execution():
             self.created_processors.append((name, mp))
             return mp
 
-    class MockEmergeLogParser:
-        def __init__(self):
+    class MockTokenizer:
+        def __init__(self, handler):
             self.kwargs = None
-            self._handler = None
+            self._handler = handler
             self.parse_called_count = 0
             self.content = None
 
@@ -72,14 +72,14 @@ def test_01_main_execution():
             self.kwargs = kwargs
 
         @property
-        def handler(self):
+        def entry_handler(self):
             return self._handler
 
-        @handler.setter
-        def handler(self, handler):
+        @entry_handler.setter
+        def entry_handler(self, handler):
             self._handler = handler
 
-        def parse(self, f):
+        def tokenize(self, f):
             self.parse_called_count += 1
             self.content = f.read()
 
@@ -101,8 +101,8 @@ def test_01_main_execution():
 
     mock_configurator = MockConfigurator()
     mock_processor_factory = MockProcessorFactory()
-    mock_elog_parser = MockEmergeLogParser()
     mock_entry_handler = MockEntryHandler()
+    mock_elog_parser = MockTokenizer(mock_entry_handler)
     mock_output = MockOutput()
 
     content = "1337\nalpha\n"
@@ -114,8 +114,7 @@ def test_01_main_execution():
         genloppy.main.DEFAULT_ELOG_FILE = temp_file.name
         m = genloppy.main.Main(configurator=mock_configurator,
                                processor_factory=mock_processor_factory,
-                               elog_parser=mock_elog_parser,
-                               entry_handler=mock_entry_handler,
+                               elog_tokenizer=mock_elog_parser,
                                output=mock_output)
         m.run()
     finally:
@@ -135,14 +134,12 @@ def test_01_main_execution():
 
     # test that parser_configuration is forwarded correctly
     assert mock_elog_parser.kwargs == dict(filter="all")
-    # test that parse() is called exactly once
+    # test that tokenize() is called exactly once
     assert mock_elog_parser.parse_called_count == 1
     # test that the input stream is forwarded correctly
     assert mock_elog_parser.content == content
-    # test that the entry handler is set correctly
-    assert mock_elog_parser.handler == mock_entry_handler
 
-    # test that entry handler got exactly one registration
+    # test that entry entry_handler got exactly one registration
     assert len(mock_entry_handler.registrations) == 1
     # test that process of mock processor was registered
     assert mock_entry_handler.registrations[0][0] == mock_processor.process
