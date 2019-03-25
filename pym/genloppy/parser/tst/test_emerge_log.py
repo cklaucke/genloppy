@@ -2,7 +2,9 @@ from io import StringIO
 
 import pytest
 
-from genloppy.parser.emerge_log import EmergeLogParser, EmergeLogParserError
+from genloppy.parser.entry_handler import EntryHandler
+from genloppy.parser.tokenizer import Tokenizer, TokenizerError
+from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
 
 ELOG_GOOD = """1507734360: === Sync completed for gentoo
 1507734361:  *** terminating.
@@ -50,10 +52,17 @@ class MockedEntryHandler:
     def entry(self, entry_type, properties):
         self.entries.append((entry_type, properties))
 
+    @property
+    def listener(self):
+        return dict(merge_begin=None,
+                    merge_end=None,
+                    sync=None,
+                    unmerge=None)
+
 
 def test_01a_good_elog_parses_successful():
     """
-    Tests that the parser matches the entry types and delegates to the given handler for a proper emerge log.
+    Tests that the parser matches the entry types and delegates to the given entry_handler for a proper emerge log.
 
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-002
@@ -66,13 +75,11 @@ def test_01a_good_elog_parses_successful():
 
     good_elog = StringIO(ELOG_GOOD)
 
-    elp = EmergeLogParser()
-    entry_handler = MockedEntryHandler()
-    elp.handler = entry_handler
+    elp = Tokenizer(EMERGE_LOG_ENTRY_TYPES, MockedEntryHandler())
 
-    elp.parse(good_elog)
+    elp.tokenize(good_elog)
 
-    entries = entry_handler.entries
+    entries = elp.entry_handler.entries
     assert len(entries) == 8
 
     entry = entries[0]
@@ -132,31 +139,15 @@ def test_01a_good_elog_parses_successful():
 
 def test_01b_missing_handler_raises():
     """
-    Tests that the parser raises if an entry handler was not given.
+    Tests that the parser raises if an entry entry_handler was not given.
 
     tests: R-PARSER-ELOG-001
     tests: R-PARSER-ELOG-003
     """
-    elp = EmergeLogParser()
+    elp = Tokenizer({}, None)
 
-    with pytest.raises(EmergeLogParserError):
-        elp.parse(StringIO(ELOG_GOOD))
-
-
-def test_01c_known_entry_types():
-    """
-    Tests that all known entry types are returned.
-
-    tests: R-PARSER-ELOG-004
-    tests: R-PARSER-ELOG-005
-    tests: R-PARSER-ELOG-006
-    tests: R-PARSER-ELOG-007
-    tests: R-PARSER-ELOG-009
-    """
-    elp = EmergeLogParser()
-
-    known_entry_types = set(elp.entry_types)
-    assert known_entry_types == {"merge_begin", "merge_end", "sync", "unmerge"}
+    with pytest.raises(TokenizerError):
+        elp.tokenize(StringIO(ELOG_GOOD))
 
 
 def test_02_optional_configuration():
@@ -165,5 +156,21 @@ def test_02_optional_configuration():
 
     tests: R-PARSER-ELOG-008
     """
-    elp = EmergeLogParser()
+    elp = Tokenizer({}, None)
     elp.configure(foo="bar")
+
+
+def test_03_registering_unknown_entry_type_raises():
+    """
+    Tests that an exception is raised if trying to register for an unknown entry type.
+
+    tests: R-PARSER-ENTRY-HANDLER-001
+    tests: R-PARSER-ENTRY-HANDLER-002
+    tests: R-PARSER-ENTRY-HANDLER-003
+    """
+    eh = EntryHandler()
+    eh.register_listener(lambda x: x, "void")
+    elp = Tokenizer({}, eh)
+
+    with pytest.raises(TokenizerError):
+        elp.tokenize(StringIO(""))
