@@ -1,7 +1,10 @@
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
+from unittest.mock import call
 
 from genloppy.processor.base import BaseOutput
-from genloppy.processor.merge_unmerge import MergeUnmerge, Merge, Unmerge
+from genloppy.processor.merge_unmerge import Merge
+from genloppy.processor.merge_unmerge import MergeUnmerge
+from genloppy.processor.merge_unmerge import Unmerge
 
 
 def test_01a_base_output_subclass():

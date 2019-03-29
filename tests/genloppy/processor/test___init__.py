@@ -1,6 +1,6 @@
-import genloppy.processor
-
 from unittest.mock import MagicMock
+
+import genloppy.processor
 
 
 def test_01_processor_factory():

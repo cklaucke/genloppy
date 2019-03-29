@@ -11,11 +11,15 @@ def test_01_register_listener_succeeds():
     """
     eh = EntryHandler()
 
-    cb = lambda x: x
+    def cb():
+        pass
+
     eh.register_listener(cb, "foo")
     assert cb in eh.listener["foo"]
 
-    cb1 = lambda x: x
+    def cb1():
+        pass
+
     eh.register_listener(cb1, "foo")
     eh.register_listener(cb1, "bar")
     assert cb1 in eh.listener["foo"]
@@ -47,7 +51,7 @@ def test_02_listener_gets_called():
 
     eh.entry("bar", dict(one=1, two="2"))
     assert ec.calls == 0
-    assert ec.properties == None
+    assert ec.properties is None
 
     eh.entry("foo", properties)
     assert ec.calls == 1

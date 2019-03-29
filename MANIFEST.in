@@ -1,5 +1,14 @@
+graft doc
+graft pym
+graft tests
+
 include README.md
 include TODO.md
 include setup.py
+include tests/genloppy/parser/good_emerge.log
 recursive-include bin *
 recursive-include pym *.py
+
+exclude doc/genloppy_concept.pdf
+exclude pym/genloppy/processor/pretend.py
+global-exclude *.py[cod] __pycache__ *.so *.dylib

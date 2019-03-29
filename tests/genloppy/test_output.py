@@ -1,12 +1,13 @@
-from datetime import timezone
 import locale
+from datetime import timezone
 from os import environ
 from time import tzset
-
-from genloppy.output import Interface, Output
+from unittest.mock import patch
 
 import pytest
-from unittest.mock import patch
+
+from genloppy.output import Interface
+from genloppy.output import Output
 
 # since output of dates is locale-aware, only C/POSIX is tested here
 locale.setlocale(locale.LC_ALL, "C")
@@ -53,10 +54,10 @@ def test_02a_configurable_output():
     tests: R-OUTPUT-004
     """
     out = Output()
-    assert out.color == True
-    assert out.tz == None
+    assert out.color is True
+    assert out.tz is None
     out.configure(color=False)
-    assert out.color == False
+    assert out.color is False
     out.configure(utc=True)
     assert out.tz == timezone.utc
 
