@@ -1,6 +1,6 @@
-from genloppy.processor import Interface
-
 import pytest
+
+from genloppy.processor import Interface
 
 
 def test_01_processor_interface():
@@ -19,7 +19,7 @@ def test_01_processor_interface():
     i = Interface()
 
     with pytest.raises(NotImplementedError):
-        cb = i.callbacks
+        i.callbacks()
     for method in [i.pre_process, i.post_process]:
         with pytest.raises(NotImplementedError):
             method()

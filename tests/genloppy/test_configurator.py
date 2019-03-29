@@ -1,7 +1,7 @@
-from genloppy.configurator import CommandLine
-import genloppy.processor as processor
-
 import pytest
+
+import genloppy.processor as processor
+from genloppy.configurator import CommandLine
 
 
 def test_01_positional_arguments_accepted():
@@ -398,8 +398,8 @@ def test_07b_get_configurations():
          dict(utc=False, color=True)),
     ]
 
-    for args, expected_parser_configuration, expected_processor_configuration, \
-        expected_output_configuration in conf_test:
+    for args, expected_parser_configuration, expected_processor_configuration, expected_output_configuration \
+            in conf_test:
         c = CommandLine(args)
         c.parse_arguments()
         assert c.parser_configuration == expected_parser_configuration

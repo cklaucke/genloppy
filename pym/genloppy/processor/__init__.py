@@ -1,8 +1,8 @@
 from genloppy.processor.api import Interface
 from genloppy.processor.merge import Merge
-from genloppy.processor.unmerge import Unmerge
 from genloppy.processor.merge_unmerge import MergeUnmerge
 from genloppy.processor.sync import Sync
+from genloppy.processor.unmerge import Unmerge
 
 # processor names
 # TODO: may also be provided by the processing class itself

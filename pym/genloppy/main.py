@@ -83,7 +83,7 @@ class Main:
         self.processor.post_process()
 
 
-def main(argv):
+def main(argv=sys.argv):
     runtime = dict(
         configurator=CommandLineConfigurator(argv[1:]),
         processor_factory=ProcessorFactory(),
@@ -95,5 +95,5 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGPIPE, signal.SIG_DFL) # pragma: no cover
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)  # pragma: no cover
     main(sys.argv)  # pragma: no cover

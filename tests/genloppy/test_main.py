@@ -1,6 +1,7 @@
 from os import unlink
 from tempfile import NamedTemporaryFile
-from unittest.mock import patch, call
+from unittest.mock import call
+from unittest.mock import patch
 
 import genloppy.main
 from genloppy.output import Interface

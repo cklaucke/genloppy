@@ -103,3 +103,6 @@ ENV/
 
 # pycharm project settings
 .idea
+
+# explicitly include test data
+!tests/genloppy/parser/good_emerge.log

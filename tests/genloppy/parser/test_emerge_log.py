@@ -1,37 +1,13 @@
 from io import StringIO
+from os.path import dirname
+from os.path import join
 
 import pytest
 
 from genloppy.parser.entry_handler import EntryHandler
-from genloppy.parser.tokenizer import Tokenizer, TokenizerError
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
-
-ELOG_GOOD = """1507734360: === Sync completed for gentoo
-1507734361:  *** terminating.
-1507735118: Started emerge on: Oct 11, 2017 17:18:38
-1507735118:  *** emerge --update --verbose --deep @world
-1507735226:  >>> emerge (1 of 2) sys-devel/gcc-config-1.8-r1 to /
-1507735227:  === (1 of 2) Cleaning (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
-1507735227:  === (1 of 2) Compiling/Merging (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
-1507735231:  === (1 of 2) Merging (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
-1507735234:  >>> AUTOCLEAN: sys-devel/gcc-config:0
-1507735234:  === Unmerging... (sys-devel/gcc-config-1.7.3)
-1507735236:  >>> unmerge success: sys-devel/gcc-config-1.7.3
-1507735239:  === (1 of 2) Post-Build Cleaning (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
-1507735239:  ::: completed emerge (1 of 2) sys-devel/gcc-config-1.8-r1 to /
-1507735239:  >>> emerge (2 of 2) app-laptop/laptop-mode-tools-1.71 to /
-1507735239:  === (2 of 2) Cleaning (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
-1507735239:  === (2 of 2) Compiling/Merging (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
-1507735244:  === (2 of 2) Merging (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
-1507735246:  >>> AUTOCLEAN: app-laptop/laptop-mode-tools:0
-1507735246:  === Unmerging... (app-laptop/laptop-mode-tools-1.70)
-1507735248:  >>> unmerge success: app-laptop/laptop-mode-tools-1.70
-1507735250:  === (2 of 2) Post-Build Cleaning (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
-1507735250:  ::: completed emerge (2 of 2) app-laptop/laptop-mode-tools-1.71 to /
-1507735250:  *** Finished. Cleaning up...
-1507735252:  *** exiting successfully.
-1507735252:  *** terminating.
-1508345663: === Sync completed for gentoo"""
+from genloppy.parser.tokenizer import Tokenizer
+from genloppy.parser.tokenizer import TokenizerError
 
 ELOG_END_WO_BEGIN = """1507735239:  ::: completed emerge (1 of 2) sys-devel/gcc-config-1.8-r1 to /"""
 
@@ -73,11 +49,10 @@ def test_01a_good_elog_parses_successful():
     tests: R-PARSER-ELOG-007
     """
 
-    good_elog = StringIO(ELOG_GOOD)
-
     elp = Tokenizer(EMERGE_LOG_ENTRY_TYPES, MockedEntryHandler())
 
-    elp.tokenize(good_elog)
+    with open(join(dirname(__file__), "good_emerge.log")) as fh:
+        elp.tokenize(fh)
 
     entries = elp.entry_handler.entries
     assert len(entries) == 8
@@ -146,8 +121,9 @@ def test_01b_missing_handler_raises():
     """
     elp = Tokenizer({}, None)
 
-    with pytest.raises(TokenizerError):
-        elp.tokenize(StringIO(ELOG_GOOD))
+    with open(join(dirname(__file__), "good_emerge.log")) as fh:
+        with pytest.raises(TokenizerError):
+            elp.tokenize(fh)
 
 
 def test_02_optional_configuration():

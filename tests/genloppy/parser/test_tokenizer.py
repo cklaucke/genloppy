@@ -3,7 +3,8 @@ from io import StringIO
 
 import pytest
 
-from genloppy.parser.tokenizer import Tokenizer, TokenizerError
+from genloppy.parser.tokenizer import Tokenizer
+from genloppy.parser.tokenizer import TokenizerError
 
 
 class MockEntryHandler:
