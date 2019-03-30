@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/cklaucke/genloppy.svg?branch=devel)](https://travis-ci.com/cklaucke/genloppy)
+
 # genloppy: README #
 
 *genloppy* aims to be a drop in replacement for [genlop](https://github.com/gentoo-perl/genlop)
