@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/cklaucke/genloppy.svg?branch=devel)](https://travis-ci.com/cklaucke/genloppy)
+[![Build Status](https://travis-ci.org/cklaucke/genloppy.svg?branch=devel)](https://travis-ci.org/cklaucke/genloppy)
 [![Code coverage](https://codecov.io/gh/cklaucke/genloppy/branch/devel/graph/badge.svg)](https://codecov.io/gh/cklaucke/genloppy)
 
 # genloppy: README #
