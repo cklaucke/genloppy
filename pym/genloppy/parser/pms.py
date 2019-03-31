@@ -38,3 +38,7 @@ EMERGE_LOG_ENTRY_TYPES = {
     "unmerge": re.compile(UNMERGE_PATTERN),
     "sync": re.compile(SYNC_COMPLETED_PATTERN),
 }
+
+EMERGE_PRETEND_ENTRY_TYPES = {
+    "pretended_package": re.compile(PRETEND_PATTERN)
+}

@@ -55,3 +55,19 @@ The following tokens shall be extracted:
 -    entry `merge_end` using the *merge end* pattern,
 -    entry `unmerge` using the *unmerge* pattern,
 -    entry `sync` using the *sync* pattern.
+
+# R-PARSER-PMS-007: pretend pattern #
+The *sync* pattern SHALL use the following regular expression
+```
+^\[e[^]]+\] [a-z0-9-]+/.*(?=-[0-9])-[^\s]+
+ ^~~bracket ^~~~~~~~~~~~~ atom base ^~~~~~ atom version
+```
+The following tokens shall be extracted:
+-   `atom_base`,
+-   `atom_version`.
+
+Note: The bracket part of the regular expression for pretended packages was taken from the original implementation of `genlop`. The `e[^]]+` will most likely match `ebuild` and not  `blocks` etc. This may lead to inaccurate results if the pretend output contains blockers (a warning may be helpful for the user). According to the manpage of `emerge`, `e[^]]+` shall suffice.
+
+# R-PARSER-PMS-008: emerge pretend entries mapping #
+*genloppy* SHALL provide a mapping for emerge pretend entries:
+-    entry `pretended_package` using the *pretend* pattern.

@@ -1,3 +1,6 @@
+import sys
+
+
 class TokenizerError(BaseException):
     pass
 
@@ -60,4 +63,4 @@ class Tokenizer:
                 if match:
                     self.entry_handler.entry(entry_type, match.groupdict())
                     if self.echo:
-                        print(line)
+                        sys.stdout.write(line)

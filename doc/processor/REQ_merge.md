@@ -7,7 +7,7 @@ The list merge processor SHALL set
 -   `HEADER` to ` * packages merged:` followed by an empty line,
 -   `TRAILER` to an empty string.
 
-*   related to: R-PROCESSOR-API-002
+*   related to: R-PROCESSOR-BASE-OUTPUT-001
 
 # R-PROCESSOR-MERGE-003: Callbacks #
 The list merge processor SHALL add a callback `process` for entry type `merge_end`.
