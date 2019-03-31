@@ -1,6 +1,4 @@
 graft doc
-graft pym
-graft tests
 
 include LICENSE
 include README.md
@@ -8,10 +6,11 @@ include TODO.md
 include setup.py
 include .coveragerc
 include tox.ini
-include tests/genloppy/parser/good_emerge.log
+
 recursive-include bin *
 recursive-include pym *.py
+recursive-include tests *.py
+include tests/genloppy/parser/good_emerge.log
 
-exclude doc/genloppy_concept.pdf
-exclude pym/genloppy/processor/pretend.py
 global-exclude *.py[cod] __pycache__ *.so *.dylib
+exclude doc/genloppy_concept.pdf
