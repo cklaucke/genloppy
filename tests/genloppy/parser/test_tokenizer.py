@@ -89,7 +89,7 @@ def test_04_complex_tokenization_succeeds(capsys):
     captured = capsys.readouterr()
     assert len(meh.entries) == 1
     assert meh.entries[0] == ("a", dict(number="1337"))
-    assert captured.out == "1337a\n\n"
+    assert captured.out == "1337a\n"
 
 
 def test_05_optional_configuration():
