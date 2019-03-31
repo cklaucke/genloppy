@@ -7,7 +7,7 @@ The list merge and unmerge processor SHALL set
 -   `HEADER` to an empty string,
 -   `TRAILER` to an empty string.
 
-*   related to: R-PROCESSOR-API-002
+*   related to: R-PROCESSOR-BASE-OUTPUT-001
 
 # R-PROCESSOR-SYNC-003: Callbacks #
 The list sync processor SHALL add a callback `process` for entry type `sync`.

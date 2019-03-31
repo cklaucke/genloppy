@@ -8,7 +8,7 @@ The list merge and unmerge processor SHALL set
 -   `HEADER` to ` * packages merged and unmerged:` followed by an empty line,
 -   `TRAILER` to an empty string.
 
-*   related to: R-PROCESSOR-API-002
+*   related to: R-PROCESSOR-BASE-OUTPUT-001
 
 # R-PROCESSOR-MERGE-UNMERGE-003: Callbacks #
 The list merge and unmerge processor SHALL retrieve the callbacks of the list merge and list unmerge processors and add them to its own callbacks.

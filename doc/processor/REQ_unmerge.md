@@ -7,7 +7,7 @@ The list unmerge processor SHALL set
 -   `HEADER` to ` * packages unmerged:` followed by an empty line,
 -   `TRAILER` to an empty string.
 
-*   related to: R-PROCESSOR-API-002
+*   related to: R-PROCESSOR-BASE-OUTPUT-001
 
 # R-PROCESSOR-UNMERGE-003: Callbacks #
 The list unmerge processor SHALL add a callback `process` for entry type `unmerge`.
