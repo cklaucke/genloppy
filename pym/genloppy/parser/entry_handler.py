@@ -1,7 +1,9 @@
 from collections import defaultdict
 
+from genloppy.parser.entry_handler_api import EntryHandlerInterface
 
-class EntryHandler:
+
+class EntryHandler(EntryHandlerInterface):
     """
     Handles events and allows registering listeners.
 
@@ -32,7 +34,7 @@ class EntryHandler:
         return self._listener
 
     def entry(self, entry_type, properties):
-        """Callback for the tokenizer.
+        """Callback for entry events.
 
         :param entry_type: type of the entry event
         :param properties: parsed key-value pairs of the entry
