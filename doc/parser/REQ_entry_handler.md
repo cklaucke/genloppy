@@ -14,9 +14,11 @@ It SHALL be possible to store multiple callbacks per `entry_type`.
 # R-PARSER-ENTRY-HANDLER-003: Provide a getter for listener #
 The entry handler SHALL provide a getter for registered listeners returning the dictionary of listeners.
 
+* realizes: R-PARSER-ENTRY-HANDLER-API-003
+
 # R-PARSER-ENTRY-HANDLER-004: Provide a callback for entry events #
 The entry handler SHALL implement a callback for entry events.
 
 The callback SHALL call all listeners for the given `entry_type` passing the `properties` dictionary.
 
-* realizes: R-PARSER-ENTRY-HANDLER-API-003
+* realizes: R-PARSER-ENTRY-HANDLER-API-004

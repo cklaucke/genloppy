@@ -15,6 +15,14 @@ class EntryHandlerInterface:
         """
         raise NotImplementedError
 
+    @property
+    def listener(self):
+        """Gets the registered listener.
+
+        :return: the registered listener
+        """
+        raise NotImplementedError
+
     def entry(self, entry_type, properties):
         """Callback for entry events.
 
