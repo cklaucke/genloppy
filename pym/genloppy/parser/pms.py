@@ -11,7 +11,7 @@ PACKAGE_NAME_PATTERN = r"(?P<package_name>[A-Za-z0-9_][A-Za-z0-9+_-]*)"
 VERSION_PATTERN = r"(?=-[0-9])-(?P<atom_version>[^\s]+)"
 # according to spec "-[0-9]" starts a version (see. PMS section 3.2)
 ATOM_BASE_PATTERN = r"(?P<atom_base>" + CATEGORY_PATTERN + r"/" + PACKAGE_NAME_PATTERN + r")"
-ATOM_PATTERN = ATOM_BASE_PATTERN + VERSION_PATTERN
+ATOM_PATTERN = r"(?P<atom>" + ATOM_BASE_PATTERN + VERSION_PATTERN + r")"
 
 TIMESTAMP_PATTERN = r"(?P<timestamp>[0-9]+)"
 COUNT_PATTERN = r"\((?P<count_n>[0-9]+) of (?P<count_m>[0-9]+)\)"
