@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import signal
 import sys
+from functools import reduce
 
 from genloppy.configurator import CommandLine as CommandLineConfigurator
 from genloppy.output import Output
+from genloppy.parser import filter
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
 from genloppy.parser.tokenizer import Tokenizer
@@ -31,12 +33,20 @@ class Main:
         processor_name = processor_configuration.pop("name")
         self.processor = self.processor_factory.create(processor_name, output=self.output, **processor_configuration)
 
+    def _setup_entry_handler(self, entry_handler):
+        for entry_type, callback in self.processor.callbacks.items():
+            entry_handler.register_listener(callback, entry_type)
+
+        extra_config = self.configurator.filter_extra_configuration
+        filters = (filter.create(k, v, **extra_config) for k, v in self.configurator.filter_configuration.items() if v)
+        entry_handler = reduce(lambda entry_handler, filter: filter(entry_handler), filters, entry_handler)
+        return entry_handler
+
     def _setup_tokenizer(self):
         parser_configuration = dict(self.configurator.parser_configuration)
         parser_configuration.pop("file_names")
         self.elog_tokenizer.configure(**parser_configuration)
-        for entry_type, callback in self.processor.callbacks.items():
-            self.elog_tokenizer.entry_handler.register_listener(callback, entry_type)
+        self.elog_tokenizer.entry_handler = self._setup_entry_handler(self.elog_tokenizer.entry_handler)
 
     def _configure_output(self):
         self.output.configure(**self.configurator.output_configuration)
