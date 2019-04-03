@@ -14,7 +14,6 @@ def test_01_well_formed_packages():
                 "x11-libs/gtk+",
                 "GTK+"]
     PackageFilter(packages)
-    pass
 
 
 def test_02_malformed_packages():
