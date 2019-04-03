@@ -51,16 +51,15 @@ class Main:
                                               "Currently allowed values are '{}'."
                                               .format(key, value, allowed_configuration[key]))  # pragma: no cover
 
-        allowed_parser_configuration = dict(file_names=None,
-                                            package_names=None,
-                                            search_reg_exps=None,
-                                            case_sensitive=False,
+        allowed_parser_configuration = dict(file_names=None)
+        allowed_filter_configuration = dict(search_reg_exps=None,
                                             dates=None)
         allowed_processor_configuration = dict(query=False)
         allowed_output_configuration = dict(utc=False,
                                             color=False)
 
         config_compare(self.configurator.parser_configuration, allowed_parser_configuration)
+        config_compare(self.configurator.filter_configuration, allowed_filter_configuration)
         config_compare(self.configurator.processor_configuration, allowed_processor_configuration)
         config_compare(self.configurator.output_configuration, allowed_output_configuration)
 

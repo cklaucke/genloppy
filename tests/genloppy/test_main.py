@@ -17,7 +17,9 @@ def test_01_main_execution():
 
     class MockConfigurator:
         def __init__(self):
-            self._parser_configuration = dict(filter="all", file_names=None)
+            self._parser_configuration = dict(file_names=None)
+            self._filter_configuration = dict(package_names=["cat/package"])
+            self._filter_extra_configuration = dict(extra=True)
             self._processor_configuration = dict(name="mock", feature="42")
             self._output_configuration = dict(format="special")
             self.parse_arguments_calls = 0
@@ -28,6 +30,14 @@ def test_01_main_execution():
         @property
         def parser_configuration(self):
             return self._parser_configuration
+
+        @property
+        def filter_configuration(self):
+            return self._filter_configuration
+
+        @property
+        def filter_extra_configuration(self):
+            return self._filter_extra_configuration
 
         @property
         def processor_configuration(self):
@@ -134,7 +144,7 @@ def test_01_main_execution():
     assert mock_processor.call_order == ["pre_process", "post_process"]
 
     # test that parser_configuration is forwarded correctly
-    assert mock_elog_parser.kwargs == dict(filter="all")
+    assert mock_elog_parser.kwargs == dict()
     # test that tokenize() is called exactly once
     assert mock_elog_parser.parse_called_count == 1
     # test that the input stream is forwarded correctly

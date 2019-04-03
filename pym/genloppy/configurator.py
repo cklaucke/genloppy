@@ -74,6 +74,8 @@ class CommandLine:
 
         self._processor_configuration = {}
         self._parser_configuration = {}
+        self._filter_configuration = {}
+        self._filter_extra_configuration = {}
         self._output_configuration = {}
 
     def _configure_arguments(self):
@@ -113,11 +115,11 @@ class CommandLine:
             raise KeyError("Up to two dates ('--date') may be given. Got {}.".format(date_count))
 
         self._processor_configuration.update(name=processor_name, query=parsed_args.query)
-        self._parser_configuration.update(file_names=parsed_args.logfile,
-                                          package_names=parsed_args.name if parsed_args.name else None,
+        self._parser_configuration.update(file_names=parsed_args.logfile)
+        self._filter_configuration.update(package_names=parsed_args.name if parsed_args.name else None,
                                           search_reg_exps=parsed_args.search,
-                                          case_sensitive=parsed_args.case_sensitive,
                                           dates=parsed_args.date)
+        self._filter_extra_configuration.update(case_sensitive=parsed_args.case_sensitive)
         self._output_configuration.update(utc=parsed_args.utc,
                                           color=parsed_args.color)
 
@@ -128,6 +130,14 @@ class CommandLine:
     @property
     def processor_configuration(self):
         return self._processor_configuration
+
+    @property
+    def filter_configuration(self):
+        return self._filter_configuration
+
+    @property
+    def filter_extra_configuration(self):
+        return self._filter_extra_configuration
 
     @property
     def output_configuration(self):
