@@ -21,6 +21,7 @@ The following tokens shall be extracted:
 -   `timestamp`,
 -   `count_n`
 -   `count_m`,
+-   `atom`,
 -   `atom_base`,
 -   `category`,
 -   `package_name`,
@@ -35,6 +36,7 @@ The following tokens shall be extracted:
 -   `timestamp`,
 -   `count_n`
 -   `count_m`,
+-   `atom`,
 -   `atom_base`,
 -   `category`,
 -   `package_name`,
@@ -47,6 +49,7 @@ The *unmerge* pattern SHALL use the following regular expression
 ```
 The following tokens shall be extracted:
 -   `timestamp`,
+-   `atom`,
 -   `atom_base`,
 -   `category`,
 -   `package_name`,
