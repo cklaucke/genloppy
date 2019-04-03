@@ -14,7 +14,7 @@ class Tokenizer:
     realizes: R-PARSER-TOKENIZER-003
     """
 
-    def __init__(self, entry_type_pattern, entry_handler, echo=False):
+    def __init__(self, entry_type_pattern, entry_handler=None, echo=False):
         self._entry_type_pattern = dict(entry_type_pattern)
         self._entry_handler = entry_handler
         self.echo = echo
@@ -35,6 +35,16 @@ class Tokenizer:
         realizes: R-PARSER-TOKENIZER-002
         """
         return self._entry_handler
+
+    @entry_handler.setter
+    def entry_handler(self, entry_handler):
+        """Sets the entry handler.
+
+        :param entry_handler: an entry handler to use
+
+        realizes: R-PARSER-TOKENIZER-002
+        """
+        self._entry_handler = entry_handler
 
     def tokenize(self, stream):
         """Tokenize a given stream using the configured patterns.

@@ -28,7 +28,7 @@ def test_01_missing_entry_handler_raises():
     tests: R-PARSER-TOKENIZER-003
     tests: R-PARSER-TOKENIZER-004
     """
-    t = Tokenizer({}, None)
+    t = Tokenizer({})
 
     with pytest.raises(TokenizerError) as cm:
         t.tokenize(StringIO())
@@ -100,3 +100,18 @@ def test_05_optional_configuration():
     """
     t = Tokenizer({}, None)
     t.configure(foo="bar")
+
+
+def test_06_entry_handler_property():
+    """Tests that getter and setter for entry_handler works.
+
+    tests: R-PARSER-TOKENIZER-001
+    tests: R-PARSER-TOKENIZER-002
+    """
+    meh = MockEntryHandler([])
+    t = Tokenizer({}, meh)
+    assert t.entry_handler == meh
+
+    meh2 = MockEntryHandler(["a"])
+    t.entry_handler = meh2
+    assert t.entry_handler == meh2
