@@ -62,8 +62,7 @@ class Main:
                                               .format(key, value, allowed_configuration[key]))  # pragma: no cover
 
         allowed_parser_configuration = dict(file_names=None)
-        allowed_filter_configuration = dict(search_reg_exps=None,
-                                            dates=None)
+        allowed_filter_configuration = dict(dates=None)
         allowed_processor_configuration = dict(query=False)
         allowed_output_configuration = dict(utc=False,
                                             color=False)
