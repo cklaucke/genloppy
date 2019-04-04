@@ -44,14 +44,12 @@ PROCESSORS = {
 }
 
 
-class ProcessorFactory:
-    """
-    Provides the factory to instantiate the processors.
+def create(processor_name, **kwargs):
+    """Returns a processor instance using processor_name.
 
-    realizes: R-PROCESSOR-001
-    """
-    def __init__(self):
-        pass
+    :param processor_name: name of the desired processor
+    :param kwargs: optional keyword arguments to pass to the processor
+    :returns a processor instance
 
-    def create(self, processor_name, **kwargs):
-        return PROCESSORS[processor_name](**kwargs)
+    realizes: R-PROCESSOR-001"""
+    return PROCESSORS[processor_name](**kwargs)
