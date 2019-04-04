@@ -1,6 +1,6 @@
-# R-PROCESSOR-001: Provide a factory to instantiate processors #
-*genloppy* SHALL processor factory that creates instances of processors.
+# R-PROCESSOR-001: Provide a factory function to instantiate processors #
+*genloppy* SHALL provide a factory function that creates instances of processors.
 
-The factory SHALL create instances by
--   using the given `name` and
--   allowing to forward optional key-value arguments.
+The factory function SHALL create instances by taking
+-   the processor name `name` and
+-   optional key-value arguments.
