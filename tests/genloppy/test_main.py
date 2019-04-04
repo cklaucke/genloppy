@@ -63,15 +63,6 @@ def test_01_main_execution():
         def post_process(self):
             self.call_order.append("post_process")
 
-    class MockProcessorFactory:
-        def __init__(self):
-            self.created_processors = []
-
-        def create(self, name, **kwargs):
-            mp = MockProcessor(**kwargs)
-            self.created_processors.append((name, mp))
-            return mp
-
     class MockTokenizer:
         def __init__(self, handler):
             self.kwargs = None
@@ -110,8 +101,8 @@ def test_01_main_execution():
 
     assert genloppy.main.DEFAULT_ELOG_FILE == "/var/log/emerge.log"
 
+    genloppy.processor.PROCESSORS = {"mock": MockProcessor}
     mock_configurator = MockConfigurator()
-    mock_processor_factory = MockProcessorFactory()
     mock_entry_handler = MockEntryHandler()
     mock_elog_parser = MockTokenizer(mock_entry_handler)
     mock_output = MockOutput()
@@ -124,7 +115,6 @@ def test_01_main_execution():
         temp_file.close()
         genloppy.main.DEFAULT_ELOG_FILE = temp_file.name
         m = genloppy.main.Main(configurator=mock_configurator,
-                               processor_factory=mock_processor_factory,
                                elog_tokenizer=mock_elog_parser,
                                output=mock_output)
         m.run()
@@ -135,9 +125,7 @@ def test_01_main_execution():
     # test that parse_arguments() is exactly called once
     assert mock_configurator.parse_arguments_calls == 1
 
-    # assert that processor factory created a processor instance
-    mock_processor = mock_processor_factory.created_processors[0][1]
-
+    mock_processor = m.processor
     # test that processor_configuration is forwarded correctly
     assert mock_processor.kwargs == dict(output=mock_output, feature="42")
     # test that pre_process() and post_process() were called once in that order
