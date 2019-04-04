@@ -3,13 +3,13 @@ import signal
 import sys
 from functools import reduce
 
+from genloppy import processor
 from genloppy.configurator import CommandLine as CommandLineConfigurator
 from genloppy.output import Output
 from genloppy.parser import filter
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
 from genloppy.parser.tokenizer import Tokenizer
-from genloppy.processor import ProcessorFactory
 
 DEFAULT_ELOG_FILE = "/var/log/emerge.log"
 
@@ -21,9 +21,8 @@ class Main:
     realizes: R-MAIN-001
     """
 
-    def __init__(self, configurator, processor_factory, elog_tokenizer, output):
+    def __init__(self, configurator, elog_tokenizer, output):
         self.configurator = configurator
-        self.processor_factory = processor_factory
         self.elog_tokenizer = elog_tokenizer
         self.output = output
         self.processor = None
@@ -31,7 +30,7 @@ class Main:
     def _create_processor(self):
         processor_configuration = dict(self.configurator.processor_configuration)
         processor_name = processor_configuration.pop("name")
-        self.processor = self.processor_factory.create(processor_name, output=self.output, **processor_configuration)
+        self.processor = processor.create(processor_name, output=self.output, **processor_configuration)
 
     def _setup_entry_handler(self, entry_handler):
         for entry_type, callback in self.processor.callbacks.items():
@@ -94,7 +93,6 @@ class Main:
 def main(argv=sys.argv):
     runtime = dict(
         configurator=CommandLineConfigurator(argv[1:]),
-        processor_factory=ProcessorFactory(),
         elog_tokenizer=Tokenizer(EMERGE_LOG_ENTRY_TYPES, EntryHandler()),
         output=Output()
     )
