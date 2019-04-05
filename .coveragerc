@@ -1,6 +1,6 @@
 [paths]
 source =
-   pym
+   src
    */site-packages
 
 [run]
