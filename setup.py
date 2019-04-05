@@ -26,9 +26,9 @@ def read(*names, **kwargs):
 setup(
     name='genloppy',
     version='0.0.0',
-    packages=find_packages('pym'),
-    package_dir={'': 'pym'},
-    py_modules=[splitext(basename(path))[0] for path in glob('pym/*.py')],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
     include_package_data=True,
     zip_safe=False,
     url='https://github.com/cklaucke/genloppy',

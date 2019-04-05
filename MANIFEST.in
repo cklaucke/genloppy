@@ -6,8 +6,8 @@ include LICENSE
 include tox.ini
 
 recursive-include bin *
-recursive-include pym *.py
+recursive-include src *.py
 recursive-include tests *.py
-include tests/genloppy/parser/good_emerge.log
+include tests/parser/good_emerge.log
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib
