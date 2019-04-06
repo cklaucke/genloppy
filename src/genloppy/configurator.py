@@ -114,11 +114,13 @@ class CommandLine:
         if date_count > 2:
             raise KeyError("Up to two dates ('--date') may be given. Got {}.".format(date_count))
 
-        self._processor_configuration.update(name=processor_name, query=parsed_args.query)
         self._parser_configuration.update(file_names=parsed_args.logfile)
         self._filter_configuration.update(package_names=parsed_args.name if parsed_args.name else None,
                                           search_reg_exps=parsed_args.search,
                                           dates=parsed_args.date)
+        self._processor_configuration.update(name=processor_name,
+                                             query=parsed_args.query,
+                                             active_filter=set(k for k, v in self._filter_configuration.items() if v))
         self._filter_extra_configuration.update(case_sensitive=parsed_args.case_sensitive)
         self._output_configuration.update(utc=parsed_args.utc,
                                           color=parsed_args.color)
