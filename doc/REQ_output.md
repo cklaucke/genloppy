@@ -24,6 +24,14 @@ The output API SHALL provide a method to output an unmerge item. The method SHAL
 The output API SHALL provide a method to output a sync item. The method SHALL be named `sync_item` and take one argument:
 -   the timestamp.
 
+# R-OUTPUT-API-007: Merge time item output #
+The output API SHALL provide a method to output merge time. The method SHALL be named `merge_time` and take one argument:
+-   the timestamp,
+-   the atom's name,
+-   the atom's version,
+-   the duration.
+
+
 
 # R-OUTPUT-001: Provide an configurable output implementation #
 *genloppy* SHALL provide a configurable output implementation.
