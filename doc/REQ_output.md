@@ -102,3 +102,38 @@ Ex.
 ```
 
 *   related to: R-OUTPUT-API-006
+
+# R-OUTPUT-010: Duration formatting #
+The output implementation SHALL print duration as follows:
+1. Determine the following parts of the duration: days, hours and minutes and optionally seconds.
+2. Suffix each part grammatically correct (singular and plural)
+3. Join the parts:
+    - omit any part whose value is zero
+    - let n the number of parts to join effectively; if n > 2 join the 1st to n-1 part by `,` (comma). The last part SHALL be joined by ` and `.
+
+Ex.
+```
+1 hour, 22 minutes and 34 seconds
+2 days, 3 hours and 1 minute
+50 seconds
+2 days and 1 second
+```
+
+
+# R-OUTPUT-011: Merge time item output #
+The output implementation SHALL print
+1. merge item output
+2. seven (7) spaces
+3. `merge time:` succeeded by a space
+4. the duration as formatted duration
+5. a newline
+
+Ex.
+```
+     Thu Nov 23 01:43:04 2017 >>> sys-devel/gcc-6.4.0
+       merge time: 1 hour, 22 minutes and 34 seconds.
+
+```
+
+*   related to: R-OUTPUT-API-007
+*   depends on: R-OUTPUT-007
