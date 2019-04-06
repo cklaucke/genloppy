@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 from datetime import timezone
 
@@ -31,6 +32,11 @@ class Interface:
         realizes: R-OUTPUT-API-006"""
         raise NotImplementedError
 
+    def merge_time_item(self, timestamp, name, version, duration):
+        """Outputs a merge time item
+        realizes: R-OUTPUT-API-007"""
+        raise NotImplementedError
+
 
 class Output(Interface):
     """Provides the output implementation
@@ -40,6 +46,23 @@ class Output(Interface):
     MERGE_FORMAT = 5 * " " + "{} >>> {}-{}"
     UNMERGE_FORMAT = 5 * " " + "{} <<< {}-{}"
     SYNC_FORMAT = 5 * " " + "rsync'ed at >>> {}"
+    MERGE_TIME_FORMAT = MERGE_FORMAT + "\n" + 7 * " " + "merge time: {}.\n"
+
+    DAY_FORMAT = defaultdict(lambda: "{days} days")
+    DAY_FORMAT[0] = ""
+    DAY_FORMAT[1] = "{days} day"
+
+    HOUR_FORMAT = defaultdict(lambda: "{hours} hours")
+    HOUR_FORMAT[0] = ""
+    HOUR_FORMAT[1] = "{hours} hour"
+
+    MINUTE_FORMAT = defaultdict(lambda: "{minutes} minutes")
+    MINUTE_FORMAT[0] = ""
+    MINUTE_FORMAT[1] = "{minutes} minute"
+
+    SECOND_FORMAT = defaultdict(lambda: "{seconds} seconds")
+    SECOND_FORMAT[0] = ""
+    SECOND_FORMAT[1] = "{seconds} second"
 
     def __init__(self):
         self.color = True
@@ -55,10 +78,25 @@ class Output(Interface):
         if utc is not None:
             self.tz = timezone.utc if utc else None
 
-    def _format_date(self, timestamp):
+    def format_date(self, timestamp):
         """Formats dates.
         realizes: R-OUTPUT-005"""
         return self.DATE_FORMAT.format(datetime.fromtimestamp(int(timestamp), tz=self.tz))
+
+    def format_duration(self, duration, show_seconds=True):
+        """Formats durations.
+        realizes: R-OUTPUT-010"""
+        days, remainder = divmod(int(duration), 60 * 60 * 24)
+        hours, remainder = divmod(remainder, 60 * 60)
+        minutes, seconds = divmod(remainder, 60)
+        duration_parts = [self.DAY_FORMAT[days].format(days=days),
+                          self.HOUR_FORMAT[hours].format(hours=hours),
+                          self.MINUTE_FORMAT[minutes].format(minutes=minutes),
+                          self.SECOND_FORMAT[seconds].format(seconds=seconds) if show_seconds else ""]
+        effective_parts = [x for x in duration_parts if x]
+        if len(effective_parts) > 2:
+            effective_parts = [", ".join(effective_parts[:-1]), effective_parts[-1]]
+        return " and ".join(effective_parts)
 
     def message(self, message):
         """Prints a message
@@ -68,14 +106,19 @@ class Output(Interface):
     def merge_item(self, timestamp, name, version):
         """Prints a merge item
         realizes: R-OUTPUT-007"""
-        print(self.MERGE_FORMAT.format(self._format_date(timestamp), name, version))
+        print(self.MERGE_FORMAT.format(self.format_date(timestamp), name, version))
 
     def unmerge_item(self, timestamp, name, version):
         """Prints a unmerge item
         realizes: R-OUTPUT-008"""
-        print(self.UNMERGE_FORMAT.format(self._format_date(timestamp), name, version))
+        print(self.UNMERGE_FORMAT.format(self.format_date(timestamp), name, version))
 
     def sync_item(self, timestamp):
         """Prints a sync item
         realizes: R-OUTPUT-009"""
-        print(self.SYNC_FORMAT.format(self._format_date(timestamp)))
+        print(self.SYNC_FORMAT.format(self.format_date(timestamp)))
+
+    def merge_time_item(self, timestamp, name, version, duration):
+        """Prints a merge time item
+        realizes: R-OUTPUT-011"""
+        print(self.MERGE_TIME_FORMAT.format(self.format_date(timestamp), name, version, self.format_duration(duration)))

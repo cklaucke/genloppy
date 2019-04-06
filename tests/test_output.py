@@ -30,6 +30,7 @@ def test_01_provided_api():
     assert hasattr(Interface, "merge_item")
     assert hasattr(Interface, "unmerge_item")
     assert hasattr(Interface, "sync_item")
+    assert hasattr(Interface, "merge_time_item")
 
     i = Interface()
 
@@ -45,6 +46,10 @@ def test_01_provided_api():
     for method in [i.merge_item, i.unmerge_item]:
         with pytest.raises(NotImplementedError):
             method(None, None, None)
+
+    # methods w/ four arguments
+    with pytest.raises(NotImplementedError):
+        i.merge_time_item(None, None, None, None)
 
 
 def test_02a_configurable_output():
@@ -66,12 +71,12 @@ def test_02b_output_date_formatting():
     """Tests that dates are formatted according to the current locale (here POSIX).
     tests: R-OUTPUT-005"""
     out = Output()
-    assert out._format_date(0) == "Wed Dec 31 19:00:00 1969"
+    assert out.format_date(0) == "Wed Dec 31 19:00:00 1969"
     out.configure(utc=True)
-    assert out._format_date(0) == "Thu Jan  1 00:00:00 1970"
-    assert out._format_date("1342421337") == "Mon Jul 16 06:48:57 2012"
+    assert out.format_date(0) == "Thu Jan  1 00:00:00 1970"
+    assert out.format_date("1342421337") == "Mon Jul 16 06:48:57 2012"
     out.configure(utc=False)
-    assert out._format_date("1342421337") == "Mon Jul 16 02:48:57 2012"
+    assert out.format_date("1342421337") == "Mon Jul 16 02:48:57 2012"
 
 
 def test_03_output_message():
@@ -90,7 +95,7 @@ def test_04_output_merge_item():
     """Tests that a merge item is outputted.
     tests: R-OUTPUT-002
     tests: R-OUTPUT-007"""
-    with patch.object(Output, '_format_date', return_value="") as mock_format_date:
+    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
         out = Output()
         ts = 0
         name = "cat/package"
@@ -106,7 +111,7 @@ def test_05_output_unmerge_item():
     """Tests that a unmerge item is outputted.
     tests: R-OUTPUT-002
     tests: R-OUTPUT-008"""
-    with patch.object(Output, '_format_date', return_value="") as mock_format_date:
+    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
         out = Output()
         ts = 0
         name = "cat/package"
@@ -122,7 +127,7 @@ def test_06_output_sync_item():
     """Tests that a sync item is outputted.
     tests: R-OUTPUT-002
     tests: R-OUTPUT-009"""
-    with patch.object(Output, '_format_date', return_value="") as mock_format_date:
+    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
         out = Output()
         ts = 0
         with patch('builtins.print') as mock:
@@ -130,3 +135,31 @@ def test_06_output_sync_item():
 
     mock_format_date.assert_called_once_with(ts)
     mock.assert_called_with(5 * " " + "rsync'ed at >>> ")
+
+
+def test_07_output_duration_formatting():
+    """Test that durations formatting.
+    tests: R-OUTPUT-010"""
+    out = Output()
+    assert out.format_duration(0) == ""
+    assert out.format_duration(1) == "1 second"
+    assert out.format_duration(1, show_seconds=False) == ""
+    assert out.format_duration(3677821) == "42 days, 13 hours, 37 minutes and 1 second"
+    assert out.format_duration(3677821, show_seconds=False) == "42 days, 13 hours and 37 minutes"
+
+
+def test_08_output_merge_time_item():
+    """Tests that a merge time item is outputted.
+    tests: R-OUTPUT-002
+    tests: R-OUTPUT-011"""
+    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
+        out = Output()
+        ts = 0
+        name = "cat/package"
+        version = "1.33.7"
+        with patch('builtins.print') as mock:
+            out.merge_time_item(ts, name, version, 100)
+
+    mock_format_date.assert_called_once_with(ts)
+    mock.assert_called_with(5 * " " + " >>> " + name + "-" + version + "\n"
+                            + 7 * " " + "merge time: 1 minute and 40 seconds.\n")

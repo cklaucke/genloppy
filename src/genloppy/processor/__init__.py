@@ -3,6 +3,7 @@ from genloppy.processor.merge import Merge
 from genloppy.processor.merge_unmerge import MergeUnmerge
 from genloppy.processor.pretend import Pretend
 from genloppy.processor.sync import Sync
+from genloppy.processor.time import Time
 from genloppy.processor.unmerge import Unmerge
 
 # processor names
@@ -38,7 +39,7 @@ PROCESSORS = {
     MERGE_UNMERGE: MergeUnmerge,
     PRETEND: Pretend,
     SYNC: Sync,
-    TIME: Interface,
+    TIME: Time,
     UNMERGE: Unmerge,
     VERSION: Interface,
 }
