@@ -18,27 +18,16 @@ In addition to the default implementation the pretend processor SHALL use the `t
 *   depends on: R-PARSER-PMS-008
 
 # R-PROCESSOR-PRETEND-004: Callbacks #
-The pretend processor SHALL add callbacks `merge_begin` and `merge_end` for entry types `merge_begin` and `merge_end` respectively.
+The pretend processor SHALL use and instance of the duration processor initialized with callback `process`.
+It SHALL retrieve the callbacks of the duration processor and add them to its own callbacks.
 
 *   related to: R-PROCESSOR-API-003
+*   depends on: R-PROCESSOR-DURATION-001
 
-# R-PROCESSOR-PRETEND-005: merge_begin callback implementation #
-On retrieving a `merge_begin` log entry the merge_begin callback SHALL save the properties / tokens.
+# R-PROCESSOR-PRETEND-005: process callback implementation #
+The callback SHALL store the `duration` for `atom_base`.
 
-# R-PROCESSOR-PRETEND-006: merge_end callback implementation #
-On retrieving a `merge_end` log entry the merge_end callback SHALL:
-1. Check if the saved `merge_begin` properties matches the `merge_end` properties by comparing
-  -   `count_n`
-  -   `count_m`,
-  -   `atom_base`,
-  -   `atom_version`
-2. If the check succeeded store the duration for `atom_base` by calculating the difference between the timestamps of `merge_end` and `merge_begin`.
-
-If no properties were saved before or if the check fails print a warning message.
-
-Always reset the saved properties before returning.
-
-# R-PROCESSOR-PRETEND-007: Post-process implementation #
+# R-PROCESSOR-PRETEND-006: Post-process implementation #
 The pretend processor SHALL *override* the default implementation. It SHALL
 -   estimate the total duration of the pretend output by adding the average of the merge durations for all pretended packages,
 -   pretty print the estimated update time in a human-readable way using `TRAILER`.
