@@ -3,8 +3,11 @@ from tempfile import NamedTemporaryFile
 from unittest.mock import call
 from unittest.mock import patch
 
+import pytest
+
 import genloppy.main
 from genloppy.output import Interface
+from genloppy.portage_configuration import PortageConfigurationError
 from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
 
 
@@ -16,8 +19,8 @@ def test_01_main_execution():
     """
 
     class MockConfigurator:
-        def __init__(self):
-            self._parser_configuration = dict(file_names=None)
+        def __init__(self, file_names=None):
+            self._parser_configuration = dict(file_names=file_names)
             self._filter_configuration = dict(package_names=["cat/package"])
             self._filter_extra_configuration = dict(extra=True)
             self._processor_configuration = dict(name="mock", feature="42")
@@ -99,21 +102,18 @@ def test_01_main_execution():
         def configure(self, **kwargs):
             self.kwargs = kwargs
 
-    assert genloppy.main.DEFAULT_ELOG_FILE == "/var/log/emerge.log"
-
     genloppy.processor.PROCESSORS = {"mock": MockProcessor}
-    mock_configurator = MockConfigurator()
     mock_entry_handler = MockEntryHandler()
     mock_elog_parser = MockTokenizer(mock_entry_handler)
     mock_output = MockOutput()
 
-    content = "1337\nalpha\n"
+    content = "1337:\n1338: alpha\n"
     temp_file = None
     try:
         temp_file = NamedTemporaryFile(delete=False)
         temp_file.write(content.encode())
         temp_file.close()
-        genloppy.main.DEFAULT_ELOG_FILE = temp_file.name
+        mock_configurator = MockConfigurator(file_names=[temp_file.name])
         m = genloppy.main.Main(configurator=mock_configurator,
                                elog_tokenizer=mock_elog_parser,
                                output=mock_output)
@@ -145,6 +145,18 @@ def test_01_main_execution():
 
     # test that output_configuration is forwarded correctly
     assert mock_output.kwargs == dict(format="special")
+
+    mock_configurator = MockConfigurator()
+    m = genloppy.main.Main(configurator=mock_configurator,
+                           elog_tokenizer=mock_elog_parser,
+                           output=mock_output)
+    with patch('genloppy.main.get_default_emerge_log_file') as default_log_file_mock:
+        default_log_file_mock.side_effect = PortageConfigurationError
+        with pytest.raises(RuntimeError) as exception:
+            m.run()
+
+    assert exception.value.args[0] == "Could not determine path to default emerge log file. " \
+                                      "Please specify the path at the command line."
 
 
 def test_02_main_function():

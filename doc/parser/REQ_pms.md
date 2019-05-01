@@ -66,10 +66,10 @@ The following tokens shall be extracted:
 
 # R-PARSER-PMS-007: emerge log file entries mapping #
 *genloppy* SHALL provide a mapping for emerge log file entries:
--    entry `merge_begin` using the *merge begin* pattern,
--    entry `merge_end` using the *merge end* pattern,
--    entry `unmerge` using the *unmerge* pattern,
--    entry `sync` using the *sync* pattern.
+-   entry `merge_begin` using the *merge begin* pattern,
+-   entry `merge_end` using the *merge end* pattern,
+-   entry `unmerge` using the *unmerge* pattern,
+-   entry `sync` using the *sync* pattern.
 
 # R-PARSER-PMS-008: pretend pattern #
 The *sync* pattern SHALL use the following regular expression
@@ -88,4 +88,12 @@ Note: The bracket part of the regular expression for pretended packages was take
 
 # R-PARSER-PMS-009: emerge pretend entries mapping #
 *genloppy* SHALL provide a mapping for emerge pretend entries:
--    entry `pretended_package` using the *pretend* pattern.
+-   entry `pretended_package` using the *pretend* pattern.
+
+# R-PARSER-PMS-010: log entry pattern #
+The *log entry* pattern SHALL use the following regular expression
+```
+^{timestamp}:
+```
+The following token shall be extracted:
+-   `timestamp`.

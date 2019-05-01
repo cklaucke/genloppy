@@ -18,6 +18,9 @@ COUNT_PATTERN = r"\((?P<count_n>[0-9]+) of (?P<count_m>[0-9]+)\)"
 REPO_NAME_PATTERN = r"(?P<repo_name>[A-Za-z0-9_][A-Za-z0-9_-]*)"
 
 # logfile and emerge output pattern
+# realizes: R-PARSER-PMS-010
+LOG_ENTRY_PATTERN = r"^" + TIMESTAMP_PATTERN + r":"
+
 # realizes: R-PARSER-PMS-003
 MERGE_BEGIN_PATTERN = r"^" + TIMESTAMP_PATTERN + r": {2}>>> emerge " + COUNT_PATTERN + \
                       r" " + ATOM_PATTERN + r" to .*$"

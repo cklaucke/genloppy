@@ -5,13 +5,14 @@ from functools import reduce
 
 from genloppy import processor
 from genloppy.configurator import CommandLine as CommandLineConfigurator
+from genloppy.log_files import LogFiles
 from genloppy.output import Output
 from genloppy.parser import filter
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
 from genloppy.parser.tokenizer import Tokenizer
-
-DEFAULT_ELOG_FILE = "/var/log/emerge.log"
+from genloppy.portage_configuration import PortageConfigurationError
+from genloppy.portage_configuration import get_default_emerge_log_file
 
 
 class Main:
@@ -50,6 +51,19 @@ class Main:
     def _configure_output(self):
         self.output.configure(**self.configurator.output_configuration)
 
+    def _get_log_files(self):
+        """Retrieves the log file names or tries to get the default emerge log file name if no log files were given.
+
+        realizes: R-LOG-FILES-002"""
+        file_names = self.configurator.parser_configuration.get("file_names")
+        if not file_names:
+            try:
+                file_names = [get_default_emerge_log_file()]
+            except PortageConfigurationError:
+                raise RuntimeError(
+                    "Could not determine path to default emerge log file. Please specify the path at the command line.")
+        return file_names
+
     def _config_feature_check(self):
         """Checks for configuration feature availability."""
 
@@ -60,13 +74,11 @@ class Main:
                                               "Currently allowed values are '{}'."
                                               .format(key, value, allowed_configuration[key]))  # pragma: no cover
 
-        allowed_parser_configuration = dict(file_names=None)
         allowed_filter_configuration = dict(dates=None)
         allowed_processor_configuration = dict(query=False)
         allowed_output_configuration = dict(utc=False,
                                             color=False)
 
-        config_compare(self.configurator.parser_configuration, allowed_parser_configuration)
         config_compare(self.configurator.filter_configuration, allowed_filter_configuration)
         config_compare(self.configurator.processor_configuration, allowed_processor_configuration)
         config_compare(self.configurator.output_configuration, allowed_output_configuration)
@@ -85,7 +97,7 @@ class Main:
         self._configure_output()
 
         self.processor.pre_process()
-        with open(DEFAULT_ELOG_FILE) as f:
+        for f in LogFiles(self._get_log_files()):
             self.elog_tokenizer.tokenize(f)
         self.processor.post_process()
 
