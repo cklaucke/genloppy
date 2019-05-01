@@ -9,5 +9,6 @@ recursive-include bin *
 recursive-include src *.py
 recursive-include tests *.py
 include tests/parser/good_emerge.log
+include tests/test_log_files/*
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib
