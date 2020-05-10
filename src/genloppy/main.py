@@ -102,16 +102,23 @@ class Main:
         self.processor.post_process()
 
 
-def main(argv=sys.argv):
+def main(argv=None):
+    if argv is None:  # pragma: no cover
+        argv = sys.argv
     runtime = dict(
         configurator=CommandLineConfigurator(argv[1:]),
         elog_tokenizer=Tokenizer(EMERGE_LOG_ENTRY_TYPES, EntryHandler()),
         output=Output()
     )
     m = Main(**runtime)
-    m.run()
+    try:
+        m.run()
+    except BaseException as e:
+        print(f"Error: {e}", file=sys.stderr)
+        runtime["configurator"].print_help()
+        sys.exit()
 
 
 if __name__ == "__main__":
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)  # pragma: no cover
-    main(sys.argv)  # pragma: no cover
+    main()  # pragma: no cover
