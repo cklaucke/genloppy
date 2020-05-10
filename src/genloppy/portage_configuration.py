@@ -32,7 +32,7 @@ def _get_portage_env_var(environment_variable, default=None):
     elif cp.returncode == 1 and default is not None:
         return default
     else:
-        raise PortageConfigurationError("Cannot query environment variable '{}'.".format(env_var))
+        raise PortageConfigurationError(f"Cannot query environment variable '{env_var}'.")
 
 
 def get_default_emerge_log_file():

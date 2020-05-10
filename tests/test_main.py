@@ -61,7 +61,7 @@ def test_01_main_execution():
             self.call_order.append("pre_process")
 
         def process(self, item):
-            self.call_order.append("process({})".format(item))
+            self.call_order.append(f"process({item})")
 
         def post_process(self):
             self.call_order.append("post_process")

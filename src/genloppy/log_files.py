@@ -54,10 +54,10 @@ def _check_log_files(log_files):
     messages = []
     if not_found_log_files:
         messages.append("The following log file(s) were not found: {}."
-                        .format(", ".join(map(lambda x: "'{}'".format(x), not_found_log_files))))
+                        .format(", ".join(map(lambda x: f"'{x}'", not_found_log_files))))
     if malformed_log_files:
         messages.append("The format of the following log file(s) is unexpected: {}."
-                        .format(", ".join(map(lambda x: "'{}'".format(x), malformed_log_files))))
+                        .format(", ".join(map(lambda x: f"'{x}'", malformed_log_files))))
     if messages:
         raise RuntimeError(" ".join(messages))
 

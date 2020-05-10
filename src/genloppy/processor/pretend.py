@@ -68,7 +68,7 @@ class Pretend(BaseOutput):
         estimated_duration, skipped_packages = self._estimate_duration()
         self.output.message("\n")
         for package in skipped_packages:
-            self.output.message("!!! Error: couldn't get previous merge of {}; skipping...".format(package))
+            self.output.message(f"!!! Error: couldn't get previous merge of {package}; skipping...")
         if skipped_packages:
             self.output.message("\n")
         if estimated_duration:
