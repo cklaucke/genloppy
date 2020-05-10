@@ -53,7 +53,7 @@ class Time(BaseOutput):
         if self.mode is self.MODES.package:
             atom_bases_merges = ((atom_base, self.durations[atom_base]) for atom_base in sorted(self.durations))
             for atom_base, merges in atom_bases_merges:
-                self.output.message(" * {}:\n".format(atom_base))
+                self.output.message(f" * {atom_base}:\n")
                 for merge in merges:
                     self.output.merge_time_item(merge[0]["timestamp"], merge[0]["atom_base"],
                                                 merge[0]["atom_version"], merge[1])

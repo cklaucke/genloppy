@@ -101,10 +101,10 @@ class CommandLine:
             raise KeyError("Not more than one sub-command allowed (except 'merge' and 'unmerge').")
 
         if parsed_args.query and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_QUERY:
-            raise KeyError("Query flag '-q' not allowed for '{}'.".format(processor_name))
+            raise KeyError(f"Query flag '-q' not allowed for '{processor_name}'.")
 
         if (parsed_args.name or parsed_args.search) and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_NAME:
-            raise KeyError("Package name(s) or search arguments '-s' not allowed for '{}'.".format(processor_name))
+            raise KeyError(f"Package name(s) or search arguments '-s' not allowed for '{processor_name}'.")
 
         if not (parsed_args.name or parsed_args.search) and processor_name in self.PROCESSORS.PROCESSORS_REQUIRE_NAME:
             raise KeyError("At least one package name(s) or search arguments '-s' required for '{}'."
@@ -112,7 +112,7 @@ class CommandLine:
 
         date_count = len(parsed_args.date) if parsed_args.date else 0
         if date_count > 2:
-            raise KeyError("Up to two dates ('--date') may be given. Got {}.".format(date_count))
+            raise KeyError(f"Up to two dates ('--date') may be given. Got {date_count}.")
 
         self._parser_configuration.update(file_names=parsed_args.logfile)
         self._filter_configuration.update(package_names=parsed_args.name if parsed_args.name else None,
@@ -120,7 +120,7 @@ class CommandLine:
                                           dates=parsed_args.date)
         self._processor_configuration.update(name=processor_name,
                                              query=parsed_args.query,
-                                             active_filter=set(k for k, v in self._filter_configuration.items() if v))
+                                             active_filter={k for k, v in self._filter_configuration.items() if v})
         self._filter_extra_configuration.update(case_sensitive=parsed_args.case_sensitive)
         self._output_configuration.update(utc=parsed_args.utc,
                                           color=parsed_args.color)
