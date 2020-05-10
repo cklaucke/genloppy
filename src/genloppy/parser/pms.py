@@ -22,22 +22,19 @@ REPO_NAME_PATTERN = r"(?P<repo_name>[A-Za-z0-9_][A-Za-z0-9_-]*)"
 LOG_ENTRY_PATTERN = r"^" + TIMESTAMP_PATTERN + r":"
 
 # realizes: R-PARSER-PMS-003
-MERGE_BEGIN_PATTERN = r"^" + TIMESTAMP_PATTERN + r": {2}>>> emerge " + COUNT_PATTERN + \
-                      r" " + ATOM_PATTERN + r" to .*$"
+MERGE_BEGIN_PATTERN = LOG_ENTRY_PATTERN + r"  >>> emerge " + COUNT_PATTERN + r" " + ATOM_PATTERN + r" to .*$"
 
 # realizes: R-PARSER-PMS-004
-MERGE_END_PATTERN = r"^" + TIMESTAMP_PATTERN + r": {2}::: completed emerge " + \
-                    COUNT_PATTERN + r" " + ATOM_PATTERN + r" to .*$"
+MERGE_END_PATTERN = LOG_ENTRY_PATTERN + r"  ::: completed emerge " + COUNT_PATTERN + r" " + ATOM_PATTERN + r" to .*$"
 
 # realizes: R-PARSER-PMS-008
 PRETEND_PATTERN = r"^\[e[^]]+\] " + ATOM_PATTERN
 
 # realizes: R-PARSER-PMS-006
-SYNC_COMPLETED_PATTERN = r"^" + TIMESTAMP_PATTERN + \
-                         r": === Sync completed for " + REPO_NAME_PATTERN + "$"
+SYNC_COMPLETED_PATTERN = LOG_ENTRY_PATTERN + r" === Sync completed for " + REPO_NAME_PATTERN + "$"
 
 # realizes: R-PARSER-PMS-005
-UNMERGE_PATTERN = r"^" + TIMESTAMP_PATTERN + r": {2}>>> unmerge success: " + ATOM_PATTERN + r"$"
+UNMERGE_PATTERN = LOG_ENTRY_PATTERN + r"  >>> unmerge success: " + ATOM_PATTERN + r"$"
 
 # realizes: R-PARSER-PMS-007
 EMERGE_LOG_ENTRY_TYPES = {
