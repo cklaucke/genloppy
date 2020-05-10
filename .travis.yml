@@ -1,22 +1,19 @@
-dist: xenial   # required for Python >= 3.7
+dist: bionic   # required for Python >= 3.7
 language: python
 matrix:
   include:
-    - python: '3.6'
+    - python: '3.7'
       env:
         - TOXENV=check
-    - python: '3.5'
-      env:
-        - TOXENV=py35,report,codecov
     - python: '3.6'
       env:
         - TOXENV=py36,report,codecov
     - python: '3.7'
       env:
         - TOXENV=py37,report,codecov
-    - python: 'pypy3.5-6.0'
+    - python: '3.8'
       env:
-        - TOXENV=pypy3,report,codecov
+        - TOXENV=py38,report,codecov
 before_install:
   - python --version
   - uname -a
