@@ -167,7 +167,20 @@ def test_02_main_function():
     """
 
     with patch('genloppy.main.Main') as mock:
+        # pass empty list to avoid usage of sys.argv
         genloppy.main.main([])
         assert len(mock.mock_calls) == 2
         assert mock.mock_calls[0][0] == ""
         assert mock.mock_calls[1] == call().run()
+
+
+def test_03_main_function(capsys):
+    """Integration test. Test the main function when no arguments are given."""
+
+    with pytest.raises(SystemExit):
+        # pass empty list to avoid usage of sys.argv
+        genloppy.main.main([])
+
+    captured = capsys.readouterr()
+    assert captured.err == 'Error: "At least one sub-command argument (one of \'-c\', \'-l\', \'-i\', \'-p\', \'-r\'' \
+                           ', \'-t\', \'-u\' or \'-v\') needed."\n'

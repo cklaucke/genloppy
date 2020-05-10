@@ -92,13 +92,14 @@ class CommandLine:
         parsed_args = self.argument_parser.parse_args(self.arguments)
 
         if not parsed_args.sub_commands:
-            raise KeyError("At least one sub-command argument needed.")
+            raise KeyError(
+                "At least one sub-command argument (one of '-c', '-l', '-i', '-p', '-r', '-t', '-u' or '-v') needed.")
         elif len(parsed_args.sub_commands) == 1:
             processor_name = parsed_args.sub_commands[0]
         elif set(parsed_args.sub_commands) == {self.PROCESSORS.MERGE, self.PROCESSORS.UNMERGE}:
             processor_name = self.PROCESSORS.MERGE_UNMERGE
         else:
-            raise KeyError("Not more than one sub-command allowed (except 'merge' and 'unmerge').")
+            raise KeyError("Not more than one sub-command allowed at the same time (except '--merge' and '--unmerge').")
 
         if parsed_args.query and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_QUERY:
             raise KeyError(f"Query flag '-q' not allowed for '{processor_name}'.")
@@ -124,6 +125,9 @@ class CommandLine:
         self._filter_extra_configuration.update(case_sensitive=parsed_args.case_sensitive)
         self._output_configuration.update(utc=parsed_args.utc,
                                           color=parsed_args.color)
+
+    def print_help(self):
+        self.argument_parser.print_help()
 
     @property
     def parser_configuration(self):
