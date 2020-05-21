@@ -1,4 +1,3 @@
-import functools
 import sys
 from collections import defaultdict
 
@@ -51,28 +50,35 @@ class Pretend(BaseOutput):
         self.durations[properties["atom_base"]].append(duration)
 
     def _estimate_duration(self):
-        average = 0
+        min_duration = 0
+        avg_duration = 0
+        max_duration = 0
         skipped_packages = []
         for package in self.pretended_packages:
             durations = self.durations[package]
             if durations:
-                average += functools.reduce(lambda x, y: x + y, map(lambda t: t / len(durations), durations))
+                min_duration += min(durations)
+                avg_duration += sum(durations) / len(durations)
+                max_duration += max(durations)
             else:
                 skipped_packages.append(package)
-        return average, skipped_packages
+        return min_duration, avg_duration, max_duration, skipped_packages
 
     def post_process(self):
         """Does post-processing after parsing has finished.
         realizes: R-PROCESSOR-PRETEND-006
         """
-        estimated_duration, skipped_packages = self._estimate_duration()
+        min_duration, avg_duration, max_duration, skipped_packages = self._estimate_duration()
         self.output.message("\n")
         for package in skipped_packages:
             self.output.message(f"!!! Error: couldn't get previous merge of {package}; skipping...")
         if skipped_packages:
             self.output.message("\n")
-        if estimated_duration:
+        if avg_duration:
             self.output.message(
-                self.TRAILER.format(self.output.format_duration(estimated_duration, show_seconds=False)))
+                self.TRAILER.format(
+                    f"{self.output.format_duration(avg_duration, show_seconds=False)} "
+                    f"(-{self.output.format_duration(avg_duration - min_duration, show_seconds=False)}/"
+                    f"+{self.output.format_duration(max_duration - avg_duration, show_seconds=False)})"))
         else:
             self.output.message("!!! Error: estimated time unknown.")
