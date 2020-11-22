@@ -11,8 +11,8 @@ class Merge(BaseOutput):
     def __init__(self, **kwargs):
         """Adds callback for 'merge'.
         realizes: R-PROCESSOR-MERGE-003"""
-        super().__init__(**kwargs)
-        self._add_callbacks(merge_end=self.process)
+        super().__init__(callbacks={"merge_end": self.process},
+                         **kwargs)
 
     def process(self, properties):
         """Prints merge information.

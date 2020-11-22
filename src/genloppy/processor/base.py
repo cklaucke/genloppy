@@ -6,11 +6,8 @@ class Base(ProcessorInterface):
 
     realizes: R-PROCESSOR-BASE-001
     """
-    def __init__(self, **kwargs):
-        self._callbacks = {}
-
-    def _add_callbacks(self, **kwargs):
-        self._callbacks.update(kwargs)
+    def __init__(self, callbacks=None, **kwargs):
+        self._callbacks = dict(callbacks) if callbacks else {}
 
     @property
     def callbacks(self):
@@ -38,8 +35,8 @@ class BaseOutput(Base):
     HEADER = ""
     TRAILER = ""
 
-    def __init__(self, output, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, output, callbacks=None, **kwargs):
+        super().__init__(callbacks, **kwargs)
         self.output = output
 
     def pre_process(self):

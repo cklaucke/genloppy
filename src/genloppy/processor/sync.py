@@ -10,8 +10,7 @@ class Sync(BaseOutput):
     def __init__(self, **kwargs):
         """Adds callback for 'sync'.
         realizes: R-PROCESSOR-SYNC-003"""
-        super().__init__(**kwargs)
-        self._add_callbacks(sync=self.process)
+        super().__init__(callbacks={"sync": self.process}, **kwargs)
 
     def process(self, properties):
         """Prints sync information.

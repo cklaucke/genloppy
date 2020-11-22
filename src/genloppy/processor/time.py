@@ -16,14 +16,13 @@ class Time(BaseOutput):
         realizes: R-PROCESSOR-TIME-002
         realizes: R-PROCESSOR-TIME-004
         """
-        super().__init__(**kwargs)
         if active_filter and "search_reg_exps" in active_filter:
             self.mode = self.MODES.search
             d = Duration(self.process_search)
         else:
             self.mode = self.MODES.package
             d = Duration(self.process_package)
-        self._add_callbacks(**d.callbacks)
+        super().__init__(callbacks=d.callbacks, **kwargs)
         self.durations = defaultdict(list)
 
     def pre_process(self):
