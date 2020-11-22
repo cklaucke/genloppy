@@ -20,9 +20,8 @@ class Pretend(BaseOutput):
         realizes: R-PROCESSOR-PRETEND-002
         realizes: R-PROCESSOR-PRETEND-004
         """
-        super().__init__(**kwargs)
         duration = Duration(self.process)
-        self._add_callbacks(**duration.callbacks)
+        super().__init__(callbacks=duration.callbacks, **kwargs)
         self.pretend_stream = pretend_stream
         self.durations = defaultdict(list)
         self.pretended_packages = []

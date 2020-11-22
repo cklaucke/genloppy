@@ -11,8 +11,7 @@ class Unmerge(BaseOutput):
     def __init__(self, **kwargs):
         """Adds callback for 'unmerge'.
         realizes: R-PROCESSOR-UNMERGE-003"""
-        super().__init__(**kwargs)
-        self._add_callbacks(unmerge=self.process)
+        super().__init__(callbacks={"unmerge": self.process}, **kwargs)
 
     def process(self, properties):
         """Prints unmerge information.

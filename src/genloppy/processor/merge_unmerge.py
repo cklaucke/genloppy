@@ -13,8 +13,6 @@ class MergeUnmerge(BaseOutput):
     def __init__(self, **kwargs):
         """Adds callbacks from 'merge' and 'unmerge'.
         realizes: R-PROCESSOR-MERGE-UNMERGE-003"""
-        super().__init__(**kwargs)
-        self._merge = Merge(**kwargs)
-        self._unmerge = Unmerge(**kwargs)
-        self._add_callbacks(**self._merge.callbacks)
-        self._add_callbacks(**self._unmerge.callbacks)
+        callbacks = Merge(**kwargs).callbacks
+        callbacks.update(Unmerge(**kwargs).callbacks)
+        super().__init__(callbacks=callbacks, **kwargs)

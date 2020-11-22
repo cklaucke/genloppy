@@ -11,16 +11,13 @@ def test_01_base_processor():
     tests: R-PROCESSOR-BASE-003
     tests: R-PROCESSOR-BASE-004
     """
-    b = Base()
-
-    assert b.callbacks == {}
 
     def bar():
         pass
 
-    b._add_callbacks(foo=bar)
-    assert b.callbacks == dict(foo=bar)
+    b = Base(callbacks={"foo": bar})
 
+    assert b.callbacks == dict(foo=bar)
     b.pre_process()
     b.post_process()
 
