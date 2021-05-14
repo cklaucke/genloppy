@@ -59,9 +59,9 @@ def test_05_pretend_processing_simple():
     pretend.post_process()
     assert m.method_calls == [call.message("These are the pretended packages: (this may take a while; wait...)\n"),
                               call.message("\n"),
-                              call.format_duration(3677820, show_seconds=False),
-                              call.format_duration(0, show_seconds=False),
-                              call.format_duration(0, show_seconds=False),
+                              call.format_duration(3677820, condensed=True),
+                              call.format_duration(0, condensed=True),
+                              call.format_duration(0, condensed=True),
                               call.message(
                                   "Estimated update time: mocked formatted date (-mocked formatted date/+mocked formatted date).")]
 
@@ -85,9 +85,9 @@ def test_08_pretend_processing_one_unkown():
                               call.message("\n"),
                               call.message("!!! Error: couldn't get previous merge of dog/package; skipping..."),
                               call.message("\n"),
-                              call.format_duration(3677820, show_seconds=False),
-                              call.format_duration(0, show_seconds=False),
-                              call.format_duration(0, show_seconds=False),
+                              call.format_duration(3677820, condensed=True),
+                              call.format_duration(0, condensed=True),
+                              call.format_duration(0, condensed=True),
                               call.message(
                                   "Estimated update time: mocked formatted date (-mocked formatted date/+mocked formatted date).")]
 

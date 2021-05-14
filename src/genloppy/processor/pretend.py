@@ -76,8 +76,8 @@ class Pretend(BaseOutput):
         if avg_duration:
             self.output.message(
                 self.TRAILER.format(
-                    f"{self.output.format_duration(avg_duration, show_seconds=False)} "
-                    f"(-{self.output.format_duration(avg_duration - min_duration, show_seconds=False)}/"
-                    f"+{self.output.format_duration(max_duration - avg_duration, show_seconds=False)})"))
+                    f"{self.output.format_duration(avg_duration, condensed=True)} "
+                    f"(-{self.output.format_duration(avg_duration - min_duration, condensed=True)}/"
+                    f"+{self.output.format_duration(max_duration - avg_duration, condensed=True)})"))
         else:
             self.output.message("!!! Error: estimated time unknown.")
