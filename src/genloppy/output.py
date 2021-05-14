@@ -83,17 +83,23 @@ class Output(Interface):
         realizes: R-OUTPUT-005"""
         return self.DATE_FORMAT.format(datetime.fromtimestamp(int(timestamp), tz=self.tz))
 
-    def format_duration(self, duration, show_seconds=True):
+    def format_duration(self, duration, condensed=False):
         """Formats durations.
-        realizes: R-OUTPUT-010"""
+        realizes: R-OUTPUT-010
+        :param duration: a duration in seconds
+        :param condensed: if set to True omits seconds for durations >= 60 seconds
+        :return: human-readable formatted duration"""
         days, remainder = divmod(int(duration), 60 * 60 * 24)
         hours, remainder = divmod(remainder, 60 * 60)
         minutes, seconds = divmod(remainder, 60)
+        force_seconds = True if days == 0 and hours == 0 and minutes == 0 else False
         duration_parts = [self.DAY_FORMAT[days].format(days=days),
                           self.HOUR_FORMAT[hours].format(hours=hours),
                           self.MINUTE_FORMAT[minutes].format(minutes=minutes),
-                          self.SECOND_FORMAT[seconds].format(seconds=seconds) if show_seconds else ""]
+                          self.SECOND_FORMAT[seconds].format(seconds=seconds) if not condensed or force_seconds else ""]
         effective_parts = [x for x in duration_parts if x]
+        if len(effective_parts) == 0:
+            effective_parts = [self.SECOND_FORMAT[2].format(seconds=0)]
         if len(effective_parts) > 2:
             effective_parts = [", ".join(effective_parts[:-1]), effective_parts[-1]]
         return " and ".join(effective_parts)

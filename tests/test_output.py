@@ -141,11 +141,11 @@ def test_07_output_duration_formatting():
     """Test that durations formatting.
     tests: R-OUTPUT-010"""
     out = Output()
-    assert out.format_duration(0) == ""
+    assert out.format_duration(0) == "0 seconds"
     assert out.format_duration(1) == "1 second"
-    assert out.format_duration(1, show_seconds=False) == ""
+    assert out.format_duration(1, condensed=True) == "1 second"
     assert out.format_duration(3677821) == "42 days, 13 hours, 37 minutes and 1 second"
-    assert out.format_duration(3677821, show_seconds=False) == "42 days, 13 hours and 37 minutes"
+    assert out.format_duration(3677821, condensed=True) == "42 days, 13 hours and 37 minutes"
 
 
 def test_08_output_merge_time_item():
