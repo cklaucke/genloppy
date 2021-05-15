@@ -89,14 +89,15 @@ class Output(Interface):
         :param duration: a duration in seconds
         :param condensed: if set to True omits seconds for durations >= 60 seconds
         :return: human-readable formatted duration"""
-        days, remainder = divmod(int(duration), 60 * 60 * 24)
+        _duration = int(duration)
+        output_seconds = not condensed or (True if _duration < 60 else False)
+        days, remainder = divmod(_duration, 60 * 60 * 24)
         hours, remainder = divmod(remainder, 60 * 60)
         minutes, seconds = divmod(remainder, 60)
-        force_seconds = True if days == 0 and hours == 0 and minutes == 0 else False
         duration_parts = [self.DAY_FORMAT[days].format(days=days),
                           self.HOUR_FORMAT[hours].format(hours=hours),
                           self.MINUTE_FORMAT[minutes].format(minutes=minutes),
-                          self.SECOND_FORMAT[seconds].format(seconds=seconds) if not condensed or force_seconds else ""]
+                          self.SECOND_FORMAT[seconds].format(seconds=seconds) if output_seconds else ""]
         effective_parts = [x for x in duration_parts if x]
         if len(effective_parts) == 0:
             effective_parts = [self.SECOND_FORMAT[2].format(seconds=0)]
