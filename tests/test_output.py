@@ -147,6 +147,10 @@ def test_07_output_duration_formatting():
     assert out.format_duration(3677821) == "42 days, 13 hours, 37 minutes and 1 second"
     assert out.format_duration(3677821, condensed=True) == "42 days, 13 hours and 37 minutes"
 
+    assert out.format_brief_duration(0) == "  0:00:00"
+    assert out.format_brief_duration(1) == "  0:00:01"
+    assert out.format_brief_duration(152017) == " 42:13:37"
+
 
 def test_08_output_merge_time_item():
     """Tests that a merge time item is outputted.
@@ -163,3 +167,37 @@ def test_08_output_merge_time_item():
     mock_format_date.assert_called_once_with(ts)
     mock.assert_called_with(5 * " " + " >>> " + name + "-" + version + "\n"
                             + 7 * " " + "merge time: 1 minute and 40 seconds.\n")
+
+
+def test_09_package_duration_header():
+    out = Output()
+
+    with patch('builtins.print') as mock:
+        out.package_duration_header(0)
+
+    mock.assert_called_with("package" + "       min /       avg /       max /  recently")
+
+    with patch('builtins.print') as mock:
+        out.package_duration_header(10)
+
+    mock.assert_called_with("package" + 3 * " " + "       min /       avg /       max /  recently")
+
+    with patch('builtins.print') as mock:
+        out.package_duration_header(20)
+
+    mock.assert_called_with("package" + 13 * " " + "       min /       avg /       max /  recently")
+
+
+def test_10_package_duration():
+    out = Output()
+
+    with patch('builtins.print') as mock:
+        out.package_duration(20, "cat/package", [1, 2, 3, 4])
+
+    mock.assert_called_with("cat/package" + 9 * " " + "   0:00:01 /   0:00:02 /   0:00:03 /   0:00:04")
+
+
+def test_11_format_duration_estimation():
+    out = Output()
+
+    assert out.format_duration_estimation([1, 2, 3, 4]) == "2 seconds (-1 second/+1 second), recently: 4 seconds"
