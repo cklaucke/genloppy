@@ -1,0 +1,26 @@
+1507734360: === Sync completed for gentoo
+1507734361:  *** terminating.
+1507735118: Started emerge on: Oct 11, 2017 17:18:38
+1507735118:  *** emerge --update --verbose --deep @world
+1507735226:  >>> emerge (1 of 2) sys-devel/gcc-config-1.8-r1 to /
+1507735227:  === (1 of 2) Cleaning (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
+1507735227:  === (1 of 2) Compiling/Merging (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
+1507735231:  === (1 of 2) Merging (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
+1507735234:  >>> AUTOCLEAN: sys-devel/gcc-config:0
+1507735234:  === Unmerging... (sys-devel/gcc-config-1.7.3)
+1507735236:  >>> unmerge success: sys-devel/gcc-config-1.7.3
+1507735239:  === (1 of 2) Post-Build Cleaning (sys-devel/gcc-config-1.8-r1::/usr/portage/sys-devel/gcc-config/gcc-config-1.8-r1.ebuild)
+1507735239:  ::: completed emerge (1 of 2) sys-devel/gcc-config-1.8-r1 to /
+1507735239:  >>> emerge (2 of 2) app-laptop/laptop-mode-tools-1.71 to /
+1507735239:  === (2 of 2) Cleaning (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
+1507735239:  === (2 of 2) Compiling/Merging (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
+1507735244:  === (2 of 2) Merging (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
+1507735246:  >>> AUTOCLEAN: app-laptop/laptop-mode-tools:0
+1507735246:  === Unmerging... (app-laptop/laptop-mode-tools-1.70)
+1507735248:  >>> unmerge success: app-laptop/laptop-mode-tools-1.70
+1507735250:  === (2 of 2) Post-Build Cleaning (app-laptop/laptop-mode-tools-1.71::/usr/portage/app-laptop/laptop-mode-tools/laptop-mode-tools-1.71.ebuild)
+1507735250:  ::: completed emerge (2 of 2) app-laptop/laptop-mode-tools-1.71 to /
+1507735250:  *** Finished. Cleaning up...
+1507735252:  *** exiting successfully.
+1507735252:  *** terminating.
+1508345663: === Sync completed for gentoo
