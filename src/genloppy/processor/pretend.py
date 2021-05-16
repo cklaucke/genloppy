@@ -1,5 +1,6 @@
 import sys
 from collections import defaultdict
+from functools import reduce
 
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_PRETEND_ENTRY_TYPES
@@ -48,36 +49,43 @@ class Pretend(BaseOutput):
         realizes: R-PROCESSOR-PRETEND-005"""
         self.durations[properties["atom_base"]].append(duration)
 
+    def _calculate_durations(self, package):
+        durations = self.durations[package]
+        if durations:
+            return [min(durations), sum(durations) / len(durations), max(durations), durations[-1]]
+
     def _estimate_duration(self):
-        min_duration = 0
-        avg_duration = 0
-        max_duration = 0
-        skipped_packages = []
+        durations = None
+        skipped_packages = [package for package in self.pretended_packages if not self.durations[package]]
+        if len(skipped_packages) < len(self.pretended_packages):
+            durations = reduce(lambda x, y: [x[i] + y[i] for i in range(4)],
+                               (self._calculate_durations(package) for package in self.pretended_packages
+                                if package not in skipped_packages),
+                               # [min, avg, max, recent]
+                               [0, 0, 0, 0])
+        return skipped_packages, durations
+
+    def _print_package_durations(self):
+        max_package_name_len = max((len(x) for x in self.pretended_packages))
+        self.output.package_duration_header(max_package_name_len)
         for package in self.pretended_packages:
-            durations = self.durations[package]
-            if durations:
-                min_duration += min(durations)
-                avg_duration += sum(durations) / len(durations)
-                max_duration += max(durations)
-            else:
-                skipped_packages.append(package)
-        return min_duration, avg_duration, max_duration, skipped_packages
+            package_durations = self._calculate_durations(package)
+            if package_durations:
+                self.output.package_duration(max_package_name_len, package, package_durations)
 
     def post_process(self):
         """Does post-processing after parsing has finished.
         realizes: R-PROCESSOR-PRETEND-006
         """
-        min_duration, avg_duration, max_duration, skipped_packages = self._estimate_duration()
+        skipped_packages, durations = self._estimate_duration()
         self.output.message("\n")
         for package in skipped_packages:
             self.output.message(f"!!! Error: couldn't get previous merge of {package}; skipping...")
         if skipped_packages:
             self.output.message("\n")
-        if avg_duration:
-            self.output.message(
-                self.TRAILER.format(
-                    f"{self.output.format_duration(avg_duration, condensed=True)} "
-                    f"(-{self.output.format_duration(avg_duration - min_duration, condensed=True)}/"
-                    f"+{self.output.format_duration(max_duration - avg_duration, condensed=True)})"))
+        if durations:
+            self._print_package_durations()
+            self.output.message("")
+            self.output.message(self.TRAILER.format(self.output.format_duration_estimation(durations)))
         else:
             self.output.message("!!! Error: estimated time unknown.")

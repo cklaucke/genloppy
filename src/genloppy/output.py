@@ -64,6 +64,12 @@ class Output(Interface):
     SECOND_FORMAT[0] = ""
     SECOND_FORMAT[1] = "{seconds} second"
 
+    BRIEF_DURATION_FORMAT = "{hours:>3}:{minutes:02}:{seconds:02}"
+    PKG_NAME_HEADING = "package"
+    PKG_DURATION_SEP = ' / '
+    PKG_DURATION_HEADER = "{:{max_package_name_len}} " + PKG_DURATION_SEP.join(4 * ["{:>9}"])
+    PKG_DURATION = "{package_name:{max_package_name_len}} {fmt_durations}"
+
     def __init__(self):
         self.color = True
         self.tz = None
@@ -105,6 +111,11 @@ class Output(Interface):
             effective_parts = [", ".join(effective_parts[:-1]), effective_parts[-1]]
         return " and ".join(effective_parts)
 
+    def format_brief_duration(self, duration):
+        hours, remainder = divmod(int(duration), 60 * 60)
+        minutes, seconds = divmod(remainder, 60)
+        return self.BRIEF_DURATION_FORMAT.format(hours=hours, minutes=minutes, seconds=seconds)
+
     def message(self, message):
         """Prints a message
         realizes: R-OUTPUT-006"""
@@ -129,3 +140,24 @@ class Output(Interface):
         """Prints a merge time item
         realizes: R-OUTPUT-011"""
         print(self.MERGE_TIME_FORMAT.format(self.format_date(timestamp), name, version, self.format_duration(duration)))
+
+    def _max_package_length(self, max_package_name_len):
+        return max(len(self.PKG_NAME_HEADING), max_package_name_len, 1)
+
+    def package_duration_header(self, max_package_name_len):
+        print(self.PKG_DURATION_HEADER.format(self.PKG_NAME_HEADING, "min", "avg", "max", "recently",
+                                              max_package_name_len=self._max_package_length(max_package_name_len)))
+
+    def package_duration(self, max_package_name_len, package_name, package_durations):
+        fmt_durations = (self.format_brief_duration(x) for x in package_durations)
+        print(self.PKG_DURATION.format(max_package_name_len=self._max_package_length(max_package_name_len),
+                                       package_name=package_name,
+                                       fmt_durations=self.PKG_DURATION_SEP.join(fmt_durations)))
+
+    def format_duration_estimation(self, durations):
+        min_duration, avg_duration, max_duration, recent_duration = durations
+        fmt_avg_duration = self.format_duration(avg_duration, condensed=True)
+        fmt_avg_rel_min = self.format_duration(avg_duration - min_duration, condensed=True)
+        fmt_avg_rel_max = self.format_duration(max_duration - avg_duration, condensed=True)
+        fmt_recent_duration = self.format_duration(recent_duration, condensed=True)
+        return f"{fmt_avg_duration} (-{fmt_avg_rel_min}/+{fmt_avg_rel_max}), recently: {fmt_recent_duration}"
