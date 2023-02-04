@@ -9,6 +9,7 @@ class Time(BaseOutput):
     """Time processor implementation
     realizes: R-PROCESSOR-TIME-001
     """
+
     MODES = Enum("Mode", "package search")
 
     def __init__(self, active_filter=None, **kwargs):
@@ -42,8 +43,7 @@ class Time(BaseOutput):
         """Prints merge time items directly in search mode
         realizes: R-PROCESSOR-TIME-006
         """
-        self.output.merge_time_item(properties["timestamp"], properties["atom_base"], properties["atom_version"],
-                                    duration)
+        self.output.merge_time_item(properties["timestamp"], properties["atom_base"], properties["atom_version"], duration)
 
     def post_process(self):
         """Does post-processing after parsing has finished.
@@ -54,5 +54,4 @@ class Time(BaseOutput):
             for atom_base, merges in atom_bases_merges:
                 self.output.message(f" * {atom_base}:\n")
                 for merge in merges:
-                    self.output.merge_time_item(merge[0]["timestamp"], merge[0]["atom_base"],
-                                                merge[0]["atom_version"], merge[1])
+                    self.output.merge_time_item(merge[0]["timestamp"], merge[0]["atom_base"], merge[0]["atom_version"], merge[1])

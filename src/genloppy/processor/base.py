@@ -6,6 +6,7 @@ class Base(ProcessorInterface):
 
     realizes: R-PROCESSOR-BASE-001
     """
+
     def __init__(self, callbacks=None, **kwargs):
         self._callbacks = dict(callbacks) if callbacks else {}
 
@@ -32,6 +33,7 @@ class Base(ProcessorInterface):
 class BaseOutput(Base):
     """Implements a base processor that supports output.
     realizes: R-PROCESSOR-BASE-OUTPUT-001"""
+
     HEADER = ""
     TRAILER = ""
 

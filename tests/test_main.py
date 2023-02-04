@@ -114,9 +114,7 @@ def test_01_main_execution():
         temp_file.write(content.encode())
         temp_file.close()
         mock_configurator = MockConfigurator(file_names=[temp_file.name])
-        m = genloppy.main.Main(configurator=mock_configurator,
-                               elog_tokenizer=mock_elog_parser,
-                               output=mock_output)
+        m = genloppy.main.Main(configurator=mock_configurator, elog_tokenizer=mock_elog_parser, output=mock_output)
         m.run()
     finally:
         if temp_file:
@@ -147,16 +145,13 @@ def test_01_main_execution():
     assert mock_output.kwargs == dict(format="special")
 
     mock_configurator = MockConfigurator()
-    m = genloppy.main.Main(configurator=mock_configurator,
-                           elog_tokenizer=mock_elog_parser,
-                           output=mock_output)
-    with patch('genloppy.main.get_default_emerge_log_file') as default_log_file_mock:
+    m = genloppy.main.Main(configurator=mock_configurator, elog_tokenizer=mock_elog_parser, output=mock_output)
+    with patch("genloppy.main.get_default_emerge_log_file") as default_log_file_mock:
         default_log_file_mock.side_effect = PortageConfigurationError
         with pytest.raises(RuntimeError) as exception:
             m.run()
 
-    assert exception.value.args[0] == "Could not determine path to default emerge log file. " \
-                                      "Please specify the path at the command line."
+    assert exception.value.args[0] == "Could not determine path to default emerge log file. " "Please specify the path at the command line."
 
 
 def test_02_main_function():
@@ -166,7 +161,7 @@ def test_02_main_function():
     tests: R-MAIN-001
     """
 
-    with patch('genloppy.main.Main') as mock:
+    with patch("genloppy.main.Main") as mock:
         # pass empty list to avoid usage of sys.argv
         genloppy.main.main([])
         assert len(mock.mock_calls) == 2
@@ -182,5 +177,7 @@ def test_03_main_function(capsys):
         genloppy.main.main([])
 
     captured = capsys.readouterr()
-    assert captured.err == 'Error: "At least one sub-command argument (one of \'-c\', \'-l\', \'-i\', \'-p\', \'-r\'' \
-                           ', \'-t\', \'-u\' or \'-v\') needed."\n'
+    assert (
+        captured.err == "Error: \"At least one sub-command argument (one of '-c', '-l', '-i', '-p', '-r'"
+        ", '-t', '-u' or '-v') needed.\"\n"
+    )

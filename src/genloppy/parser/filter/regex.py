@@ -31,8 +31,7 @@ class RegexFilter(EntryHandlerWrapper):
                 malformed_regexes.append(regular_expression)
 
         if malformed_regexes:
-            raise RuntimeError("Malformed regular expressions given: '{}'. Aborting!"
-                               .format(", ".join(malformed_regexes)))
+            raise RuntimeError("Malformed regular expressions given: '{}'. Aborting!".format(", ".join(malformed_regexes)))
 
         return regexes
 

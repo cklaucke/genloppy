@@ -36,8 +36,7 @@ def test_02_directly_delegated_calls():
     wrapper.register_listener(None, None)
     wrapper.listener()
 
-    assert m.method_calls == [call.register_listener(None, None),
-                              call.listener()]
+    assert m.method_calls == [call.register_listener(None, None), call.listener()]
 
 
 def test_03_entry_filter_accept():
@@ -50,7 +49,7 @@ def test_03_entry_filter_accept():
     """
     m = MagicMock()
 
-    with patch.object(EntryHandlerWrapper, 'test', return_value=True) as mock_test:
+    with patch.object(EntryHandlerWrapper, "test", return_value=True) as mock_test:
         wrapper = EntryHandlerWrapper()(m)
         wrapper.entry(None, None)
 
@@ -68,7 +67,7 @@ def test_04_entry_filter_reject():
     """
     m = MagicMock()
 
-    with patch.object(EntryHandlerWrapper, 'test', return_value=False) as mock_test:
+    with patch.object(EntryHandlerWrapper, "test", return_value=False) as mock_test:
         wrapper = EntryHandlerWrapper()(m)
         wrapper.entry(None, None)
 

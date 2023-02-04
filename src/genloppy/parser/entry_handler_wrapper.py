@@ -7,6 +7,7 @@ class EntryHandlerWrapper(EntryHandlerInterface):
 
     realizes: R-PARSER-ENTRY-HANDLER-WRAPPER-001
     """
+
     def __init__(self):
         self.entry_handler = None
 

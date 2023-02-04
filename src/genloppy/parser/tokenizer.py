@@ -62,9 +62,7 @@ class Tokenizer:
         if unknown_entry_types:
             raise TokenizerError("Unknown registered entry type")
 
-        entry_type_pattern = dict(
-            item for item in self._entry_type_pattern.items()
-            if item[0] in listened_entry_types)
+        entry_type_pattern = dict(item for item in self._entry_type_pattern.items() if item[0] in listened_entry_types)
 
         for line in stream:
             for entry_type, pattern in entry_type_pattern.items():

@@ -43,6 +43,4 @@ def test_05_processing():
     unmerge = Unmerge(output=m)
     info = dict(timestamp=1337, atom_base="cat/package", atom_version="3.2.1")
     unmerge.process(info)
-    assert m.method_calls == [call.unmerge_item(info["timestamp"],
-                                                info["atom_base"],
-                                                info["atom_version"])]
+    assert m.method_calls == [call.unmerge_item(info["timestamp"], info["atom_base"], info["atom_version"])]

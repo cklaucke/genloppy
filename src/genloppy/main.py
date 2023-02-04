@@ -60,8 +60,7 @@ class Main:
             try:
                 file_names = [get_default_emerge_log_file()]
             except PortageConfigurationError:
-                raise RuntimeError(
-                    "Could not determine path to default emerge log file. Please specify the path at the command line.")
+                raise RuntimeError("Could not determine path to default emerge log file. Please specify the path at the command line.")
         return file_names
 
     def _config_feature_check(self):
@@ -70,14 +69,14 @@ class Main:
         def config_compare(given_configuration, allowed_configuration):
             for key, value in given_configuration.items():
                 if key in allowed_configuration.keys() and value is not allowed_configuration[key]:
-                    raise NotImplementedError("Sorry, configuration '{}={}' is not implemented, yet. "
-                                              "Currently allowed values are '{}'."
-                                              .format(key, value, allowed_configuration[key]))  # pragma: no cover
+                    raise NotImplementedError(
+                        "Sorry, configuration '{}={}' is not implemented, yet. "
+                        "Currently allowed values are '{}'.".format(key, value, allowed_configuration[key])
+                    )  # pragma: no cover
 
         allowed_filter_configuration = dict(dates=None)
         allowed_processor_configuration = dict(query=False)
-        allowed_output_configuration = dict(utc=False,
-                                            color=False)
+        allowed_output_configuration = dict(utc=False, color=False)
 
         config_compare(self.configurator.filter_configuration, allowed_filter_configuration)
         config_compare(self.configurator.processor_configuration, allowed_processor_configuration)
@@ -106,9 +105,7 @@ def main(argv=None):
     if argv is None:  # pragma: no cover
         argv = sys.argv
     runtime = dict(
-        configurator=CommandLineConfigurator(argv[1:]),
-        elog_tokenizer=Tokenizer(EMERGE_LOG_ENTRY_TYPES, EntryHandler()),
-        output=Output()
+        configurator=CommandLineConfigurator(argv[1:]), elog_tokenizer=Tokenizer(EMERGE_LOG_ENTRY_TYPES, EntryHandler()), output=Output()
     )
     m = Main(**runtime)
     try:

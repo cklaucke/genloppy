@@ -11,14 +11,11 @@ RE_LOG_ENTRY = re.compile(LOG_ENTRY_PATTERN)
 
 
 def _open_log_file(filename):
-    return closing(_get_opener(filename)(filename, mode='rt'))
+    return closing(_get_opener(filename)(filename, mode="rt"))
 
 
 def _get_opener(filename):
-    file_types = [(open, UnicodeDecodeError),
-                  (gzip.open, OSError),
-                  (bz2.open, OSError),
-                  (lzma.open, lzma.LZMAError)]
+    file_types = [(open, UnicodeDecodeError), (gzip.open, OSError), (bz2.open, OSError), (lzma.open, lzma.LZMAError)]
     for opener, exception in file_types:
         try:
             with opener(filename) as f:
@@ -32,7 +29,7 @@ def _get_opener(filename):
 def _get_log_entry_timestamp(log_entry):
     m = RE_LOG_ENTRY.match(log_entry)
     if m:
-        return int(m.group('timestamp'))
+        return int(m.group("timestamp"))
     else:
         raise ValueError("Malformed log file.")
 
@@ -53,11 +50,11 @@ def _check_log_files(log_files):
 
     messages = []
     if not_found_log_files:
-        messages.append("The following log file(s) were not found: {}."
-                        .format(", ".join(map(lambda x: f"'{x}'", not_found_log_files))))
+        messages.append("The following log file(s) were not found: {}.".format(", ".join(map(lambda x: f"'{x}'", not_found_log_files))))
     if malformed_log_files:
-        messages.append("The format of the following log file(s) is unexpected: {}."
-                        .format(", ".join(map(lambda x: f"'{x}'", malformed_log_files))))
+        messages.append(
+            "The format of the following log file(s) is unexpected: {}.".format(", ".join(map(lambda x: f"'{x}'", malformed_log_files)))
+        )
     if messages:
         raise RuntimeError(" ".join(messages))
 
@@ -69,8 +66,7 @@ def _order_log_files(log_files):
     log_file_timestamp = list()
     for log_file in log_files:
         with _open_log_file(log_file) as f:
-            log_file_timestamp.append((log_file,
-                                       _get_log_entry_timestamp(f.readline())))
+            log_file_timestamp.append((log_file, _get_log_entry_timestamp(f.readline())))
     return list(map(lambda item: item[0], sorted(log_file_timestamp, key=lambda item: item[1])))
 
 

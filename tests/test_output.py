@@ -12,7 +12,7 @@ from genloppy.output import Output
 # since output of dates is locale-aware, only C/POSIX is tested here
 locale.setlocale(locale.LC_ALL, "C")
 # same with timezone
-environ['TZ'] = 'EST+05EDT,M4.1.0,M10.5.0'
+environ["TZ"] = "EST+05EDT,M4.1.0,M10.5.0"
 tzset()
 
 
@@ -85,7 +85,7 @@ def test_03_output_message():
     tests: R-OUTPUT-006"""
     out = Output()
     msg = "A message."
-    with patch('builtins.print') as mock:
+    with patch("builtins.print") as mock:
         out.message(msg)
 
     mock.assert_called_with(msg)
@@ -95,12 +95,12 @@ def test_04_output_merge_item():
     """Tests that a merge item is outputted.
     tests: R-OUTPUT-002
     tests: R-OUTPUT-007"""
-    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
+    with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
         ts = 0
         name = "cat/package"
         version = "1.33.7"
-        with patch('builtins.print') as mock:
+        with patch("builtins.print") as mock:
             out.merge_item(ts, name, version)
 
     mock_format_date.assert_called_once_with(ts)
@@ -111,12 +111,12 @@ def test_05_output_unmerge_item():
     """Tests that a unmerge item is outputted.
     tests: R-OUTPUT-002
     tests: R-OUTPUT-008"""
-    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
+    with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
         ts = 0
         name = "cat/package"
         version = "1.33.7"
-        with patch('builtins.print') as mock:
+        with patch("builtins.print") as mock:
             out.unmerge_item(ts, name, version)
 
     mock_format_date.assert_called_once_with(ts)
@@ -127,10 +127,10 @@ def test_06_output_sync_item():
     """Tests that a sync item is outputted.
     tests: R-OUTPUT-002
     tests: R-OUTPUT-009"""
-    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
+    with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
         ts = 0
-        with patch('builtins.print') as mock:
+        with patch("builtins.print") as mock:
             out.sync_item(ts)
 
     mock_format_date.assert_called_once_with(ts)
@@ -156,33 +156,32 @@ def test_08_output_merge_time_item():
     """Tests that a merge time item is outputted.
     tests: R-OUTPUT-002
     tests: R-OUTPUT-011"""
-    with patch.object(Output, 'format_date', return_value="") as mock_format_date:
+    with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
         ts = 0
         name = "cat/package"
         version = "1.33.7"
-        with patch('builtins.print') as mock:
+        with patch("builtins.print") as mock:
             out.merge_time_item(ts, name, version, 100)
 
     mock_format_date.assert_called_once_with(ts)
-    mock.assert_called_with(5 * " " + " >>> " + name + "-" + version + "\n"
-                            + 7 * " " + "merge time: 1 minute and 40 seconds.\n")
+    mock.assert_called_with(5 * " " + " >>> " + name + "-" + version + "\n" + 7 * " " + "merge time: 1 minute and 40 seconds.\n")
 
 
 def test_09_package_duration_header():
     out = Output()
 
-    with patch('builtins.print') as mock:
+    with patch("builtins.print") as mock:
         out.package_duration_header(0)
 
     mock.assert_called_with("package" + "       min /       avg /       max /  recently")
 
-    with patch('builtins.print') as mock:
+    with patch("builtins.print") as mock:
         out.package_duration_header(10)
 
     mock.assert_called_with("package" + 3 * " " + "       min /       avg /       max /  recently")
 
-    with patch('builtins.print') as mock:
+    with patch("builtins.print") as mock:
         out.package_duration_header(20)
 
     mock.assert_called_with("package" + 13 * " " + "       min /       avg /       max /  recently")
@@ -191,7 +190,7 @@ def test_09_package_duration_header():
 def test_10_package_duration():
     out = Output()
 
-    with patch('builtins.print') as mock:
+    with patch("builtins.print") as mock:
         out.package_duration(20, "cat/package", [1, 2, 3, 4])
 
     mock.assert_called_with("cat/package" + 9 * " " + "   0:00:01 /   0:00:02 /   0:00:03 /   0:00:04")

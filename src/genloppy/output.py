@@ -42,6 +42,7 @@ class Output(Interface):
     """Provides the output implementation
     realizes: R-OUTPUT-001
     realizes: R-OUTPUT-002"""
+
     DATE_FORMAT = "{0:%c}"
     MERGE_FORMAT = 5 * " " + "{} >>> {}-{}"
     UNMERGE_FORMAT = 5 * " " + "{} <<< {}-{}"
@@ -66,7 +67,7 @@ class Output(Interface):
 
     BRIEF_DURATION_FORMAT = "{hours:>3}:{minutes:02}:{seconds:02}"
     PKG_NAME_HEADING = "package"
-    PKG_DURATION_SEP = ' / '
+    PKG_DURATION_SEP = " / "
     PKG_DURATION_HEADER = "{:{max_package_name_len}} " + PKG_DURATION_SEP.join(4 * ["{:>9}"])
     PKG_DURATION = "{package_name:{max_package_name_len}} {fmt_durations}"
 
@@ -100,10 +101,12 @@ class Output(Interface):
         days, remainder = divmod(_duration, 60 * 60 * 24)
         hours, remainder = divmod(remainder, 60 * 60)
         minutes, seconds = divmod(remainder, 60)
-        duration_parts = [self.DAY_FORMAT[days].format(days=days),
-                          self.HOUR_FORMAT[hours].format(hours=hours),
-                          self.MINUTE_FORMAT[minutes].format(minutes=minutes),
-                          self.SECOND_FORMAT[seconds].format(seconds=seconds) if output_seconds else ""]
+        duration_parts = [
+            self.DAY_FORMAT[days].format(days=days),
+            self.HOUR_FORMAT[hours].format(hours=hours),
+            self.MINUTE_FORMAT[minutes].format(minutes=minutes),
+            self.SECOND_FORMAT[seconds].format(seconds=seconds) if output_seconds else "",
+        ]
         effective_parts = [x for x in duration_parts if x]
         if len(effective_parts) == 0:
             effective_parts = [self.SECOND_FORMAT[2].format(seconds=0)]
@@ -145,14 +148,21 @@ class Output(Interface):
         return max(len(self.PKG_NAME_HEADING), max_package_name_len, 1)
 
     def package_duration_header(self, max_package_name_len):
-        print(self.PKG_DURATION_HEADER.format(self.PKG_NAME_HEADING, "min", "avg", "max", "recently",
-                                              max_package_name_len=self._max_package_length(max_package_name_len)))
+        print(
+            self.PKG_DURATION_HEADER.format(
+                self.PKG_NAME_HEADING, "min", "avg", "max", "recently", max_package_name_len=self._max_package_length(max_package_name_len)
+            )
+        )
 
     def package_duration(self, max_package_name_len, package_name, package_durations):
         fmt_durations = (self.format_brief_duration(x) for x in package_durations)
-        print(self.PKG_DURATION.format(max_package_name_len=self._max_package_length(max_package_name_len),
-                                       package_name=package_name,
-                                       fmt_durations=self.PKG_DURATION_SEP.join(fmt_durations)))
+        print(
+            self.PKG_DURATION.format(
+                max_package_name_len=self._max_package_length(max_package_name_len),
+                package_name=package_name,
+                fmt_durations=self.PKG_DURATION_SEP.join(fmt_durations),
+            )
+        )
 
     def format_duration_estimation(self, durations):
         min_duration, avg_duration, max_duration, recent_duration = durations

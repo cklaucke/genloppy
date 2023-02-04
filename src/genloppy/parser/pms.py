@@ -45,6 +45,4 @@ EMERGE_LOG_ENTRY_TYPES = {
 }
 
 # realizes: R-PARSER-PMS-009
-EMERGE_PRETEND_ENTRY_TYPES = {
-    "pretended_package": re.compile(PRETEND_PATTERN)
-}
+EMERGE_PRETEND_ENTRY_TYPES = {"pretended_package": re.compile(PRETEND_PATTERN)}

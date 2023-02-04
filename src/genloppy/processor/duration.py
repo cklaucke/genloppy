@@ -15,9 +15,7 @@ class Duration(Base):
         realizes: R-PROCESSOR-DURATION-002
         realizes: R-PROCESSOR-DURATION-003
         """
-        super().__init__(callbacks={"merge_begin": self.merge_begin,
-                                    "merge_end": self.merge_end},
-                         **kwargs)
+        super().__init__(callbacks={"merge_begin": self.merge_begin, "merge_end": self.merge_end}, **kwargs)
         self.callback = callback
         self.current_merge = None
 

@@ -13,6 +13,7 @@ class Pretend(BaseOutput):
     """Pretend processor implementation
     realizes: R-PROCESSOR-PRETEND-001
     """
+
     HEADER = "These are the pretended packages: (this may take a while; wait...)\n"
     TRAILER = "Estimated update time: {}."
 
@@ -29,9 +30,7 @@ class Pretend(BaseOutput):
 
     def _parse_pretended_packages(self):
         tp = Tokenizer(EMERGE_PRETEND_ENTRY_TYPES, entry_handler=EntryHandler(), echo=True)
-        tp.entry_handler.register_listener(
-            lambda properties: self.pretended_packages.append(properties["atom_base"]),
-            "pretended_package")
+        tp.entry_handler.register_listener(lambda properties: self.pretended_packages.append(properties["atom_base"]), "pretended_package")
         tp.tokenize(self.pretend_stream)
 
     def pre_process(self):
@@ -58,11 +57,12 @@ class Pretend(BaseOutput):
         durations = None
         skipped_packages = [package for package in self.pretended_packages if not self.durations[package]]
         if len(skipped_packages) < len(self.pretended_packages):
-            durations = reduce(lambda x, y: [x[i] + y[i] for i in range(4)],
-                               (self._calculate_durations(package) for package in self.pretended_packages
-                                if package not in skipped_packages),
-                               # [min, avg, max, recent]
-                               [0, 0, 0, 0])
+            durations = reduce(
+                lambda x, y: [x[i] + y[i] for i in range(4)],
+                (self._calculate_durations(package) for package in self.pretended_packages if package not in skipped_packages),
+                # [min, avg, max, recent]
+                [0, 0, 0, 0],
+            )
         return skipped_packages, durations
 
     def _print_package_durations(self):
