@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/cklaucke/genloppy.svg?branch=devel)](https://travis-ci.org/cklaucke/genloppy)
-[![Code coverage](https://codecov.io/gh/cklaucke/genloppy/branch/devel/graph/badge.svg)](https://codecov.io/gh/cklaucke/genloppy)
+[![Python package](https://github.com/cklaucke/genloppy/actions/workflows/python-package.yml/badge.svg)](https://github.com/cklaucke/genloppy/actions/workflows/python-package.yml)
 
 # genloppy: README #
 
