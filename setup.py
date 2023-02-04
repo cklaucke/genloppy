@@ -1,10 +1,5 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-from __future__ import absolute_import
-from __future__ import print_function
-
-import io
 from glob import glob
 from os.path import basename
 from os.path import dirname
@@ -16,7 +11,7 @@ from setuptools import setup
 
 
 def read(*names, **kwargs):
-    with io.open(
+    with open(
             join(dirname(__file__), *names),
             encoding=kwargs.get('encoding', 'utf8')
     ) as fh:

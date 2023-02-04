@@ -26,7 +26,7 @@ def _get_portage_env_var(environment_variable, default=None):
     :return: the value of the environment variable
     """
     env_var = str(environment_variable)
-    cp = subprocess.run([PORTAGEQ, "envvar", env_var], stdout=subprocess.PIPE, universal_newlines=True)
+    cp = subprocess.run([PORTAGEQ, "envvar", env_var], stdout=subprocess.PIPE, text=True)
     if cp.returncode == 0:
         return cp.stdout.strip()
     elif cp.returncode == 1 and default is not None:

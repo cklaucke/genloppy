@@ -66,7 +66,7 @@ class Pretend(BaseOutput):
         return skipped_packages, durations
 
     def _print_package_durations(self):
-        max_package_name_len = max((len(x) for x in self.pretended_packages))
+        max_package_name_len = max(len(x) for x in self.pretended_packages)
         self.output.package_duration_header(max_package_name_len)
         for package in self.pretended_packages:
             package_durations = self._calculate_durations(package)
