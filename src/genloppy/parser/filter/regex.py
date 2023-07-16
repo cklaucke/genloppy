@@ -1,4 +1,5 @@
 import re
+from collections.abc import Iterable
 
 from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
 
@@ -10,19 +11,19 @@ class RegexFilter(EntryHandlerWrapper):
     realizes: R-PARSER-FILTER-REGEX-001
     """
 
-    def __init__(self, regular_expressions, **kwargs):
+    def __init__(self, regular_expressions: Iterable[str], **kwargs):
         """Initializes the filter with the given regular expressions.
 
         realizes: R-PARSER-FILTER-REGEX-002
         """
-        super().__init__()
-        self.case_sensitive = kwargs.get("case_sensitive", False)
+        super().__init__(regular_expressions, **kwargs)
+        self.case_sensitive: bool = kwargs.get("case_sensitive", False)
         self.regexes = self._store_regexes(set(regular_expressions), self.case_sensitive)
 
     @staticmethod
-    def _store_regexes(regular_expressions, case_sensitive=False):
+    def _store_regexes(regular_expressions: Iterable[str], case_sensitive: bool = False) -> list[re.Pattern[str]]:
         regexes = []
-        malformed_regexes = []
+        malformed_regexes: list[str] = []
 
         for regular_expression in regular_expressions:
             try:
@@ -35,7 +36,7 @@ class RegexFilter(EntryHandlerWrapper):
 
         return regexes
 
-    def test(self, properties):
+    def test(self, properties: dict[str, str]):
         """Tests for regular expression matches
 
         :param properties: tokens (key-value) of the entry event
@@ -45,6 +46,6 @@ class RegexFilter(EntryHandlerWrapper):
         """
         atom = properties.get("atom")
         if atom:
-            return any(map(lambda regex: regex.search(atom), self.regexes))
+            return any(regex.search(atom) for regex in self.regexes)
         else:
             return False

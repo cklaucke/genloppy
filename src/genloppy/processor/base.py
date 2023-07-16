@@ -12,7 +12,7 @@ class Base(ProcessorInterface):
 
     @property
     def callbacks(self):
-        """Returns a empty dict of modes and associated callbacks to be subscribed.
+        """Returns an empty dict of modes and associated callbacks to be subscribed.
 
         realizes: R-PROCESSOR-BASE-003"""
         return self._callbacks

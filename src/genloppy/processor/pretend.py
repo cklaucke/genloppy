@@ -1,12 +1,29 @@
+from __future__ import annotations
+
 import sys
 from collections import defaultdict
-from functools import reduce
+from dataclasses import dataclass
 
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_PRETEND_ENTRY_TYPES
 from genloppy.parser.tokenizer import Tokenizer
 from genloppy.processor.base import BaseOutput
 from genloppy.processor.duration import Duration
+
+
+@dataclass
+class Durations:
+    min: int
+    avg: int
+    max: int
+    recent: int
+
+    def __add__(self, other: Durations) -> Durations:
+        self.min += other.min
+        self.avg += other.avg
+        self.max += other.max
+        self.recent += other.recent
+        return self
 
 
 class Pretend(BaseOutput):
@@ -25,12 +42,14 @@ class Pretend(BaseOutput):
         duration = Duration(self.process)
         super().__init__(callbacks=duration.callbacks, **kwargs)
         self.pretend_stream = pretend_stream
-        self.durations = defaultdict(list)
-        self.pretended_packages = []
+        self.durations: dict[str, list[int]] = defaultdict(list)
+        self.pretended_packages: list[str] = []
 
     def _parse_pretended_packages(self):
         tp = Tokenizer(EMERGE_PRETEND_ENTRY_TYPES, entry_handler=EntryHandler(), echo=True)
-        tp.entry_handler.register_listener(lambda properties: self.pretended_packages.append(properties["atom_base"]), "pretended_package")
+        tp.entry_handler.register_listener(
+            lambda properties: self.pretended_packages.append(properties["atom_base"]), "pretended_package"
+        )
         tp.tokenize(self.pretend_stream)
 
     def pre_process(self):
@@ -40,7 +59,7 @@ class Pretend(BaseOutput):
         super().pre_process()
         self._parse_pretended_packages()
 
-    def process(self, properties, duration):
+    def process(self, properties, duration: int):
         """Stores the duration using the atom_base.
         :param properties: properties/token of the entry
         :param duration: the duration of the merge
@@ -48,22 +67,22 @@ class Pretend(BaseOutput):
         realizes: R-PROCESSOR-PRETEND-005"""
         self.durations[properties["atom_base"]].append(duration)
 
-    def _calculate_durations(self, package):
+    def _calculate_durations(self, package: str) -> Durations | None:
         durations = self.durations[package]
         if durations:
-            return [min(durations), sum(durations) / len(durations), max(durations), durations[-1]]
+            return Durations(min(durations), sum(durations) // len(durations), max(durations), durations[-1])
+        return None
 
-    def _estimate_duration(self):
-        durations = None
-        skipped_packages = [package for package in self.pretended_packages if not self.durations[package]]
-        if len(skipped_packages) < len(self.pretended_packages):
-            durations = reduce(
-                lambda x, y: [x[i] + y[i] for i in range(4)],
-                (self._calculate_durations(package) for package in self.pretended_packages if package not in skipped_packages),
-                # [min, avg, max, recent]
-                [0, 0, 0, 0],
-            )
-        return skipped_packages, durations
+    def _estimate_duration(self) -> tuple[list[str], Durations | None]:
+        skipped_packages: list[str] = []
+        durations = Durations(0, 0, 0, 0)
+        for package in self.pretended_packages:
+            if pd := self._calculate_durations(package):
+                durations += pd
+            else:
+                skipped_packages.append(package)
+
+        return skipped_packages, durations if len(skipped_packages) < len(self.pretended_packages) else None
 
     def _print_package_durations(self):
         max_package_name_len = max(len(x) for x in self.pretended_packages)

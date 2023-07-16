@@ -14,7 +14,7 @@ def test_01_wrapping():
     tests: R-PARSER-ENTRY-HANDLER-WRAPPER-002
     """
     m = MagicMock()
-    wrapper = EntryHandlerWrapper()
+    wrapper = EntryHandlerWrapper({})
     wrapped_m = wrapper(m)
 
     assert wrapper == wrapped_m
@@ -30,7 +30,7 @@ def test_02_directly_delegated_calls():
     tests: R-PARSER-ENTRY-HANDLER-WRAPPER-004
     """
     m = MagicMock()
-    wrapper = EntryHandlerWrapper()
+    wrapper = EntryHandlerWrapper({})
     wrapper(m)
 
     wrapper.register_listener(None, None)
@@ -50,7 +50,7 @@ def test_03_entry_filter_accept():
     m = MagicMock()
 
     with patch.object(EntryHandlerWrapper, "test", return_value=True) as mock_test:
-        wrapper = EntryHandlerWrapper()(m)
+        wrapper = EntryHandlerWrapper({})(m)
         wrapper.entry(None, None)
 
     assert m.method_calls == [call.entry(None, None)]
@@ -68,7 +68,7 @@ def test_04_entry_filter_reject():
     m = MagicMock()
 
     with patch.object(EntryHandlerWrapper, "test", return_value=False) as mock_test:
-        wrapper = EntryHandlerWrapper()(m)
+        wrapper = EntryHandlerWrapper({})(m)
         wrapper.entry(None, None)
 
     assert m.method_calls == []
@@ -81,7 +81,7 @@ def test_05_predicate_api():
     tests: R-PARSER-ENTRY-HANDLER-WRAPPER-001
     tests: R-PARSER-ENTRY-HANDLER-WRAPPER-005
     """
-    wrapper = EntryHandlerWrapper()
+    wrapper = EntryHandlerWrapper({})
     assert hasattr(wrapper, "test")
 
     with pytest.raises(NotImplementedError):
