@@ -1,8 +1,15 @@
 from collections import defaultdict
 from enum import Enum
+from enum import StrEnum
+from enum import auto
 
 from genloppy.processor.base import BaseOutput
 from genloppy.processor.duration import Duration
+
+
+class Modes(StrEnum):
+    PACKAGE = auto()
+    SEARCH = auto()
 
 
 class Time(BaseOutput):
@@ -18,10 +25,10 @@ class Time(BaseOutput):
         realizes: R-PROCESSOR-TIME-004
         """
         if active_filter and "search_reg_exps" in active_filter:
-            self.mode = self.MODES.search
+            self.mode = Modes.SEARCH
             d = Duration(self.process_search)
         else:
-            self.mode = self.MODES.package
+            self.mode = Modes.PACKAGE
             d = Duration(self.process_package)
         super().__init__(callbacks=d.callbacks, **kwargs)
         self.durations = defaultdict(list)
@@ -30,7 +37,7 @@ class Time(BaseOutput):
         """Does pre-processing before parsing has begun.
         realizes: R-PROCESSOR-TIME-003
         """
-        if self.mode is self.MODES.search:
+        if self.mode == Modes.SEARCH:
             self.output.message(" * matches found:\n")
 
     def process_package(self, properties, duration):
@@ -49,7 +56,7 @@ class Time(BaseOutput):
         """Does post-processing after parsing has finished.
         realizes: R-PROCESSOR-TIME-007
         """
-        if self.mode is self.MODES.package:
+        if self.mode == Modes.PACKAGE:
             atom_bases_merges = ((atom_base, self.durations[atom_base]) for atom_base in sorted(self.durations))
             for atom_base, merges in atom_bases_merges:
                 self.output.message(f" * {atom_base}:\n")

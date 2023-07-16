@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
+import dataclasses
 import signal
 import sys
+from dataclasses import dataclass
 from functools import reduce
 
 from genloppy import processor
 from genloppy.configurator import CommandLine as CommandLineConfigurator
+from genloppy.configurator import Configuration
 from genloppy.log_files import LogFiles
+from genloppy.output import Interface as OutputInterface
 from genloppy.output import Output
-from genloppy.parser import filter
+from genloppy.parser import filter as parser_filter
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
 from genloppy.parser.tokenizer import Tokenizer
 from genloppy.portage_configuration import PortageConfigurationError
 from genloppy.portage_configuration import get_default_emerge_log_file
+
+
+@dataclass(frozen=True)
+class RuntimeConfiguration:
+    configuration: Configuration
+    elog_tokenizer: Tokenizer
+    output: OutputInterface
 
 
 class Main:
@@ -22,14 +33,14 @@ class Main:
     realizes: R-MAIN-001
     """
 
-    def __init__(self, configurator, elog_tokenizer, output):
-        self.configurator = configurator
-        self.elog_tokenizer = elog_tokenizer
-        self.output = output
-        self.processor = None
+    def __init__(self, runtime_configuration: RuntimeConfiguration):
+        self.configuration = runtime_configuration.configuration
+        self.elog_tokenizer = runtime_configuration.elog_tokenizer
+        self.output = runtime_configuration.output
+        self.processor: processor.Interface | None = None
 
     def _create_processor(self):
-        processor_configuration = dict(self.configurator.processor_configuration)
+        processor_configuration = dataclasses.asdict(self.configuration.processor)
         processor_name = processor_configuration.pop("name")
         self.processor = processor.create(processor_name, output=self.output, **processor_configuration)
 
@@ -37,50 +48,50 @@ class Main:
         for entry_type, callback in self.processor.callbacks.items():
             entry_handler.register_listener(callback, entry_type)
 
-        extra_config = self.configurator.filter_extra_configuration
-        filters = (filter.create(k, v, **extra_config) for k, v in self.configurator.filter_configuration.items() if v)
-        entry_handler = reduce(lambda entry_handler, filter: filter(entry_handler), filters, entry_handler)
+        extra_config = dataclasses.asdict(self.configuration.filter_extra)
+        filter_config = dataclasses.asdict(self.configuration.filter)
+        filters = (parser_filter.create(k, v, **extra_config) for k, v in filter_config.items() if v)
+        entry_handler = reduce(lambda _entry_handler, _filter: _filter(_entry_handler), filters, entry_handler)
         return entry_handler
 
     def _setup_tokenizer(self):
-        parser_configuration = dict(self.configurator.parser_configuration)
+        parser_configuration = dataclasses.asdict(self.configuration.parser)
         parser_configuration.pop("file_names")
         self.elog_tokenizer.configure(**parser_configuration)
         self.elog_tokenizer.entry_handler = self._setup_entry_handler(self.elog_tokenizer.entry_handler)
 
     def _configure_output(self):
-        self.output.configure(**self.configurator.output_configuration)
+        self.output.configure(**dataclasses.asdict(self.configuration.output))
 
     def _get_log_files(self):
         """Retrieves the log file names or tries to get the default emerge log file name if no log files were given.
 
         realizes: R-LOG-FILES-002"""
-        file_names = self.configurator.parser_configuration.get("file_names")
+        file_names = self.configuration.parser.file_names
         if not file_names:
             try:
                 file_names = [get_default_emerge_log_file()]
             except PortageConfigurationError:
-                raise RuntimeError("Could not determine path to default emerge log file. Please specify the path at the command line.")
+                raise RuntimeError(
+                    "Could not determine path to default emerge log file. Please specify the path at the command line."
+                )
         return file_names
 
     def _config_feature_check(self):
         """Checks for configuration feature availability."""
 
-        def config_compare(given_configuration, allowed_configuration):
-            for key, value in given_configuration.items():
-                if key in allowed_configuration.keys() and value is not allowed_configuration[key]:
-                    raise NotImplementedError(
-                        "Sorry, configuration '{}={}' is not implemented, yet. "
-                        "Currently allowed values are '{}'.".format(key, value, allowed_configuration[key])
-                    )  # pragma: no cover
+        messages = []
+        if self.configuration.filter.dates is not None:
+            messages.append("limitation of log entries by date")
+        if self.configuration.processor.query:
+            messages.append("querying of gentoo.linuxhowtos.org database")
+        if self.configuration.output.utc:
+            messages.append("setting the display time format to GMT/UTC")
+        if not self.configuration.output.color:
+            messages.append("disabling the colored output")
 
-        allowed_filter_configuration = dict(dates=None)
-        allowed_processor_configuration = dict(query=False)
-        allowed_output_configuration = dict(utc=False, color=False)
-
-        config_compare(self.configurator.filter_configuration, allowed_filter_configuration)
-        config_compare(self.configurator.processor_configuration, allowed_processor_configuration)
-        config_compare(self.configurator.output_configuration, allowed_output_configuration)
+        if messages:
+            raise NotImplementedError("Sorry, the following features are not implemented yet: " "\n".join(messages))
 
     def run(self):
         """
@@ -89,7 +100,6 @@ class Main:
 
         realizes: R-MAIN-002
         """
-        self.configurator.parse_arguments()
         self._config_feature_check()
         self._create_processor()
         self._setup_tokenizer()
@@ -104,15 +114,19 @@ class Main:
 def main(argv=None):
     if argv is None:  # pragma: no cover
         argv = sys.argv
-    runtime = dict(
-        configurator=CommandLineConfigurator(argv[1:]), elog_tokenizer=Tokenizer(EMERGE_LOG_ENTRY_TYPES, EntryHandler()), output=Output()
-    )
-    m = Main(**runtime)
+
+    configurator = CommandLineConfigurator(argv[1:])
     try:
+        runtime = RuntimeConfiguration(
+            configuration=configurator.parse_arguments(),
+            elog_tokenizer=Tokenizer(EMERGE_LOG_ENTRY_TYPES, EntryHandler()),
+            output=Output(),
+        )
+        m = Main(runtime)
         m.run()
     except BaseException as e:
         print(f"Error: {e}", file=sys.stderr)
-        runtime["configurator"].print_help()
+        configurator.print_help()
         sys.exit()
 
 

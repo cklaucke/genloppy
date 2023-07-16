@@ -8,6 +8,7 @@ import pytest
 
 from genloppy.output import Interface
 from genloppy.output import Output
+from genloppy.processor.pretend import Durations
 
 # since output of dates is locale-aware, only C/POSIX is tested here
 locale.setlocale(locale.LC_ALL, "C")
@@ -74,9 +75,9 @@ def test_02b_output_date_formatting():
     assert out.format_date(0) == "Wed Dec 31 19:00:00 1969"
     out.configure(utc=True)
     assert out.format_date(0) == "Thu Jan  1 00:00:00 1970"
-    assert out.format_date("1342421337") == "Mon Jul 16 06:48:57 2012"
+    assert out.format_date(1342421337) == "Mon Jul 16 06:48:57 2012"
     out.configure(utc=False)
-    assert out.format_date("1342421337") == "Mon Jul 16 02:48:57 2012"
+    assert out.format_date(1342421337) == "Mon Jul 16 02:48:57 2012"
 
 
 def test_03_output_message():
@@ -191,7 +192,7 @@ def test_10_package_duration():
     out = Output()
 
     with patch("builtins.print") as mock:
-        out.package_duration(20, "cat/package", [1, 2, 3, 4])
+        out.package_duration(20, "cat/package", Durations(1, 2, 3, 4))
 
     mock.assert_called_with("cat/package" + 9 * " " + "   0:00:01 /   0:00:02 /   0:00:03 /   0:00:04")
 
@@ -199,4 +200,4 @@ def test_10_package_duration():
 def test_11_format_duration_estimation():
     out = Output()
 
-    assert out.format_duration_estimation([1, 2, 3, 4]) == "2 seconds (-1 second/+1 second), recently: 4 seconds"
+    assert out.format_duration_estimation(Durations(1, 2, 3, 4)) == "2 seconds (-1 second/+1 second), recently: 4 seconds"

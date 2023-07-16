@@ -1,4 +1,5 @@
 import sys
+from typing import TextIO
 
 
 class TokenizerError(BaseException):
@@ -46,7 +47,7 @@ class Tokenizer:
         """
         self._entry_handler = entry_handler
 
-    def tokenize(self, stream):
+    def tokenize(self, stream: TextIO):
         """Tokenize a given stream using the configured patterns.
 
         :param stream: a file-like object o tokenize
