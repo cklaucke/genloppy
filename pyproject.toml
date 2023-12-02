@@ -1,3 +1,20 @@
 [tool.black]
 line-length = 140
 target-version = ['py311']
+
+[tool.ruff]
+line-length = 140
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "C", # flake8-comprehensions
+    "B", # flake8-bugbear
+    "UP", # pyupgrade
+]
+
+[tool.ruff.isort]
+known-first-party = ["genloppy"]
