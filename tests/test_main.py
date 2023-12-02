@@ -160,13 +160,12 @@ def test_02_main_function():
     """
 
     # mocks configurator to avoid validation errors
-    with patch("genloppy.main.CommandLineConfigurator"):
-        with patch("genloppy.main.Main") as mock:
-            # pass empty list to avoid usage of sys.argv
-            genloppy.main.main([])
-            assert len(mock.mock_calls) == 2
-            assert mock.mock_calls[0][0] == ""
-            assert mock.mock_calls[1] == call().run()
+    with patch("genloppy.main.CommandLineConfigurator"), patch("genloppy.main.Main") as mock:
+        # pass empty list to avoid usage of sys.argv
+        genloppy.main.main([])
+        assert len(mock.mock_calls) == 2
+        assert mock.mock_calls[0][0] == ""
+        assert mock.mock_calls[1] == call().run()
 
 
 def test_03_main_function(capsys):

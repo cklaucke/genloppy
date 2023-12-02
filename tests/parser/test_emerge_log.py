@@ -116,9 +116,8 @@ def test_01b_missing_handler_raises():
     """
     elp = Tokenizer({}, None)
 
-    with open(join(dirname(__file__), "good_emerge.log")) as fh:
-        with pytest.raises(TokenizerError):
-            elp.tokenize(fh)
+    with open(join(dirname(__file__), "good_emerge.log")) as fh, pytest.raises(TokenizerError):
+        elp.tokenize(fh)
 
 
 def test_02_optional_configuration():

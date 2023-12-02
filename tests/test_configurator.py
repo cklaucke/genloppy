@@ -68,8 +68,8 @@ def test_02b_sub_command_arguments_with_optional_name_accepted():
     for sub_command in sub_commands_short:
         CommandLine([sub_command, "-s", "pkg"]).parse_arguments()
 
-    CommandLine(sub_commands_long + ["pkg"]).parse_arguments()
-    CommandLine(sub_commands_short + ["-s", "pkg"]).parse_arguments()
+    CommandLine([*sub_commands_long, "pkg"]).parse_arguments()
+    CommandLine([*sub_commands_short, "-s", "pkg"]).parse_arguments()
 
 
 def test_02c_sub_command_arguments_with_required_name_accepted():

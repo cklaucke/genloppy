@@ -25,7 +25,6 @@ class Tokenizer:
 
         realizes: R-PARSER-TOKENIZER-005
         """
-        pass
 
     @property
     def entry_handler(self):

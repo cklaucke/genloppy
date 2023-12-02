@@ -40,6 +40,10 @@ class Interface:
         raise NotImplementedError
 
 
+def _construct_dict_with_default(default_value: str, special_cases: dict[int, str]) -> dict[int, str]:
+    return defaultdict(lambda: default_value, special_cases)
+
+
 class Output(Interface):
     """Provides the output implementation
     realizes: R-OUTPUT-001
@@ -51,21 +55,10 @@ class Output(Interface):
     SYNC_FORMAT = 5 * " " + "rsync'ed at >>> {}"
     MERGE_TIME_FORMAT = MERGE_FORMAT + "\n" + 7 * " " + "merge time: {}.\n"
 
-    DAY_FORMAT: dict[int, str] = defaultdict(lambda: "{days} days")
-    DAY_FORMAT[0] = ""
-    DAY_FORMAT[1] = "{days} day"
-
-    HOUR_FORMAT: dict[int, str] = defaultdict(lambda: "{hours} hours")
-    HOUR_FORMAT[0] = ""
-    HOUR_FORMAT[1] = "{hours} hour"
-
-    MINUTE_FORMAT: dict[int, str] = defaultdict(lambda: "{minutes} minutes")
-    MINUTE_FORMAT[0] = ""
-    MINUTE_FORMAT[1] = "{minutes} minute"
-
-    SECOND_FORMAT: dict[int, str] = defaultdict(lambda: "{seconds} seconds")
-    SECOND_FORMAT[0] = ""
-    SECOND_FORMAT[1] = "{seconds} second"
+    DAY_FORMAT = _construct_dict_with_default("{days} days", {0: "", 1: "{days} day"})
+    HOUR_FORMAT = _construct_dict_with_default("{hours} hours", {0: "", 1: "{hours} hour"})
+    MINUTE_FORMAT = _construct_dict_with_default("{minutes} minutes", {0: "", 1: "{minutes} minute"})
+    SECOND_FORMAT: dict[int, str] = _construct_dict_with_default("{seconds} seconds", {0: "", 1: "{seconds} second"})
 
     BRIEF_DURATION_FORMAT = "{hours:>3}:{minutes:02}:{seconds:02}"
     PKG_NAME_HEADING = "package"
@@ -98,7 +91,7 @@ class Output(Interface):
         :param duration: a duration in seconds
         :param condensed: if set to True omits seconds for durations >= 60 seconds
         :return: human-readable formatted duration"""
-        output_seconds = not condensed or (True if duration < 60 else False)
+        output_seconds = not condensed or (duration < 60)
         days, remainder = divmod(duration, 60 * 60 * 24)
         hours, remainder = divmod(remainder, 60 * 60)
         minutes, seconds = divmod(remainder, 60)

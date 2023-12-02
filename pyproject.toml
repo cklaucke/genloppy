@@ -4,16 +4,25 @@ target-version = ['py311']
 
 [tool.ruff]
 line-length = 140
+src = ["src"]
 
 [tool.ruff.lint]
 select = [
+    "B", # flake8-bugbear
+    "C", # flake8-comprehensions
     "E", # pycodestyle errors
-    "W", # pycodestyle warnings
+    "ERA", # flake8-eradicate/eradicate
     "F", # pyflakes
     "I", # isort
-    "C", # flake8-comprehensions
-    "B", # flake8-bugbear
+    "N", # pep8-naming
+    "PIE", # flake8-pie
+    "PGH", # pygrep
+    "RUF", # ruff checks
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
     "UP", # pyupgrade
+    "W", # pycodestyle warnings
 ]
 
 [tool.ruff.isort]
