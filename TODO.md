@@ -10,7 +10,9 @@
   required
 * rename EntryHandler to LogEntryHandler (which make its task more clear and avoids confusion)
 * use path-like object where handling paths
-* configurator: configuration sub-types (parser, ...) -> to dataclass
+* pass configurations as dataclass instead of dict (see main.py's dataclasses.asdict)
+* use `ruff` and enable most of the plugins
+* use `black` or `ruff` for formatting
 
 ## 2018-01-04 - 2019-03-19
 
