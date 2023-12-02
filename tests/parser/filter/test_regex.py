@@ -9,9 +9,7 @@ def test_01_valid_regular_expressions():
     tests: R-PARSER-FILTER-REGEX-001
     tests: R-PARSER-FILTER-REGEX-002
     """
-    regexes = ["foo",
-               "foo.*",
-               "(foo|bar)"]
+    regexes = ["foo", "foo.*", "(foo|bar)"]
     RegexFilter(regexes)
 
 
@@ -37,10 +35,7 @@ def test_03_predicate_case_insensitive():
     tests: R-PARSER-FILTER-REGEX-001
     tests: R-PARSER-FILTER-REGEX-003
     """
-    regexes = ["FIRE.*",
-               "libc",
-               "gcc-[6-9]",
-               "gtk\\+"]
+    regexes = ["FIRE.*", "libc", "gcc-[6-9]", "gtk\\+"]
     r = RegexFilter(regexes)
 
     assert not r.test(dict())
@@ -56,10 +51,7 @@ def test_04_predicate_case_sensitive():
     tests: R-PARSER-FILTER-REGEX-001
     tests: R-PARSER-FILTER-REGEX-003
     """
-    regexes = ["FIRE.*",
-               "libc",
-               "gcc-[6-9]",
-               "gtk\\+"]
+    regexes = ["FIRE.*", "libc", "gcc-[6-9]", "gtk\\+"]
     r = RegexFilter(regexes, case_sensitive=True)
 
     assert not r.test(dict())

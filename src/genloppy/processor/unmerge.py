@@ -6,6 +6,7 @@ class Unmerge(BaseOutput):
     realizes: R-PROCESSOR-UNMERGE-001
     realizes: R-PROCESSOR-UNMERGE-002
     """
+
     HEADER = " * packages unmerged:\n"
 
     def __init__(self, **kwargs):

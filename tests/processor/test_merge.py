@@ -43,6 +43,4 @@ def test_05_processing():
     merge = Merge(output=m)
     info = dict(timestamp=1337, atom_base="cat/package", atom_version="3.2.1")
     merge.process(info)
-    assert m.method_calls == [call.merge_item(info["timestamp"],
-                                              info["atom_base"],
-                                              info["atom_version"])]
+    assert m.method_calls == [call.merge_item(info["timestamp"], info["atom_base"], info["atom_version"])]

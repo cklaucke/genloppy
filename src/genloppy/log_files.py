@@ -1,47 +1,63 @@
+from __future__ import annotations
+
 import bz2
 import gzip
 import lzma
 import re
-from contextlib import closing
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
+from typing import Iterable
+from typing import Iterator
+from typing import TextIO
 
 from genloppy.parser.pms import LOG_ENTRY_PATTERN
 
 RE_LOG_ENTRY = re.compile(LOG_ENTRY_PATTERN)
 
 
-def _open_log_file(filename):
-    return closing(_get_opener(filename)(filename, mode='rt'))
+@dataclass
+class Opener:
+    callback: Callable[..., TextIO]
+    exception: type[Exception]
 
 
-def _get_opener(filename):
-    file_types = [(open, UnicodeDecodeError),
-                  (gzip.open, OSError),
-                  (bz2.open, OSError),
-                  (lzma.open, lzma.LZMAError)]
-    for opener, exception in file_types:
+OPENER = [
+    Opener(open, UnicodeDecodeError),
+    Opener(gzip.open, OSError),
+    Opener(bz2.open, OSError),
+    Opener(lzma.open, lzma.LZMAError),
+]
+
+
+def _get_opener(filename) -> Callable:
+    for opener in OPENER:
         try:
-            with opener(filename) as f:
+            with opener.callback(filename) as f:
                 f.readline()
-            return opener
-        except exception:
+            return opener.callback
+        except opener.exception:
             continue
     raise RuntimeError("Unknown file format.")
 
 
-def _get_log_entry_timestamp(log_entry):
+def _open_log_file(filename: str) -> TextIO:
+    return _get_opener(filename)(filename, mode="rt")
+
+
+def _get_log_entry_timestamp(log_entry: str) -> int:
     m = RE_LOG_ENTRY.match(log_entry)
     if m:
-        return int(m.group('timestamp'))
+        return int(m.group("timestamp"))
     else:
         raise ValueError("Malformed log file.")
 
 
-def _check_log_files(log_files):
-    not_found_log_files = list(filename for filename in log_files if not Path(filename).is_file())
-    malformed_log_files = list()
+def _check_log_files(log_files: Iterable[str]):
+    not_found_log_files = [filename for filename in log_files if not Path(filename).is_file()]
+    malformed_log_files: list[str] = []
 
-    def _well_formed_log_file(filename):
+    def _well_formed_log_file(filename: str):
         try:
             with _open_log_file(filename) as f:
                 _get_log_entry_timestamp(f.readline())
@@ -53,25 +69,35 @@ def _check_log_files(log_files):
 
     messages = []
     if not_found_log_files:
-        messages.append("The following log file(s) were not found: {}."
-                        .format(", ".join(map(lambda x: f"'{x}'", not_found_log_files))))
+        _not_found_log_files_as_str = ", ".join(map(lambda x: f"'{x}'", not_found_log_files))
+        messages.append(f"The following log file(s) were not found: {_not_found_log_files_as_str}.")
     if malformed_log_files:
-        messages.append("The format of the following log file(s) is unexpected: {}."
-                        .format(", ".join(map(lambda x: f"'{x}'", malformed_log_files))))
+        _malformed_log_files_as_str = ", ".join(map(lambda x: f"'{x}'", malformed_log_files))
+        messages.append(f"The format of the following log file(s) is unexpected: {_malformed_log_files_as_str}.")
     if messages:
         raise RuntimeError(" ".join(messages))
 
 
-def _order_log_files(log_files):
+@dataclass
+class _LogFileTimeStamp:
+    filename: str
+    timestamp: int
+
+    def __lt__(self, other: _LogFileTimeStamp) -> bool:
+        return self.timestamp < other.timestamp
+
+
+def _order_log_files(log_files: list[str]) -> list[str]:
     if len(log_files) == 1:
         return log_files
 
-    log_file_timestamp = list()
+    log_file_timestamps: list[_LogFileTimeStamp] = []
     for log_file in log_files:
         with _open_log_file(log_file) as f:
-            log_file_timestamp.append((log_file,
-                                       _get_log_entry_timestamp(f.readline())))
-    return list(map(lambda item: item[0], sorted(log_file_timestamp, key=lambda item: item[1])))
+            timestamp = _get_log_entry_timestamp(f.readline())
+            log_file_timestamps.append(_LogFileTimeStamp(log_file, timestamp))
+
+    return [log_file.filename for log_file in sorted(log_file_timestamps)]
 
 
 class LogFiles:
@@ -79,7 +105,7 @@ class LogFiles:
     realizes: R-LOG-FILES-001
     """
 
-    def __init__(self, file_names):
+    def __init__(self, file_names: Iterable[str]) -> None:
         """Validates and orders the provided log file names.
         realizes: R-LOG-FILES-003
         realizes: R-LOG-FILES-004
@@ -88,7 +114,7 @@ class LogFiles:
         _check_log_files(_file_names)
         self.file_names = _order_log_files(_file_names)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[TextIO]:
         """Returns the file handles of the log files one by one in chronological order (ascending).
         :return: handle of the log file in the line
         realizes: R-LOG-FILES-004

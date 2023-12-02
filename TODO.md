@@ -1,5 +1,21 @@
 # genloppy: TODO #
 
+## 2023-07-10
+
+* try to get rid of EntryHandlerWrapper (EntryHandler should be sufficient; Interface not really needed): EntryHandler
+  should be initialized w/ a Predicate-Type (function/call that returns bool) that returns True/False if a package
+  matches
+* `properties` shall become a dataclass(es) (maybe w/ Protocol-classes that define which fields are required for an 
+  operation); as far as I remember: not all fields are always set in `properties` and not all fields are always
+  required
+* rename EntryHandler to LogEntryHandler (which make its task more clear and avoids confusion)
+* use path-like object where handling paths
+* pass configurations as dataclass instead of dict (see main.py's dataclasses.asdict)
+* use `ruff` and enable most of the plugins
+* use `black` or `ruff` for formatting
+
+## 2018-01-04 - 2019-03-19
+
 *   create requirements and trace them
 *   nosetests against original *genlop* output (problem: some output of *genlop* is buggy)
 *   name and prioritize features

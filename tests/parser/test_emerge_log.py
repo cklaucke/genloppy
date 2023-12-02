@@ -30,10 +30,7 @@ class MockedEntryHandler:
 
     @property
     def listener(self):
-        return dict(merge_begin=None,
-                    merge_end=None,
-                    sync=None,
-                    unmerge=None)
+        return dict(merge_begin=None, merge_end=None, sync=None, unmerge=None)
 
 
 def test_01a_good_elog_parses_successful():

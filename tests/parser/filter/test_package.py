@@ -9,10 +9,7 @@ def test_01_well_formed_packages():
     tests: R-PARSER-FILTER-PACKAGE-001
     tests: R-PARSER-FILTER-PACKAGE-002
     """
-    packages = ["www-client/firefox",
-                "glibc",
-                "x11-libs/gtk+",
-                "GTK+"]
+    packages = ["www-client/firefox", "glibc", "x11-libs/gtk+", "GTK+"]
     PackageFilter(packages)
 
 
@@ -22,11 +19,7 @@ def test_02_malformed_packages():
     tests: R-PARSER-FILTER-PACKAGE-001
     tests: R-PARSER-FILTER-PACKAGE-002
     """
-    packages = ["www-client//firefox",
-                "www-client/firefox-55",
-                "gcc-8",
-                "glibc-1.0",
-                "-lib"]
+    packages = ["www-client//firefox", "www-client/firefox-55", "gcc-8", "glibc-1.0", "-lib"]
     with pytest.raises(RuntimeError) as cm:
         PackageFilter(packages)
 
@@ -41,10 +34,7 @@ def test_03_predicate_case_insensitive():
     tests: R-PARSER-FILTER-PACKAGE-001
     tests: R-PARSER-FILTER-PACKAGE-003
     """
-    packages = ["www-client/firefox",
-                "glibc",
-                "X11-LIBS/gtk+",
-                "Gtk+"]
+    packages = ["www-client/firefox", "glibc", "X11-LIBS/gtk+", "Gtk+"]
     p = PackageFilter(packages)
 
     assert not p.test(dict())
@@ -60,10 +50,7 @@ def test_04_predicate_case_sensitive():
     tests: R-PARSER-FILTER-PACKAGE-001
     tests: R-PARSER-FILTER-PACKAGE-003
     """
-    packages = ["www-client/firefox",
-                "glibc",
-                "X11-LIBS/gtk+",
-                "Gtk+"]
+    packages = ["www-client/firefox", "glibc", "X11-LIBS/gtk+", "Gtk+"]
     p = PackageFilter(packages, case_sensitive=True)
 
     assert not p.test(dict())

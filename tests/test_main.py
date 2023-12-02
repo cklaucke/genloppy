@@ -6,9 +6,25 @@ from unittest.mock import patch
 import pytest
 
 import genloppy.main
+from genloppy.configurator import Configuration
+from genloppy.configurator import FilterConfiguration
+from genloppy.configurator import FilterExtraConfiguration
+from genloppy.configurator import OutputConfiguration
+from genloppy.configurator import ParserConfiguration
+from genloppy.configurator import ProcessorConfiguration
 from genloppy.output import Interface
 from genloppy.portage_configuration import PortageConfigurationError
 from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
+
+
+def _create_configuration(file_names: list[str] | None = None):
+    return Configuration(
+        parser=ParserConfiguration(file_names=file_names),
+        filter=FilterConfiguration(package_names=["cat/package"], dates=None, search_reg_exps=None),
+        filter_extra=FilterExtraConfiguration(),
+        processor=ProcessorConfiguration(name="mock", active_filter=set()),
+        output=OutputConfiguration(color=True),
+    )
 
 
 def test_01_main_execution():
@@ -17,38 +33,6 @@ def test_01_main_execution():
 
     tests: R-MAIN-002
     """
-
-    class MockConfigurator:
-        def __init__(self, file_names=None):
-            self._parser_configuration = dict(file_names=file_names)
-            self._filter_configuration = dict(package_names=["cat/package"])
-            self._filter_extra_configuration = dict(extra=True)
-            self._processor_configuration = dict(name="mock", feature="42")
-            self._output_configuration = dict(format="special")
-            self.parse_arguments_calls = 0
-
-        def parse_arguments(self):
-            self.parse_arguments_calls += 1
-
-        @property
-        def parser_configuration(self):
-            return self._parser_configuration
-
-        @property
-        def filter_configuration(self):
-            return self._filter_configuration
-
-        @property
-        def filter_extra_configuration(self):
-            return self._filter_extra_configuration
-
-        @property
-        def processor_configuration(self):
-            return self._processor_configuration
-
-        @property
-        def output_configuration(self):
-            return self._output_configuration
 
     class MockProcessor(ProcessorBaseOutput):
         def __init__(self, **kwargs):
@@ -113,21 +97,21 @@ def test_01_main_execution():
         temp_file = NamedTemporaryFile(delete=False)
         temp_file.write(content.encode())
         temp_file.close()
-        mock_configurator = MockConfigurator(file_names=[temp_file.name])
-        m = genloppy.main.Main(configurator=mock_configurator,
-                               elog_tokenizer=mock_elog_parser,
-                               output=mock_output)
+
+        rc = genloppy.main.RuntimeConfiguration(
+            configuration=_create_configuration([temp_file.name]),
+            elog_tokenizer=mock_elog_parser,
+            output=mock_output,
+        )
+        m = genloppy.main.Main(rc)
         m.run()
     finally:
         if temp_file:
             unlink(temp_file.name)
 
-    # test that parse_arguments() is exactly called once
-    assert mock_configurator.parse_arguments_calls == 1
-
     mock_processor = m.processor
     # test that processor_configuration is forwarded correctly
-    assert mock_processor.kwargs == dict(output=mock_output, feature="42")
+    assert mock_processor.kwargs == dict(output=mock_output, query=False, active_filter=set())
     # test that pre_process() and post_process() were called once in that order
     assert mock_processor.call_order == ["pre_process", "post_process"]
 
@@ -144,19 +128,23 @@ def test_01_main_execution():
     assert mock_entry_handler.registrations[0][0] == mock_processor.process
 
     # test that output_configuration is forwarded correctly
-    assert mock_output.kwargs == dict(format="special")
+    assert mock_output.kwargs == dict(color=True, utc=False)
 
-    mock_configurator = MockConfigurator()
-    m = genloppy.main.Main(configurator=mock_configurator,
-                           elog_tokenizer=mock_elog_parser,
-                           output=mock_output)
-    with patch('genloppy.main.get_default_emerge_log_file') as default_log_file_mock:
+    rc = genloppy.main.RuntimeConfiguration(
+        configuration=_create_configuration(),
+        elog_tokenizer=mock_elog_parser,
+        output=mock_output
+    )
+    m = genloppy.main.Main(rc)
+    with patch("genloppy.main.get_default_emerge_log_file") as default_log_file_mock:
         default_log_file_mock.side_effect = PortageConfigurationError
         with pytest.raises(RuntimeError) as exception:
             m.run()
 
-    assert exception.value.args[0] == "Could not determine path to default emerge log file. " \
-                                      "Please specify the path at the command line."
+    assert exception.value.args[0] == (
+        "Could not determine path to default emerge log file. "
+        "Please specify the path at the command line."
+    )
 
 
 def test_02_main_function():
@@ -166,12 +154,14 @@ def test_02_main_function():
     tests: R-MAIN-001
     """
 
-    with patch('genloppy.main.Main') as mock:
-        # pass empty list to avoid usage of sys.argv
-        genloppy.main.main([])
-        assert len(mock.mock_calls) == 2
-        assert mock.mock_calls[0][0] == ""
-        assert mock.mock_calls[1] == call().run()
+    # mocks configurator to avoid validation errors
+    with patch("genloppy.main.CommandLineConfigurator"):
+        with patch("genloppy.main.Main") as mock:
+            # pass empty list to avoid usage of sys.argv
+            genloppy.main.main([])
+            assert len(mock.mock_calls) == 2
+            assert mock.mock_calls[0][0] == ""
+            assert mock.mock_calls[1] == call().run()
 
 
 def test_03_main_function(capsys):
@@ -182,5 +172,7 @@ def test_03_main_function(capsys):
         genloppy.main.main([])
 
     captured = capsys.readouterr()
-    assert captured.err == 'Error: "At least one sub-command argument (one of \'-c\', \'-l\', \'-i\', \'-p\', \'-r\'' \
-                           ', \'-t\', \'-u\' or \'-v\') needed."\n'
+    assert captured.err == (
+        "Error: \"At least one sub-command argument (one of '-c', '-l', '-i', '-p', '-r'"
+        ", '-t', '-u' or '-v') needed.\"\n"
+    )

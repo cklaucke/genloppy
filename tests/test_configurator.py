@@ -2,6 +2,12 @@ import pytest
 
 import genloppy.processor as processor
 from genloppy.configurator import CommandLine
+from genloppy.configurator import Configuration
+from genloppy.configurator import FilterConfiguration
+from genloppy.configurator import FilterExtraConfiguration
+from genloppy.configurator import OutputConfiguration
+from genloppy.configurator import ParserConfiguration
+from genloppy.configurator import ProcessorConfiguration
 
 
 def test_01_positional_arguments_accepted():
@@ -25,8 +31,7 @@ def test_02a_sub_command_arguments_without_name_accepted():
     tests: R-CONF-CLI-003
     tests: R-CONF-CLI-006
     """
-    sub_commands_long = ["--current", "--list", "--pretend",
-                         "--rsync", "--unmerge", "--version"]
+    sub_commands_long = ["--current", "--list", "--pretend", "--rsync", "--unmerge", "--version"]
     sub_commands_short = ["-c", "-l", "-p", "-r", "-u", "-v"]
 
     for sub_command in sub_commands_long:
@@ -102,8 +107,7 @@ def test_02d_sub_command_arguments_with_unexpected_name_rejected():
     tests: R-CONF-CLI-003
     tests: R-CONF-CLI-006
     """
-    sub_commands_long = ["--current", "--pretend",
-                         "--rsync", "--version"]
+    sub_commands_long = ["--current", "--pretend", "--rsync", "--version"]
     sub_commands_short = ["-c", "-p", "-r", "-v"]
 
     for sub_command in sub_commands_long:
@@ -335,16 +339,15 @@ def test_07a_get_default_configuration():
 
     tests: R-CONF-CLI-007
     """
-    c = CommandLine(["-l"])
-    c.parse_arguments()
-    assert c.parser_configuration == dict(file_names=None)
-    assert c.filter_configuration == dict(package_names=None,
-                                          search_reg_exps=None,
-                                          dates=None)
-    assert c.filter_extra_configuration == dict(case_sensitive=False)
-    assert c.processor_configuration == dict(name=processor.MERGE, query=False, active_filter=set())
-    assert c.output_configuration == dict(utc=False,
-                                          color=True)
+    c = CommandLine(["-l"]).parse_arguments()
+
+    assert c == Configuration(
+        parser=ParserConfiguration(file_names=None),
+        filter=FilterConfiguration(package_names=None, search_reg_exps=None, dates=None),
+        processor=ProcessorConfiguration(name=processor.MERGE, query=False, active_filter=set()),
+        filter_extra=FilterExtraConfiguration(case_sensitive=False),
+        output=OutputConfiguration(utc=False, color=True),
+    )
 
 
 def test_07b_get_configurations():
@@ -354,79 +357,138 @@ def test_07b_get_configurations():
     tests: R-CONF-CLI-007
     """
     conf_test = [
-        (["-l", "pkg"],
-         dict(file_names=None),
-         dict(package_names=["pkg"], search_reg_exps=None, dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter={"package_names", }),
-         dict(utc=False, color=True)),
-        (["-l", "pkg", "pkg2"],
-         dict(file_names=None),
-         dict(package_names=["pkg", "pkg2"], search_reg_exps=None, dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter={"package_names", }),
-         dict(utc=False, color=True)),
-        (["-l", "-f", "file1", "-f", "file2"],
-         dict(file_names=["file1", "file2"]),
-         dict(package_names=None, search_reg_exps=None, dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter=set()),
-         dict(utc=False, color=True)),
-        (["-l", "--date", "1", "--date", "1337"],
-         dict(file_names=None),
-         dict(package_names=None, search_reg_exps=None, dates=["1", "1337"]),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter={"dates", }),
-         dict(utc=False, color=True)),
-        (["-l", "--search", ".*", "-s", "foo[a-z]+"],
-         dict(file_names=None),
-         dict(package_names=None, search_reg_exps=[".*", "foo[a-z]+"], dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter={"search_reg_exps", }),
-         dict(utc=False, color=True)),
-        (["-l", "-g"],
-         dict(file_names=None),
-         dict(package_names=None, search_reg_exps=None, dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter=set()),
-         dict(utc=True, color=True)),
-        (["-l", "-n"],
-         dict(file_names=None),
-         dict(package_names=None, search_reg_exps=None, dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter=set()),
-         dict(utc=False, color=False)),
-        (["-l", "--gmt", "--nocolor"],
-         dict(file_names=None),
-         dict(package_names=None, search_reg_exps=None, dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.MERGE, query=False, active_filter=set()),
-         dict(utc=True, color=False)),
-        (["-t", "-q", "cat/pkg"],
-         dict(file_names=None),
-         dict(package_names=["cat/pkg"], search_reg_exps=None, dates=None),
-         dict(case_sensitive=False),
-         dict(name=processor.TIME, query=True, active_filter={"package_names", }),
-         dict(utc=False, color=True)),
-        (["-l", "-S"],
-         dict(file_names=None),
-         dict(package_names=None, search_reg_exps=None, dates=None),
-         dict(case_sensitive=True),
-         dict(name=processor.MERGE, query=False, active_filter=set()),
-         dict(utc=False, color=True)),
+        (
+            ["-l", "pkg"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=["pkg"], search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(
+                    name=processor.MERGE,
+                    query=False,
+                    active_filter={
+                        "package_names",
+                    },
+                ),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=False, color=True),
+            ),
+        ),
+        (
+            ["-l", "pkg", "pkg2"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=["pkg", "pkg2"], search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(
+                    name=processor.MERGE,
+                    query=False,
+                    active_filter={
+                        "package_names",
+                    },
+                ),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=False, color=True),
+            ),
+        ),
+        (
+            ["-l", "-f", "file1", "-f", "file2"],
+            Configuration(
+                parser=ParserConfiguration(file_names=["file1", "file2"]),
+                filter=FilterConfiguration(package_names=None, search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(name=processor.MERGE, query=False, active_filter=set()),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=False, color=True),
+            ),
+        ),
+        (
+            ["-l", "--date", "1", "--date", "1337"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=None, search_reg_exps=None, dates=["1", "1337"]),
+                processor=ProcessorConfiguration(
+                    name=processor.MERGE,
+                    query=False,
+                    active_filter={
+                        "dates",
+                    },
+                ),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=False, color=True),
+            ),
+        ),
+        (
+            ["-l", "--search", ".*", "-s", "foo[a-z]+"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=None, search_reg_exps=[".*", "foo[a-z]+"], dates=None),
+                processor=ProcessorConfiguration(
+                    name=processor.MERGE,
+                    query=False,
+                    active_filter={
+                        "search_reg_exps",
+                    },
+                ),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=False, color=True),
+            ),
+        ),
+        (
+            ["-l", "-g"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=None, search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(name=processor.MERGE, query=False, active_filter=set()),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=True, color=True),
+            ),
+        ),
+        (
+            ["-l", "-n"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=None, search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(name=processor.MERGE, query=False, active_filter=set()),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=False, color=False),
+            ),
+        ),
+        (
+            ["-l", "--gmt", "--nocolor"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=None, search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(name=processor.MERGE, query=False, active_filter=set()),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=True, color=False),
+            ),
+        ),
+        (
+            ["-t", "-q", "cat/pkg"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=["cat/pkg"], search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(
+                    name=processor.TIME,
+                    query=True,
+                    active_filter={
+                        "package_names",
+                    },
+                ),
+                filter_extra=FilterExtraConfiguration(case_sensitive=False),
+                output=OutputConfiguration(utc=False, color=True),
+            ),
+        ),
+        (
+            ["-l", "-S"],
+            Configuration(
+                parser=ParserConfiguration(file_names=None),
+                filter=FilterConfiguration(package_names=None, search_reg_exps=None, dates=None),
+                processor=ProcessorConfiguration(name=processor.MERGE, query=False, active_filter=set()),
+                filter_extra=FilterExtraConfiguration(case_sensitive=True),
+                output=OutputConfiguration(utc=False, color=True),
+            ),
+        ),
     ]
 
-    for args, \
-        expected_parser_configuration, \
-        expected_filter_configuration, \
-        expected_filter_extra_configuration, \
-        expected_processor_configuration, \
-        expected_output_configuration \
-            in conf_test:
-        c = CommandLine(args)
-        c.parse_arguments()
-        assert c.parser_configuration == expected_parser_configuration
-        assert c.filter_configuration == expected_filter_configuration
-        assert c.filter_extra_configuration == expected_filter_extra_configuration
-        assert c.processor_configuration == expected_processor_configuration
-        assert c.output_configuration == expected_output_configuration
+    for args, expected_configuration in conf_test:
+        c = CommandLine(args).parse_arguments()
+        assert c == expected_configuration

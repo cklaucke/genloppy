@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from genloppy.parser.entry_handler_api import EntryHandlerInterface
 
 
@@ -7,7 +9,8 @@ class EntryHandlerWrapper(EntryHandlerInterface):
 
     realizes: R-PARSER-ENTRY-HANDLER-WRAPPER-001
     """
-    def __init__(self):
+
+    def __init__(self, config: Iterable[str], **kwargs):
         self.entry_handler = None
 
     def __call__(self, entry_handler):

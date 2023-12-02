@@ -81,8 +81,7 @@ def test_04_complex_tokenization_succeeds(capsys):
     tests: R-PARSER-TOKENIZER-004
     """
     meh = MockEntryHandler(["a"])
-    t = Tokenizer(dict(a=re.compile("^(?P<number>[0-9]+)a$"),
-                       b=re.compile("^(?P<number>[0-9]+)b$")), meh, echo=True)
+    t = Tokenizer(dict(a=re.compile("^(?P<number>[0-9]+)a$"), b=re.compile("^(?P<number>[0-9]+)b$")), meh, echo=True)
 
     t.tokenize(StringIO("1337a\n42b"))
 

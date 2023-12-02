@@ -21,7 +21,7 @@ def test_01_get_default_emerge_log_file_with_emerge_log_dir():
         if args[0][2] == "EMERGE_LOG_DIR":
             return CompletedProcess("", 0, stdout=emerge_log_dir)
 
-    with patch('subprocess.run') as subprocess_run_mock:
+    with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
 
         assert get_default_emerge_log_file() == os.path.join(emerge_log_dir, "emerge.log")
@@ -42,7 +42,7 @@ def test_02_get_default_emerge_log_file_without_emerge_log_dir():
         elif args[0][2] == "EPREFIX":
             return CompletedProcess("", 0, stdout=e_prefix)
 
-    with patch('subprocess.run') as subprocess_run_mock:
+    with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
 
         assert get_default_emerge_log_file() == os.path.join(os.sep, e_prefix, "var", "log", "emerge.log")
@@ -62,7 +62,7 @@ def test_03_get_default_emerge_log_file_without_eprefix_fails():
         elif args[0][2] == "EPREFIX":
             return CompletedProcess("", 1, stdout=None)
 
-    with patch('subprocess.run') as subprocess_run_mock:
+    with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
 
         with pytest.raises(PortageConfigurationError) as exception:
@@ -80,7 +80,7 @@ def test_04_get_default_emerge_log_file_without_portageq_fails():
     def run_side_effects(*args, **kwargs):
         return CompletedProcess("", 127)
 
-    with patch('subprocess.run') as subprocess_run_mock:
+    with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
 
         with pytest.raises(PortageConfigurationError) as exception:

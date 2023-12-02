@@ -1,4 +1,5 @@
 import sys
+from typing import TextIO
 
 
 class TokenizerError(BaseException):
@@ -46,7 +47,7 @@ class Tokenizer:
         """
         self._entry_handler = entry_handler
 
-    def tokenize(self, stream):
+    def tokenize(self, stream: TextIO):
         """Tokenize a given stream using the configured patterns.
 
         :param stream: a file-like object o tokenize
@@ -62,9 +63,7 @@ class Tokenizer:
         if unknown_entry_types:
             raise TokenizerError("Unknown registered entry type")
 
-        entry_type_pattern = dict(
-            item for item in self._entry_type_pattern.items()
-            if item[0] in listened_entry_types)
+        entry_type_pattern = dict(item for item in self._entry_type_pattern.items() if item[0] in listened_entry_types)
 
         for line in stream:
             for entry_type, pattern in entry_type_pattern.items():
