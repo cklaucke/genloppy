@@ -28,12 +28,47 @@ def test_03_merge_end_mismatch():
     tests: R-PROCESSOR-DURATION-005"""
     m = MagicMock()
     duration = Duration(m.callback)
-    merge_begin = dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23")
+    merge_begin = {
+        "timestamp": 0,
+        "atom": "cat/package-3.2.1",
+        "atom_base": "cat/package",
+        "atom_version": "3.2.1",
+        "count_n": "11",
+        "count_m": "23",
+    }
     merge_ends = [
-        dict(timestamp=0, atom="dog/package-3.2.1", atom_base="dog/package", atom_version="3.2.1", count_n="11", count_m="23"),
-        dict(timestamp=0, atom="cat/package-3.2.2", atom_base="cat/package", atom_version="3.2.2", count_n="11", count_m="23"),
-        dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="12", count_m="23"),
-        dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="22"),
+        {
+            "timestamp": 0,
+            "atom": "dog/package-3.2.1",
+            "atom_base": "dog/package",
+            "atom_version": "3.2.1",
+            "count_n": "11",
+            "count_m": "23",
+        },
+        {
+            "timestamp": 0,
+            "atom": "cat/package-3.2.2",
+            "atom_base": "cat/package",
+            "atom_version": "3.2.2",
+            "count_n": "11",
+            "count_m": "23",
+        },
+        {
+            "timestamp": 0,
+            "atom": "cat/package-3.2.1",
+            "atom_base": "cat/package",
+            "atom_version": "3.2.1",
+            "count_n": "12",
+            "count_m": "23",
+        },
+        {
+            "timestamp": 0,
+            "atom": "cat/package-3.2.1",
+            "atom_base": "cat/package",
+            "atom_version": "3.2.1",
+            "count_n": "11",
+            "count_m": "22",
+        },
     ]
     for merge_end in merge_ends:
         duration.callbacks["merge_begin"](merge_begin)
@@ -48,7 +83,14 @@ def test_04_merge_end_orphaned_merge_end():
     tests: R-PROCESSOR-DURATION-005"""
     m = MagicMock()
     duration = Duration(m.callback)
-    merge_end = dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23")
+    merge_end = {
+        "timestamp": 0,
+        "atom": "cat/package-3.2.1",
+        "atom_base": "cat/package",
+        "atom_version": "3.2.1",
+        "count_n": "11",
+        "count_m": "23",
+    }
     duration.callbacks["merge_end"](merge_end)
     assert not m.method_calls
 
@@ -60,8 +102,22 @@ def test_05_duration_calculation_success():
     m = MagicMock()
     duration = Duration(m.callback)
     merge_properties = [
-        dict(timestamp=1337, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23"),
-        dict(timestamp=3677820, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23"),
+        {
+            "timestamp": 1337,
+            "atom": "cat/package-3.2.1",
+            "atom_base": "cat/package",
+            "atom_version": "3.2.1",
+            "count_n": "11",
+            "count_m": "23",
+        },
+        {
+            "timestamp": 3677820,
+            "atom": "cat/package-3.2.1",
+            "atom_base": "cat/package",
+            "atom_version": "3.2.1",
+            "count_n": "11",
+            "count_m": "23",
+        },
     ]
     duration.callbacks["merge_begin"](merge_properties[0])
     duration.callbacks["merge_end"](merge_properties[1])

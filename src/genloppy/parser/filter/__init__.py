@@ -2,7 +2,7 @@ from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
 from genloppy.parser.filter.package import PackageFilter
 from genloppy.parser.filter.regex import RegexFilter
 
-FILTER: dict[str, type[EntryHandlerWrapper]] = dict(package_names=PackageFilter, search_reg_exps=RegexFilter)
+FILTER: dict[str, type[EntryHandlerWrapper]] = {"package_names": PackageFilter, "search_reg_exps": RegexFilter}
 
 
 def create(filter_name, filter_config, **kwargs):

@@ -47,9 +47,9 @@ def test_02_listener_gets_called():
     eh = EntryHandler()
     eh.register_listener(ec.capture, "foo")
 
-    properties = dict(start=1337, stop="infinite")
+    properties = {"start": 1337, "stop": "infinite"}
 
-    eh.entry("bar", dict(one=1, two="2"))
+    eh.entry("bar", {"one": 1, "two": "2"})
     assert ec.calls == 0
     assert ec.properties is None
 

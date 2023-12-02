@@ -112,12 +112,12 @@ def test_01_main_execution():
 
     mock_processor = m.processor
     # test that processor_configuration is forwarded correctly
-    assert mock_processor.kwargs == dict(output=mock_output, query=False, active_filter=set())
+    assert mock_processor.kwargs == {"output": mock_output, "query": False, "active_filter": set()}
     # test that pre_process() and post_process() were called once in that order
     assert mock_processor.call_order == ["pre_process", "post_process"]
 
     # test that parser_configuration is forwarded correctly
-    assert mock_elog_parser.kwargs == dict()
+    assert mock_elog_parser.kwargs == {}
     # test that tokenize() is called exactly once
     assert mock_elog_parser.parse_called_count == 1
     # test that the input stream is forwarded correctly
@@ -129,7 +129,7 @@ def test_01_main_execution():
     assert mock_entry_handler.registrations[0][0] == mock_processor.process
 
     # test that output_configuration is forwarded correctly
-    assert mock_output.kwargs == dict(color=True, utc=False)
+    assert mock_output.kwargs == {"color": True, "utc": False}
 
     rc = genloppy.main.RuntimeConfiguration(
         configuration=_create_configuration(),

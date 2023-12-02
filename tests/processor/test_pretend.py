@@ -52,9 +52,14 @@ def test_05_pretend_processing_simple():
 
     pretend = Pretend(output=m, pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3"))
     pretend.pre_process()
-    merge_properties = dict(
-        timestamp=3679157, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23"
-    )
+    merge_properties = {
+        "timestamp": 3679157,
+        "atom": "cat/package-3.2.1",
+        "atom_base": "cat/package",
+        "atom_version": "3.2.1",
+        "count_n": "11",
+        "count_m": "23",
+    }
     pretend.process(merge_properties, duration)
     pretend.post_process()
 
@@ -82,9 +87,14 @@ def test_08_pretend_processing_one_unknown():
 
     pretend = Pretend(output=m, pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3\n" "[ebuild   N    ] dog/package-4.0.3\n"))
     pretend.pre_process()
-    merge_properties = dict(
-        timestamp=3679157, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23"
-    )
+    merge_properties = {
+        "timestamp": 3679157,
+        "atom": "cat/package-3.2.1",
+        "atom_base": "cat/package",
+        "atom_version": "3.2.1",
+        "count_n": "11",
+        "count_m": "23",
+    }
     pretend.process(merge_properties, duration)
     pretend.post_process()
 

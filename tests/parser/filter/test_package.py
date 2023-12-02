@@ -37,11 +37,11 @@ def test_03_predicate_case_insensitive():
     packages = ["www-client/firefox", "glibc", "X11-LIBS/gtk+", "Gtk+"]
     p = PackageFilter(packages)
 
-    assert not p.test(dict())
-    assert p.test(dict(atom_base="www-client/firefox"))
-    assert p.test(dict(package_name="glibc"))
-    assert p.test(dict(atom_base="x11-libs/gtk+"))
-    assert p.test(dict(package_name="GTK+"))
+    assert not p.test({})
+    assert p.test({"atom_base": "www-client/firefox"})
+    assert p.test({"package_name": "glibc"})
+    assert p.test({"atom_base": "x11-libs/gtk+"})
+    assert p.test({"package_name": "GTK+"})
 
 
 def test_04_predicate_case_sensitive():
@@ -53,8 +53,8 @@ def test_04_predicate_case_sensitive():
     packages = ["www-client/firefox", "glibc", "X11-LIBS/gtk+", "Gtk+"]
     p = PackageFilter(packages, case_sensitive=True)
 
-    assert not p.test(dict())
-    assert p.test(dict(atom_base="www-client/firefox"))
-    assert p.test(dict(package_name="glibc"))
-    assert not p.test(dict(atom_base="x11-libs/gtk+"))
-    assert not p.test(dict(package_name="GTK+"))
+    assert not p.test({})
+    assert p.test({"atom_base": "www-client/firefox"})
+    assert p.test({"package_name": "glibc"})
+    assert not p.test({"atom_base": "x11-libs/gtk+"})
+    assert not p.test({"package_name": "GTK+"})
