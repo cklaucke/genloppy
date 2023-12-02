@@ -66,10 +66,10 @@ def _check_log_files(log_files: Iterable[str]):
 
     messages = []
     if not_found_log_files:
-        _not_found_log_files_as_str = ", ".join(map(lambda x: f"'{x}'", not_found_log_files))
+        _not_found_log_files_as_str = ", ".join(f"'{x}'" for x in not_found_log_files)
         messages.append(f"The following log file(s) were not found: {_not_found_log_files_as_str}.")
     if malformed_log_files:
-        _malformed_log_files_as_str = ", ".join(map(lambda x: f"'{x}'", malformed_log_files))
+        _malformed_log_files_as_str = ", ".join(f"'{x}'" for x in malformed_log_files)
         messages.append(f"The format of the following log file(s) is unexpected: {_malformed_log_files_as_str}.")
     if messages:
         raise RuntimeError(" ".join(messages))

@@ -22,12 +22,10 @@ def test01b_malformed_log_files_raises():
     """Tests that an error is raised if given log files are malformed
     tests: R-LOG-FILES-001
     tests: R-LOG-FILES-003"""
-    log_files = list(
-        map(
-            lambda file: join(dirname(__file__), TEST_DATA_DIR, file),
-            ["malformed.log", "malformed.log.gz", "malformed.log.bz2", "malformed.log.lzma"],
-        )
-    )
+    log_files = [
+        join(dirname(__file__), TEST_DATA_DIR, file) for file in
+        ["malformed.log", "malformed.log.gz", "malformed.log.bz2", "malformed.log.lzma"]
+    ]
 
     with pytest.raises(RuntimeError) as exception:
         LogFiles(log_files)
@@ -74,20 +72,20 @@ def test_02b_order_multiple_log_file_succeeds():
     lf = LogFiles(log_files_unordered)
     assert lf.file_names == log_files_ordered
 
-    log_files_ordered_compressed = list(map(lambda x: x + ".gz", log_files_ordered))
+    log_files_ordered_compressed = [x + ".gz" for x in log_files_ordered]
     lf = LogFiles(log_files_ordered_compressed)
     assert lf.file_names == log_files_ordered_compressed
-    lf = LogFiles(map(lambda x: x + ".gz", log_files_unordered))
+    lf = LogFiles(x + ".gz" for x in log_files_unordered)
     assert lf.file_names == log_files_ordered_compressed
 
-    log_files_ordered_compressed = list(map(lambda x: x + ".bz2", log_files_ordered))
+    log_files_ordered_compressed = [x + ".bz2" for x in log_files_ordered]
     lf = LogFiles(log_files_ordered_compressed)
     assert lf.file_names == log_files_ordered_compressed
-    lf = LogFiles(map(lambda x: x + ".bz2", log_files_unordered))
+    lf = LogFiles(x + ".bz2" for x in log_files_unordered)
     assert lf.file_names == log_files_ordered_compressed
 
-    log_files_ordered_compressed = list(map(lambda x: x + ".lzma", log_files_ordered))
+    log_files_ordered_compressed = [x + ".lzma" for x in log_files_ordered]
     lf = LogFiles(log_files_ordered_compressed)
     assert lf.file_names == log_files_ordered_compressed
-    lf = LogFiles(map(lambda x: x + ".lzma", log_files_unordered))
+    lf = LogFiles(x + ".lzma" for x in log_files_unordered)
     assert lf.file_names == log_files_ordered_compressed
