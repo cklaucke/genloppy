@@ -3,6 +3,7 @@ graft doc
 include *.md
 include .coveragerc
 include LICENSE
+include requirements.txt
 include tox.ini
 
 recursive-include bin *
