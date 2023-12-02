@@ -70,10 +70,10 @@ class Main:
         if not file_names:
             try:
                 file_names = [get_default_emerge_log_file()]
-            except PortageConfigurationError:
+            except PortageConfigurationError as exc:
                 raise RuntimeError(
                     "Could not determine path to default emerge log file. Please specify the path at the command line."
-                )
+                ) from exc
         return file_names
 
     def _config_feature_check(self):
