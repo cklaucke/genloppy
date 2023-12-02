@@ -1,5 +1,4 @@
-from genloppy.processor.base import Base
-from genloppy.processor.base import BaseOutput
+from genloppy.processor.base import Base, BaseOutput
 
 
 def test_01_base_processor():

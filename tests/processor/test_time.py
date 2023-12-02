@@ -1,9 +1,7 @@
-from unittest.mock import MagicMock
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 from genloppy.processor.base import BaseOutput
-from genloppy.processor.time import Modes
-from genloppy.processor.time import Time
+from genloppy.processor.time import Modes, Time
 
 
 def test_01_base_output_subclass():

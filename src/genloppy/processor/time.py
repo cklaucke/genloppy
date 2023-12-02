@@ -1,7 +1,5 @@
 from collections import defaultdict
-from enum import Enum
-from enum import StrEnum
-from enum import auto
+from enum import Enum, StrEnum, auto
 
 from genloppy.processor.base import BaseOutput
 from genloppy.processor.duration import Duration

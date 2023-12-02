@@ -4,8 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from genloppy.portage_configuration import PortageConfigurationError
-from genloppy.portage_configuration import get_default_emerge_log_file
+from genloppy.portage_configuration import PortageConfigurationError, get_default_emerge_log_file
 
 
 def test_01_get_default_emerge_log_file_with_emerge_log_dir():

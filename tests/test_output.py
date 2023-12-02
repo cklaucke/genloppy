@@ -6,8 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from genloppy.output import Interface
-from genloppy.output import Output
+from genloppy.output import Interface, Output
 from genloppy.processor.pretend import Durations
 
 # since output of dates is locale-aware, only C/POSIX is tested here

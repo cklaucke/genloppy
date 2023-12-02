@@ -1,17 +1,18 @@
 from os import unlink
 from tempfile import NamedTemporaryFile
-from unittest.mock import call
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 import pytest
 
 import genloppy.main
-from genloppy.configurator import Configuration
-from genloppy.configurator import FilterConfiguration
-from genloppy.configurator import FilterExtraConfiguration
-from genloppy.configurator import OutputConfiguration
-from genloppy.configurator import ParserConfiguration
-from genloppy.configurator import ProcessorConfiguration
+from genloppy.configurator import (
+    Configuration,
+    FilterConfiguration,
+    FilterExtraConfiguration,
+    OutputConfiguration,
+    ParserConfiguration,
+    ProcessorConfiguration,
+)
 from genloppy.output import Interface
 from genloppy.portage_configuration import PortageConfigurationError
 from genloppy.processor.base import BaseOutput as ProcessorBaseOutput

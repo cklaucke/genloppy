@@ -1,8 +1,7 @@
 import argparse
 import dataclasses
 from dataclasses import dataclass
-from typing import Any
-from typing import Final
+from typing import Any, Final
 
 import genloppy.processor
 

@@ -1,7 +1,6 @@
 import dataclasses
 from collections import defaultdict
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timezone
 
 from genloppy.processor.pretend import Durations
 

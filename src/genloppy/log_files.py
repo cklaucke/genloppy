@@ -6,10 +6,7 @@ import lzma
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
-from typing import Iterable
-from typing import Iterator
-from typing import TextIO
+from typing import Callable, Iterable, Iterator, TextIO
 
 from genloppy.parser.pms import LOG_ENTRY_PATTERN
 

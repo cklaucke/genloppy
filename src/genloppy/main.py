@@ -15,8 +15,7 @@ from genloppy.parser import filter as parser_filter
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
 from genloppy.parser.tokenizer import Tokenizer
-from genloppy.portage_configuration import PortageConfigurationError
-from genloppy.portage_configuration import get_default_emerge_log_file
+from genloppy.portage_configuration import PortageConfigurationError, get_default_emerge_log_file
 
 
 @dataclass(frozen=True)

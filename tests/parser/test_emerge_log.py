@@ -1,13 +1,11 @@
 from io import StringIO
-from os.path import dirname
-from os.path import join
+from os.path import dirname, join
 
 import pytest
 
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
-from genloppy.parser.tokenizer import Tokenizer
-from genloppy.parser.tokenizer import TokenizerError
+from genloppy.parser.tokenizer import Tokenizer, TokenizerError
 
 ELOG_END_WO_BEGIN = """1507735239:  ::: completed emerge (1 of 2) sys-devel/gcc-config-1.8-r1 to /"""
 

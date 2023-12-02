@@ -1,13 +1,15 @@
 import pytest
 
 import genloppy.processor as processor
-from genloppy.configurator import CommandLine
-from genloppy.configurator import Configuration
-from genloppy.configurator import FilterConfiguration
-from genloppy.configurator import FilterExtraConfiguration
-from genloppy.configurator import OutputConfiguration
-from genloppy.configurator import ParserConfiguration
-from genloppy.configurator import ProcessorConfiguration
+from genloppy.configurator import (
+    CommandLine,
+    Configuration,
+    FilterConfiguration,
+    FilterExtraConfiguration,
+    OutputConfiguration,
+    ParserConfiguration,
+    ProcessorConfiguration,
+)
 
 
 def test_01_positional_arguments_accepted():
