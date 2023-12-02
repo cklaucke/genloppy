@@ -14,6 +14,7 @@ from genloppy.configurator import (
     ProcessorConfiguration,
 )
 from genloppy.output import Interface
+from genloppy.parser.tokenizer import Tokenizer
 from genloppy.portage_configuration import PortageConfigurationError
 from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
 
@@ -45,8 +46,9 @@ class _MockProcessor(ProcessorBaseOutput):
         self.call_order.append("post_process")
 
 
-class _MockTokenizer:
+class _MockTokenizer(Tokenizer):
     def __init__(self, handler):
+        super().__init__({})  # for completeness' sake
         self.kwargs = None
         self._handler = handler
         self.parse_called_count = 0
@@ -83,6 +85,21 @@ class _MockOutput(Interface):
     def configure(self, **kwargs):
         self.kwargs = kwargs
 
+    def message(self, message):
+        ...
+
+    def merge_item(self, timestamp, name, version):
+        ...
+
+    def unmerge_item(self, timestamp, name, version):
+        ...
+
+    def sync_item(self, timestamp):
+        ...
+
+    def merge_time_item(self, timestamp, name, version, duration):
+        ...
+
 
 def test_01_main_execution():
     """
@@ -111,10 +128,12 @@ def test_01_main_execution():
         m = genloppy.main.Main(rc)
         m.run()
     finally:
-        if temp_file:
+        if temp_file is not None:
             unlink(temp_file.name)
 
     mock_processor = m.processor
+    assert mock_processor is not None  # needed to get type right
+    assert isinstance(mock_processor, _MockProcessor)  # needed to get type right
     # test that processor_configuration is forwarded correctly
     assert mock_processor.kwargs == {"output": mock_output, "query": False, "active_filter": set()}
     # test that pre_process() and post_process() were called once in that order

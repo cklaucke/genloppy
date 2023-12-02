@@ -1,39 +1,46 @@
 import dataclasses
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from datetime import datetime, timezone
 
 from genloppy.processor.pretend import Durations
 
 
-class Interface:
+class Interface(ABC):
     """Provides the output API
     realizes: R-OUTPUT-API-001"""
 
+    @abstractmethod
     def configure(self, **kwargs):
         """Configures the output.
         realizes: R-OUTPUT-API-002"""
         raise NotImplementedError
 
+    @abstractmethod
     def message(self, message):
         """Outputs a message
         realizes: R-OUTPUT-API-003"""
         raise NotImplementedError
 
+    @abstractmethod
     def merge_item(self, timestamp, name, version):
         """Outputs a merge item
         realizes: R-OUTPUT-API-004"""
         raise NotImplementedError
 
+    @abstractmethod
     def unmerge_item(self, timestamp, name, version):
         """Outputs a unmerge item
         realizes: R-OUTPUT-API-005"""
         raise NotImplementedError
 
+    @abstractmethod
     def sync_item(self, timestamp):
         """Outputs a sync item
         realizes: R-OUTPUT-API-006"""
         raise NotImplementedError
 
+    @abstractmethod
     def merge_time_item(self, timestamp, name, version, duration):
         """Outputs a merge time item
         realizes: R-OUTPUT-API-007"""

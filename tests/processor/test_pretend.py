@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, call
 
 from genloppy.processor.base import BaseOutput
 from genloppy.processor.pretend import Durations, Pretend
+from tests.processor import MergeProperties
 
 
 def test_01_base_output_subclass():
@@ -52,24 +53,24 @@ def test_05_pretend_processing_simple():
 
     pretend = Pretend(output=m, pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3"))
     pretend.pre_process()
-    merge_properties = {
-        "timestamp": 3679157,
-        "atom": "cat/package-3.2.1",
-        "atom_base": "cat/package",
-        "atom_version": "3.2.1",
-        "count_n": "11",
-        "count_m": "23",
-    }
-    pretend.process(merge_properties, duration)
+    merge_properties = MergeProperties(
+        timestamp=3679157,
+        atom="cat/package-3.2.1",
+        atom_base="cat/package",
+        atom_version="3.2.1",
+        count_n="11",
+        count_m="23"
+    )
+    pretend.process(merge_properties._asdict(), duration)
     pretend.post_process()
 
-    max_package_name_len = len(merge_properties["atom_base"])
+    max_package_name_len = len(merge_properties.atom_base)
     expected_durations = Durations(min=duration, avg=duration, max=duration, recent=duration)
     assert m.method_calls == [
         call.message("These are the pretended packages: (this may take a while; wait...)\n"),
         call.message("\n"),
         call.package_duration_header(max_package_name_len),
-        call.package_duration(max_package_name_len, merge_properties["atom_base"], expected_durations),
+        call.package_duration(max_package_name_len, merge_properties.atom_base, expected_durations),
         call.message(""),
         call.format_duration_estimation(expected_durations),
         call.message("Estimated update time: mocked duration estimation."),
@@ -87,18 +88,18 @@ def test_08_pretend_processing_one_unknown():
 
     pretend = Pretend(output=m, pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3\n" "[ebuild   N    ] dog/package-4.0.3\n"))
     pretend.pre_process()
-    merge_properties = {
-        "timestamp": 3679157,
-        "atom": "cat/package-3.2.1",
-        "atom_base": "cat/package",
-        "atom_version": "3.2.1",
-        "count_n": "11",
-        "count_m": "23",
-    }
-    pretend.process(merge_properties, duration)
+    merge_properties = MergeProperties(
+        timestamp=3679157,
+        atom="cat/package-3.2.1",
+        atom_base="cat/package",
+        atom_version="3.2.1",
+        count_n="11",
+        count_m="23"
+    )
+    pretend.process(merge_properties._asdict(), duration)
     pretend.post_process()
 
-    max_package_name_len = len(merge_properties["atom_base"])
+    max_package_name_len = len(merge_properties.atom_base)
     expected_durations = Durations(min=duration, avg=duration, max=duration, recent=duration)
     assert m.method_calls == [
         call.message("These are the pretended packages: (this may take a while; wait...)\n"),
@@ -106,7 +107,7 @@ def test_08_pretend_processing_one_unknown():
         call.message("!!! Error: couldn't get previous merge of dog/package; skipping..."),
         call.message("\n"),
         call.package_duration_header(max_package_name_len),
-        call.package_duration(max_package_name_len, merge_properties["atom_base"], expected_durations),
+        call.package_duration(max_package_name_len, merge_properties.atom_base, expected_durations),
         call.message(""),
         call.format_duration_estimation(expected_durations),
         call.message("Estimated update time: mocked duration estimation."),
