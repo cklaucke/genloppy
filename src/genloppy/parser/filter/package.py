@@ -1,7 +1,6 @@
 import re
 from collections.abc import Iterable
 
-from genloppy.configurator import FilterExtraConfiguration
 from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
 from genloppy.parser.pms import ATOM_BASE_PATTERN
 from genloppy.parser.pms import ATOM_PATTERN
