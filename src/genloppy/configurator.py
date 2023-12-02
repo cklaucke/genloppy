@@ -257,9 +257,7 @@ class CommandLine:
             raise KeyError(f"Package name(s) or search arguments '-s' not allowed for '{processor_name}'.")
 
         if not (parsed_args.name or parsed_args.search) and processor_name in self.PROCESSORS.PROCESSORS_REQUIRE_NAME:
-            raise KeyError(
-                "At least one package name(s) or search arguments '-s' required for '{}'.".format(processor_name)
-            )
+            raise KeyError(f"At least one package name(s) or search arguments '-s' required for '{processor_name}'.")
 
         date_count = len(parsed_args.date) if parsed_args.date else 0
         if date_count > 2:
