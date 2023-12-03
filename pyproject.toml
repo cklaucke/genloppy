@@ -2,6 +2,27 @@
 line-length = 140
 target-version = ['py311']
 
+[tool.coverage.run]
+branch = true
+source = [
+    "genloppy",
+    "tests",
+]
+parallel = true
+
+[tool.coverage.paths]
+source = [
+    "src",
+    "*/site-packages",
+]
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+omit = [
+    "*migrations*",
+]
+
 [tool.mypy]
 files = "src, tests"
 mypy_path = "src"
