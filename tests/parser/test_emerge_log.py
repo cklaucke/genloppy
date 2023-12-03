@@ -1,13 +1,11 @@
 from io import StringIO
-from os.path import dirname
-from os.path import join
+from os.path import dirname, join
 
 import pytest
 
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
-from genloppy.parser.tokenizer import Tokenizer
-from genloppy.parser.tokenizer import TokenizerError
+from genloppy.parser.tokenizer import Tokenizer, TokenizerError
 
 ELOG_END_WO_BEGIN = """1507735239:  ::: completed emerge (1 of 2) sys-devel/gcc-config-1.8-r1 to /"""
 
@@ -30,7 +28,7 @@ class MockedEntryHandler:
 
     @property
     def listener(self):
-        return dict(merge_begin=None, merge_end=None, sync=None, unmerge=None)
+        return {"merge_begin": None, "merge_end": None, "sync": None, "unmerge": None}
 
 
 def test_01a_good_elog_parses_successful():
@@ -118,9 +116,8 @@ def test_01b_missing_handler_raises():
     """
     elp = Tokenizer({}, None)
 
-    with open(join(dirname(__file__), "good_emerge.log")) as fh:
-        with pytest.raises(TokenizerError):
-            elp.tokenize(fh)
+    with open(join(dirname(__file__), "good_emerge.log")) as fh, pytest.raises(TokenizerError):
+        elp.tokenize(fh)
 
 
 def test_02_optional_configuration():

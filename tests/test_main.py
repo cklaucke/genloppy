@@ -1,18 +1,20 @@
 from os import unlink
 from tempfile import NamedTemporaryFile
-from unittest.mock import call
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 import pytest
 
 import genloppy.main
-from genloppy.configurator import Configuration
-from genloppy.configurator import FilterConfiguration
-from genloppy.configurator import FilterExtraConfiguration
-from genloppy.configurator import OutputConfiguration
-from genloppy.configurator import ParserConfiguration
-from genloppy.configurator import ProcessorConfiguration
+from genloppy.configurator import (
+    Configuration,
+    FilterConfiguration,
+    FilterExtraConfiguration,
+    OutputConfiguration,
+    ParserConfiguration,
+    ProcessorConfiguration,
+)
 from genloppy.output import Interface
+from genloppy.parser.tokenizer import Tokenizer
 from genloppy.portage_configuration import PortageConfigurationError
 from genloppy.processor.base import BaseOutput as ProcessorBaseOutput
 
@@ -27,6 +29,78 @@ def _create_configuration(file_names: list[str] | None = None):
     )
 
 
+class _MockProcessor(ProcessorBaseOutput):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.kwargs = kwargs
+        self._callbacks.update(merge_begin=self.process)
+        self.call_order = []
+
+    def pre_process(self):
+        self.call_order.append("pre_process")
+
+    def process(self, item):
+        self.call_order.append(f"process({item})")
+
+    def post_process(self):
+        self.call_order.append("post_process")
+
+
+class _MockTokenizer(Tokenizer):
+    def __init__(self, handler):
+        super().__init__({})  # for completeness' sake
+        self.kwargs = None
+        self._handler = handler
+        self.parse_called_count = 0
+        self.content = None
+
+    def configure(self, **kwargs):
+        self.kwargs = kwargs
+
+    @property
+    def entry_handler(self):
+        return self._handler
+
+    @entry_handler.setter
+    def entry_handler(self, handler):
+        self._handler = handler
+
+    def tokenize(self, f):
+        self.parse_called_count += 1
+        self.content = f.read()
+
+
+class _MockEntryHandler:
+    def __init__(self):
+        self.registrations = []
+
+    def register_listener(self, callback, entry_type):
+        self.registrations.append((callback, entry_type))
+
+
+class _MockOutput(Interface):
+    def __init__(self):
+        self.kwargs = None
+
+    def configure(self, **kwargs):
+        self.kwargs = kwargs
+
+    def message(self, message):
+        ...
+
+    def merge_item(self, timestamp, name, version):
+        ...
+
+    def unmerge_item(self, timestamp, name, version):
+        ...
+
+    def sync_item(self, timestamp):
+        ...
+
+    def merge_time_item(self, timestamp, name, version, duration):
+        ...
+
+
 def test_01_main_execution():
     """
     Tests main class execution.
@@ -34,62 +108,10 @@ def test_01_main_execution():
     tests: R-MAIN-002
     """
 
-    class MockProcessor(ProcessorBaseOutput):
-        def __init__(self, **kwargs):
-            super().__init__(**kwargs)
-            self.kwargs = kwargs
-            self._callbacks.update(merge_begin=self.process)
-            self.call_order = []
-
-        def pre_process(self):
-            self.call_order.append("pre_process")
-
-        def process(self, item):
-            self.call_order.append(f"process({item})")
-
-        def post_process(self):
-            self.call_order.append("post_process")
-
-    class MockTokenizer:
-        def __init__(self, handler):
-            self.kwargs = None
-            self._handler = handler
-            self.parse_called_count = 0
-            self.content = None
-
-        def configure(self, **kwargs):
-            self.kwargs = kwargs
-
-        @property
-        def entry_handler(self):
-            return self._handler
-
-        @entry_handler.setter
-        def entry_handler(self, handler):
-            self._handler = handler
-
-        def tokenize(self, f):
-            self.parse_called_count += 1
-            self.content = f.read()
-
-    class MockEntryHandler:
-        def __init__(self):
-            self.registrations = []
-
-        def register_listener(self, callback, entry_type):
-            self.registrations.append((callback, entry_type))
-
-    class MockOutput(Interface):
-        def __init__(self):
-            self.kwargs = None
-
-        def configure(self, **kwargs):
-            self.kwargs = kwargs
-
-    genloppy.processor.PROCESSORS = {"mock": MockProcessor}
-    mock_entry_handler = MockEntryHandler()
-    mock_elog_parser = MockTokenizer(mock_entry_handler)
-    mock_output = MockOutput()
+    genloppy.processor.PROCESSORS = {"mock": _MockProcessor}
+    mock_entry_handler = _MockEntryHandler()
+    mock_elog_parser = _MockTokenizer(mock_entry_handler)
+    mock_output = _MockOutput()
 
     content = "1337:\n1338: alpha\n"
     temp_file = None
@@ -106,17 +128,19 @@ def test_01_main_execution():
         m = genloppy.main.Main(rc)
         m.run()
     finally:
-        if temp_file:
+        if temp_file is not None:
             unlink(temp_file.name)
 
     mock_processor = m.processor
+    assert mock_processor is not None  # needed to get type right
+    assert isinstance(mock_processor, _MockProcessor)  # needed to get type right
     # test that processor_configuration is forwarded correctly
-    assert mock_processor.kwargs == dict(output=mock_output, query=False, active_filter=set())
+    assert mock_processor.kwargs == {"output": mock_output, "query": False, "active_filter": set()}
     # test that pre_process() and post_process() were called once in that order
     assert mock_processor.call_order == ["pre_process", "post_process"]
 
     # test that parser_configuration is forwarded correctly
-    assert mock_elog_parser.kwargs == dict()
+    assert mock_elog_parser.kwargs == {}
     # test that tokenize() is called exactly once
     assert mock_elog_parser.parse_called_count == 1
     # test that the input stream is forwarded correctly
@@ -128,7 +152,7 @@ def test_01_main_execution():
     assert mock_entry_handler.registrations[0][0] == mock_processor.process
 
     # test that output_configuration is forwarded correctly
-    assert mock_output.kwargs == dict(color=True, utc=False)
+    assert mock_output.kwargs == {"color": True, "utc": False}
 
     rc = genloppy.main.RuntimeConfiguration(
         configuration=_create_configuration(),
@@ -155,13 +179,12 @@ def test_02_main_function():
     """
 
     # mocks configurator to avoid validation errors
-    with patch("genloppy.main.CommandLineConfigurator"):
-        with patch("genloppy.main.Main") as mock:
-            # pass empty list to avoid usage of sys.argv
-            genloppy.main.main([])
-            assert len(mock.mock_calls) == 2
-            assert mock.mock_calls[0][0] == ""
-            assert mock.mock_calls[1] == call().run()
+    with patch("genloppy.main.CommandLineConfigurator"), patch("genloppy.main.Main") as mock:
+        # pass empty list to avoid usage of sys.argv
+        genloppy.main.main([])
+        assert len(mock.mock_calls) == 2
+        assert mock.mock_calls[0][0] == ""
+        assert mock.mock_calls[1] == call().run()
 
 
 def test_03_main_function(capsys):

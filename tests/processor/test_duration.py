@@ -1,8 +1,8 @@
-from unittest.mock import MagicMock
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 from genloppy.processor.base import Base
 from genloppy.processor.duration import Duration
+from tests.processor import MergeProperties
 
 
 def test_01_base_subclass():
@@ -29,16 +29,51 @@ def test_03_merge_end_mismatch():
     tests: R-PROCESSOR-DURATION-005"""
     m = MagicMock()
     duration = Duration(m.callback)
-    merge_begin = dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23")
+    merge_begin = MergeProperties(
+        timestamp=0,
+        atom="cat/package-3.2.1",
+        atom_base="cat/package",
+        atom_version="3.2.1",
+        count_n="11",
+        count_m="23"
+    )
     merge_ends = [
-        dict(timestamp=0, atom="dog/package-3.2.1", atom_base="dog/package", atom_version="3.2.1", count_n="11", count_m="23"),
-        dict(timestamp=0, atom="cat/package-3.2.2", atom_base="cat/package", atom_version="3.2.2", count_n="11", count_m="23"),
-        dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="12", count_m="23"),
-        dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="22"),
+        MergeProperties(
+            timestamp=0,
+            atom="dog/package-3.2.1",
+            atom_base="dog/package",
+            atom_version="3.2.1",
+            count_n="11",
+            count_m="23"
+        ),
+        MergeProperties(
+            timestamp=0,
+            atom="cat/package-3.2.2",
+            atom_base="cat/package",
+            atom_version="3.2.2",
+            count_n="11",
+            count_m="23"
+        ),
+        MergeProperties(
+            timestamp=0,
+            atom="cat/package-3.2.1",
+            atom_base="cat/package",
+            atom_version="3.2.1",
+            count_n="12",
+            count_m="23"
+        ),
+        MergeProperties(
+            timestamp=0,
+            atom="cat/package-3.2.1",
+            atom_base="cat/package",
+            atom_version="3.2.1",
+            count_n="11",
+            count_m="22"
+        ),
     ]
     for merge_end in merge_ends:
-        duration.callbacks["merge_begin"](merge_begin)
-        duration.callbacks["merge_end"](merge_end)
+        duration.callbacks["merge_begin"](merge_begin._asdict())
+        duration.callbacks["merge_end"](merge_end._asdict())
 
     assert not m.method_calls
 
@@ -49,8 +84,15 @@ def test_04_merge_end_orphaned_merge_end():
     tests: R-PROCESSOR-DURATION-005"""
     m = MagicMock()
     duration = Duration(m.callback)
-    merge_end = dict(timestamp=0, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23")
-    duration.callbacks["merge_end"](merge_end)
+    merge_end = MergeProperties(
+        timestamp=0,
+        atom="cat/package-3.2.1",
+        atom_base="cat/package",
+        atom_version="3.2.1",
+        count_n="11",
+        count_m="23"
+    )
+    duration.callbacks["merge_end"](merge_end._asdict())
     assert not m.method_calls
 
 
@@ -61,10 +103,22 @@ def test_05_duration_calculation_success():
     m = MagicMock()
     duration = Duration(m.callback)
     merge_properties = [
-        dict(timestamp=1337, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23"),
-        dict(timestamp=3677820, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11", count_m="23"),
+        mp := MergeProperties(
+            timestamp=1337,
+            atom="cat/package-3.2.1",
+            atom_base="cat/package",
+            atom_version="3.2.1",
+            count_n="11",
+            count_m="23"
+        ),
+        mp._replace(timestamp=3677820),
     ]
-    duration.callbacks["merge_begin"](merge_properties[0])
-    duration.callbacks["merge_end"](merge_properties[1])
+    duration.callbacks["merge_begin"](merge_properties[0]._asdict())
+    duration.callbacks["merge_end"](merge_properties[1]._asdict())
 
-    assert m.method_calls == [call.callback(merge_properties[1], merge_properties[1]["timestamp"] - merge_properties[0]["timestamp"])]
+    assert m.method_calls == [
+        call.callback(
+            merge_properties[1]._asdict(),
+            merge_properties[1].timestamp - merge_properties[0].timestamp
+        )
+    ]

@@ -1,5 +1,4 @@
-from unittest.mock import MagicMock
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 from genloppy.processor.base import BaseOutput
 from genloppy.processor.unmerge import Unmerge
@@ -24,7 +23,7 @@ def test_03_callback_added():
     """Tests that unmerge processor added 'process' to callbacks for 'unmerge'.
     tests: R-PROCESSOR-UNMERGE-003"""
     unmerge = Unmerge(output=None)
-    assert unmerge.callbacks == dict(unmerge=unmerge.process)
+    assert unmerge.callbacks == {"unmerge": unmerge.process}
 
 
 def test_04_post_processing():
@@ -41,6 +40,6 @@ def test_05_processing():
     test: R-PROCESSOR-UNMERGE-004"""
     m = MagicMock()
     unmerge = Unmerge(output=m)
-    info = dict(timestamp=1337, atom_base="cat/package", atom_version="3.2.1")
+    info = {"timestamp": 1337, "atom_base": "cat/package", "atom_version": "3.2.1"}
     unmerge.process(info)
     assert m.method_calls == [call.unmerge_item(info["timestamp"], info["atom_base"], info["atom_version"])]

@@ -15,8 +15,7 @@ from genloppy.parser import filter as parser_filter
 from genloppy.parser.entry_handler import EntryHandler
 from genloppy.parser.pms import EMERGE_LOG_ENTRY_TYPES
 from genloppy.parser.tokenizer import Tokenizer
-from genloppy.portage_configuration import PortageConfigurationError
-from genloppy.portage_configuration import get_default_emerge_log_file
+from genloppy.portage_configuration import PortageConfigurationError, get_default_emerge_log_file
 
 
 @dataclass(frozen=True)
@@ -71,10 +70,10 @@ class Main:
         if not file_names:
             try:
                 file_names = [get_default_emerge_log_file()]
-            except PortageConfigurationError:
+            except PortageConfigurationError as exc:
                 raise RuntimeError(
                     "Could not determine path to default emerge log file. Please specify the path at the command line."
-                )
+                ) from exc
         return file_names
 
     def _config_feature_check(self):

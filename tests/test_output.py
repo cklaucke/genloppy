@@ -1,13 +1,11 @@
 import locale
-from datetime import timezone
+from datetime import UTC
+from inspect import signature
 from os import environ
 from time import tzset
 from unittest.mock import patch
 
-import pytest
-
-from genloppy.output import Interface
-from genloppy.output import Output
+from genloppy.output import Interface, Output
 from genloppy.processor.pretend import Durations
 
 # since output of dates is locale-aware, only C/POSIX is tested here
@@ -26,6 +24,10 @@ def test_01_provided_api():
     tests: R-OUTPUT-API-005
     tests: R-OUTPUT-API-006"""
 
+    # this is a proof of concept of how to ensure that output API is provided
+    # it simply checks if all methods are available and if their signatures match
+    # this test case will fail if a signature was modified (intentionally or accidentally)
+
     assert hasattr(Interface, "configure")
     assert hasattr(Interface, "message")
     assert hasattr(Interface, "merge_item")
@@ -33,24 +35,12 @@ def test_01_provided_api():
     assert hasattr(Interface, "sync_item")
     assert hasattr(Interface, "merge_time_item")
 
-    i = Interface()
-
-    with pytest.raises(NotImplementedError):
-        i.configure()
-
-    # methods w/ one argument
-    for method in [i.message, i.sync_item]:
-        with pytest.raises(NotImplementedError):
-            method(None)
-
-    # methods w/ three arguments
-    for method in [i.merge_item, i.unmerge_item]:
-        with pytest.raises(NotImplementedError):
-            method(None, None, None)
-
-    # methods w/ four arguments
-    with pytest.raises(NotImplementedError):
-        i.merge_time_item(None, None, None, None)
+    assert str(signature(Interface.configure)) == "(self, **kwargs)"
+    assert str(signature(Interface.message)) == "(self, message)"
+    assert str(signature(Interface.merge_item)) == "(self, timestamp, name, version)"
+    assert str(signature(Interface.unmerge_item)) == "(self, timestamp, name, version)"
+    assert str(signature(Interface.sync_item)) == "(self, timestamp)"
+    assert str(signature(Interface.merge_time_item)) == "(self, timestamp, name, version, duration)"
 
 
 def test_02a_configurable_output():
@@ -65,7 +55,7 @@ def test_02a_configurable_output():
     out.configure(color=False)
     assert out.color is False
     out.configure(utc=True)
-    assert out.tz == timezone.utc
+    assert out.tz == UTC
 
 
 def test_02b_output_date_formatting():

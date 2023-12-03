@@ -1,5 +1,4 @@
-from unittest.mock import MagicMock
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 import genloppy.parser.filter
 

@@ -4,8 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from genloppy.portage_configuration import PortageConfigurationError
-from genloppy.portage_configuration import get_default_emerge_log_file
+from genloppy.portage_configuration import PortageConfigurationError, get_default_emerge_log_file
 
 
 def test_01_get_default_emerge_log_file_with_emerge_log_dir():
@@ -55,11 +54,10 @@ def test_03_get_default_emerge_log_file_without_eprefix_fails():
     """
 
     def run_side_effects(*args, **kwargs):
-        assert args[0][0] == "portageq"
-        assert args[0][1] == "envvar"
-        if args[0][2] == "EMERGE_LOG_DIR":
-            return CompletedProcess("", 1, stdout=None)
-        elif args[0][2] == "EPREFIX":
+        first_arg = args[0]
+        assert first_arg[0] == "portageq"
+        assert first_arg[1] == "envvar"
+        if first_arg[2] == "EMERGE_LOG_DIR" or first_arg[2] == "EPREFIX":
             return CompletedProcess("", 1, stdout=None)
 
     with patch("subprocess.run") as subprocess_run_mock:

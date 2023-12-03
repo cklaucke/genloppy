@@ -3,8 +3,7 @@ from io import StringIO
 
 import pytest
 
-from genloppy.parser.tokenizer import Tokenizer
-from genloppy.parser.tokenizer import TokenizerError
+from genloppy.parser.tokenizer import Tokenizer, TokenizerError
 
 
 class MockEntryHandler:
@@ -62,7 +61,7 @@ def test_03_simple_tokenization_succeeds(capsys):
     tests: R-PARSER-TOKENIZER-004
     """
     meh = MockEntryHandler(["a"])
-    t = Tokenizer(dict(a=re.compile("^a$")), meh)
+    t = Tokenizer({"a": re.compile("^a$")}, meh)
 
     t.tokenize(StringIO("a"))
 
@@ -81,13 +80,13 @@ def test_04_complex_tokenization_succeeds(capsys):
     tests: R-PARSER-TOKENIZER-004
     """
     meh = MockEntryHandler(["a"])
-    t = Tokenizer(dict(a=re.compile("^(?P<number>[0-9]+)a$"), b=re.compile("^(?P<number>[0-9]+)b$")), meh, echo=True)
+    t = Tokenizer({"a": re.compile("^(?P<number>[0-9]+)a$"), "b": re.compile("^(?P<number>[0-9]+)b$")}, meh, echo=True)
 
     t.tokenize(StringIO("1337a\n42b"))
 
     captured = capsys.readouterr()
     assert len(meh.entries) == 1
-    assert meh.entries[0] == ("a", dict(number="1337"))
+    assert meh.entries[0] == ("a", {"number": "1337"})
     assert captured.out == "1337a\n"
 
 
