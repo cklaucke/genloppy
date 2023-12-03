@@ -6,9 +6,12 @@ import lzma
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Iterable, Iterator, TextIO
+from typing import TYPE_CHECKING, TextIO
 
 from genloppy.parser.pms import LOG_ENTRY_PATTERN
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Iterator
 
 RE_LOG_ENTRY = re.compile(LOG_ENTRY_PATTERN)
 

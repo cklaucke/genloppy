@@ -1,5 +1,5 @@
 import locale
-from datetime import timezone
+from datetime import UTC
 from inspect import signature
 from os import environ
 from time import tzset
@@ -55,7 +55,7 @@ def test_02a_configurable_output():
     out.configure(color=False)
     assert out.color is False
     out.configure(utc=True)
-    assert out.tz == timezone.utc
+    assert out.tz == UTC
 
 
 def test_02b_output_date_formatting():

@@ -1,7 +1,7 @@
 import dataclasses
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from genloppy.processor.pretend import Durations
 
@@ -85,7 +85,7 @@ class Output(Interface):
             self.color = color
         utc = kwargs.get("utc")
         if utc is not None:
-            self.tz = timezone.utc if utc else None
+            self.tz = UTC if utc else None
 
     def format_date(self, timestamp: int) -> str:
         """Formats dates.
