@@ -2,10 +2,7 @@ import re
 from collections.abc import Iterable
 
 from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
-from genloppy.parser.pms import ATOM_BASE_PATTERN
-from genloppy.parser.pms import ATOM_PATTERN
-from genloppy.parser.pms import PACKAGE_NAME_PATTERN
-from genloppy.parser.pms import VERSION_PATTERN
+from genloppy.parser.pms import ATOM_BASE_PATTERN, ATOM_PATTERN, PACKAGE_NAME_PATTERN, VERSION_PATTERN
 
 
 class PackageFilter(EntryHandlerWrapper):

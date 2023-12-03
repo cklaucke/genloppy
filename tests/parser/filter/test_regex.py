@@ -38,11 +38,11 @@ def test_03_predicate_case_insensitive():
     regexes = ["FIRE.*", "libc", "gcc-[6-9]", "gtk\\+"]
     r = RegexFilter(regexes)
 
-    assert not r.test(dict())
-    assert r.test(dict(atom="www-client/firefox-55.0"))
-    assert r.test(dict(atom="glibc"))
-    assert r.test(dict(atom="gcc-8.1.0"))
-    assert r.test(dict(atom="GTK+"))
+    assert not r.test({})
+    assert r.test({"atom": "www-client/firefox-55.0"})
+    assert r.test({"atom": "glibc"})
+    assert r.test({"atom": "gcc-8.1.0"})
+    assert r.test({"atom": "GTK+"})
 
 
 def test_04_predicate_case_sensitive():
@@ -54,8 +54,8 @@ def test_04_predicate_case_sensitive():
     regexes = ["FIRE.*", "libc", "gcc-[6-9]", "gtk\\+"]
     r = RegexFilter(regexes, case_sensitive=True)
 
-    assert not r.test(dict())
-    assert not r.test(dict(atom="www-client/firefox-55.0"))
-    assert r.test(dict(atom="glibc"))
-    assert r.test(dict(atom="gcc-8.1.0"))
-    assert not r.test(dict(atom="GTK+"))
+    assert not r.test({})
+    assert not r.test({"atom": "www-client/firefox-55.0"})
+    assert r.test({"atom": "glibc"})
+    assert r.test({"atom": "gcc-8.1.0"})
+    assert not r.test({"atom": "GTK+"})

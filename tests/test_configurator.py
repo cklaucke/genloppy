@@ -1,13 +1,15 @@
 import pytest
 
 import genloppy.processor as processor
-from genloppy.configurator import CommandLine
-from genloppy.configurator import Configuration
-from genloppy.configurator import FilterConfiguration
-from genloppy.configurator import FilterExtraConfiguration
-from genloppy.configurator import OutputConfiguration
-from genloppy.configurator import ParserConfiguration
-from genloppy.configurator import ProcessorConfiguration
+from genloppy.configurator import (
+    CommandLine,
+    Configuration,
+    FilterConfiguration,
+    FilterExtraConfiguration,
+    OutputConfiguration,
+    ParserConfiguration,
+    ProcessorConfiguration,
+)
 
 
 def test_01_positional_arguments_accepted():
@@ -66,8 +68,8 @@ def test_02b_sub_command_arguments_with_optional_name_accepted():
     for sub_command in sub_commands_short:
         CommandLine([sub_command, "-s", "pkg"]).parse_arguments()
 
-    CommandLine(sub_commands_long + ["pkg"]).parse_arguments()
-    CommandLine(sub_commands_short + ["-s", "pkg"]).parse_arguments()
+    CommandLine([*sub_commands_long, "pkg"]).parse_arguments()
+    CommandLine([*sub_commands_short, "-s", "pkg"]).parse_arguments()
 
 
 def test_02c_sub_command_arguments_with_required_name_accepted():

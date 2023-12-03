@@ -1,3 +1,109 @@
+[build-system]
+requires = ["setuptools>=67.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "genloppy"
+version = "0.2.1"
+description = "genlop drop in purely written in python"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+    { name = "cklaucke", email = "33376323+cklaucke@users.noreply.github.com" }
+]
+
+[project.urls]
+"Homepage" = "https://github.com/cklaucke/genloppy"
+
+[project.scripts]
+genloppy = "genloppy.main:main"
+
 [tool.black]
 line-length = 140
 target-version = ['py311']
+
+[tool.check-manifest]
+ignore = [
+    "*.md",
+    "LICENSE",
+    "requirements.txt",
+    "tox.ini",
+    "doc/**",
+    "tests/**",
+]
+
+[tool.coverage.run]
+branch = true
+source = [
+    "genloppy",
+    "tests",
+]
+parallel = true
+
+[tool.coverage.paths]
+source = [
+    "src",
+    "*/site-packages",
+]
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+
+[tool.mypy]
+files = "src, tests"
+mypy_path = "src"
+namespace_packages = true
+explicit_package_bases = true
+show_error_codes = true
+#strict = true
+check_untyped_defs = true
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+python_files = [
+    "test_*.py",
+    "*_test.py",
+    "tests.py",
+]
+addopts = """
+    -ra
+    --strict-markers
+    --doctest-modules
+    --doctest-glob=*.rst
+    --tb=short"""
+
+[tool.ruff]
+line-length = 140
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "B", # flake8-bugbear
+    "C", # flake8-comprehensions
+    "E", # pycodestyle errors
+    "ERA", # flake8-eradicate/eradicate
+    "F", # pyflakes
+    "I", # isort
+    "N", # pep8-naming
+    "PIE", # flake8-pie
+    "PGH", # pygrep
+    "RUF", # ruff checks
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "UP", # pyupgrade
+    "W", # pycodestyle warnings
+    "YTT", # flake8-2020
+]
+
+[tool.ruff.isort]
+known-first-party = ["genloppy"]

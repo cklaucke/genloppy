@@ -1,5 +1,4 @@
-from unittest.mock import MagicMock
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 from genloppy.processor.base import BaseOutput
 from genloppy.processor.sync import Sync
@@ -24,7 +23,7 @@ def test_03_callback_added():
     """Tests that sync processor added 'process' to callbacks for 'sync'.
     tests: R-PROCESSOR-SYNC-003"""
     sync = Sync(output=None)
-    assert sync.callbacks == dict(sync=sync.process)
+    assert sync.callbacks == {"sync": sync.process}
 
 
 def test_04_post_processing():
@@ -41,6 +40,6 @@ def test_05_processing():
     test: R-PROCESSOR-SYNC-004"""
     m = MagicMock()
     sync = Sync(output=m)
-    info = dict(timestamp=1337)
+    info = {"timestamp": 1337}
     sync.process(info)
     assert m.method_calls == [call.sync_item(info["timestamp"])]

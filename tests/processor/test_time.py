@@ -1,9 +1,8 @@
-from unittest.mock import MagicMock
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 from genloppy.processor.base import BaseOutput
-from genloppy.processor.time import Modes
-from genloppy.processor.time import Time
+from genloppy.processor.time import Modes, Time
+from tests.processor import MergeProperties
 
 
 def test_01_base_output_subclass():
@@ -82,16 +81,24 @@ def test_05_search_mode():
             "search_reg_exps",
         },
     )
-    merge_properties = dict(
-        timestamp=3679157, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11",
+    merge_properties = MergeProperties(
+        timestamp=3679157,
+        atom="cat/package-3.2.1",
+        atom_base="cat/package",
+        atom_version="3.2.1",
+        count_n="11",
         count_m="23"
     )
-    time.process_search(merge_properties, 3677820)
+    time.process_search(merge_properties._asdict(), 3677820)
     time.post_process()
 
     assert m.method_calls == [
-        call.merge_time_item(merge_properties["timestamp"], merge_properties["atom_base"],
-                             merge_properties["atom_version"], 3677820)
+        call.merge_time_item(
+            merge_properties.timestamp,
+            merge_properties.atom_base,
+            merge_properties.atom_version,
+            3677820
+        )
     ]
 
 
@@ -102,25 +109,55 @@ def test_06_package_mode():
     m = MagicMock()
     time = Time(output=m)
     merge_properties = [
-        dict(timestamp=1, atom="cat/package-3.2.1", atom_base="cat/package", atom_version="3.2.1", count_n="11",
-             count_m="23"),
-        dict(timestamp=2, atom="abc/package-0.47.11", atom_base="abc/package", atom_version="0.47.11", count_n="7",
-             count_m="9"),
-        dict(timestamp=3, atom="cat/package-3.1.1", atom_base="cat/package", atom_version="3.1.1", count_n="1",
-             count_m="1"),
+        MergeProperties(
+            timestamp=1,
+            atom="cat/package-3.2.1",
+            atom_base="cat/package",
+            atom_version="3.2.1",
+            count_n="11",
+            count_m="23"
+        ),
+        MergeProperties(
+            timestamp=2,
+            atom="abc/package-0.47.11",
+            atom_base="abc/package",
+            atom_version="0.47.11",
+            count_n="7",
+            count_m="9"
+        ),
+        MergeProperties(
+            timestamp=3,
+            atom="cat/package-3.1.1",
+            atom_base="cat/package",
+            atom_version="3.1.1",
+            count_n="1",
+            count_m="1"
+        ),
     ]
 
     for merge_property in merge_properties:
-        time.process_package(merge_property, 50)
+        time.process_package(merge_property._asdict(), 50)
     time.post_process()
 
     assert m.method_calls == [
-        call.message(" * {}:\n".format(merge_properties[1]["atom_base"])),
-        call.merge_time_item(merge_properties[1]["timestamp"], merge_properties[1]["atom_base"],
-                             merge_properties[1]["atom_version"], 50),
-        call.message(" * {}:\n".format(merge_properties[0]["atom_base"])),
-        call.merge_time_item(merge_properties[0]["timestamp"], merge_properties[0]["atom_base"],
-                             merge_properties[0]["atom_version"], 50),
-        call.merge_time_item(merge_properties[2]["timestamp"], merge_properties[2]["atom_base"],
-                             merge_properties[2]["atom_version"], 50),
+        call.message(f" * {merge_properties[1].atom_base}:\n"),
+        call.merge_time_item(
+            merge_properties[1].timestamp,
+            merge_properties[1].atom_base,
+            merge_properties[1].atom_version,
+            50,
+        ),
+        call.message(f" * {merge_properties[0].atom_base}:\n"),
+        call.merge_time_item(
+            merge_properties[0].timestamp,
+            merge_properties[0].atom_base,
+            merge_properties[0].atom_version,
+            50,
+        ),
+        call.merge_time_item(
+            merge_properties[2].timestamp,
+            merge_properties[2].atom_base,
+            merge_properties[2].atom_version,
+            50,
+        ),
     ]

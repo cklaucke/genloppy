@@ -21,13 +21,11 @@ class Base(ProcessorInterface):
         """Pre-processes.
 
         realizes: R-PROCESSOR-BASE-002"""
-        pass
 
     def post_process(self):
         """Post-processes.
 
         realizes: R-PROCESSOR-BASE-004"""
-        pass
 
 
 class BaseOutput(Base):

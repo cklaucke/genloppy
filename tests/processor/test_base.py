@@ -1,5 +1,4 @@
-from genloppy.processor.base import Base
-from genloppy.processor.base import BaseOutput
+from genloppy.processor.base import Base, BaseOutput
 
 
 def test_01_base_processor():
@@ -17,7 +16,7 @@ def test_01_base_processor():
 
     b = Base(callbacks={"foo": bar})
 
-    assert b.callbacks == dict(foo=bar)
+    assert b.callbacks == {"foo": bar}
     b.pre_process()
     b.post_process()
 

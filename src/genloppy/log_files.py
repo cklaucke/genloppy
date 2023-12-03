@@ -6,12 +6,12 @@ import lzma
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
-from typing import Iterable
-from typing import Iterator
-from typing import TextIO
+from typing import TYPE_CHECKING, TextIO
 
 from genloppy.parser.pms import LOG_ENTRY_PATTERN
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Iterator
 
 RE_LOG_ENTRY = re.compile(LOG_ENTRY_PATTERN)
 
@@ -69,10 +69,10 @@ def _check_log_files(log_files: Iterable[str]):
 
     messages = []
     if not_found_log_files:
-        _not_found_log_files_as_str = ", ".join(map(lambda x: f"'{x}'", not_found_log_files))
+        _not_found_log_files_as_str = ", ".join(f"'{x}'" for x in not_found_log_files)
         messages.append(f"The following log file(s) were not found: {_not_found_log_files_as_str}.")
     if malformed_log_files:
-        _malformed_log_files_as_str = ", ".join(map(lambda x: f"'{x}'", malformed_log_files))
+        _malformed_log_files_as_str = ", ".join(f"'{x}'" for x in malformed_log_files)
         messages.append(f"The format of the following log file(s) is unexpected: {_malformed_log_files_as_str}.")
     if messages:
         raise RuntimeError(" ".join(messages))
