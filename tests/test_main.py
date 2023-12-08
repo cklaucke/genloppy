@@ -25,7 +25,7 @@ def _create_configuration(file_names: list[str] | None = None):
         filter=FilterConfiguration(package_names=["cat/package"], dates=None, search_reg_exps=None),
         filter_extra=FilterExtraConfiguration(),
         processor=ProcessorConfiguration(name="mock", active_filter=set()),
-        output=OutputConfiguration(color=True),
+        output=OutputConfiguration(color=False),
     )
 
 
@@ -152,7 +152,7 @@ def test_01_main_execution():
     assert mock_entry_handler.registrations[0][0] == mock_processor.process
 
     # test that output_configuration is forwarded correctly
-    assert mock_output.kwargs == {"color": True, "utc": False}
+    assert mock_output.kwargs == {"color": False, "utc": False}
 
     rc = genloppy.main.RuntimeConfiguration(
         configuration=_create_configuration(),

@@ -86,11 +86,11 @@ class Main:
             messages.append("querying of gentoo.linuxhowtos.org database")
         if self.configuration.output.utc:
             messages.append("setting the display time format to GMT/UTC")
-        if not self.configuration.output.color:
-            messages.append("disabling the colored output")
+        if self.configuration.output.color:
+            messages.append("colored output (try to disable colored output)")
 
         if messages:
-            raise NotImplementedError("Sorry, the following features are not implemented yet: " "\n".join(messages))
+            raise NotImplementedError("Sorry, the following features are not implemented yet: " + "\n".join(messages))
 
     def run(self):
         """
@@ -126,7 +126,7 @@ def main(argv=None):
     except BaseException as e:
         print(f"Error: {e}", file=sys.stderr)
         configurator.print_help()
-        sys.exit()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
