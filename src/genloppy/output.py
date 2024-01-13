@@ -87,10 +87,10 @@ class Output(Interface):
         if utc is not None:
             self.tz = UTC if utc else None
 
-    def format_date(self, timestamp: int) -> str:
+    def format_date(self, timestamp: str) -> str:
         """Formats dates.
         realizes: R-OUTPUT-005"""
-        return self.DATE_FORMAT.format(datetime.fromtimestamp(timestamp, tz=self.tz))
+        return self.DATE_FORMAT.format(datetime.fromtimestamp(int(timestamp), tz=self.tz))
 
     def format_duration(self, duration: int, condensed=False):
         """Formats durations.
@@ -125,22 +125,22 @@ class Output(Interface):
         realizes: R-OUTPUT-006"""
         print(message)
 
-    def merge_item(self, timestamp: int, name: str, version: str):
+    def merge_item(self, timestamp: str, name: str, version: str):
         """Prints a merge item
         realizes: R-OUTPUT-007"""
         print(self.MERGE_FORMAT.format(self.format_date(timestamp), name, version))
 
-    def unmerge_item(self, timestamp: int, name: str, version: str):
+    def unmerge_item(self, timestamp: str, name: str, version: str):
         """Prints a unmerge item
         realizes: R-OUTPUT-008"""
         print(self.UNMERGE_FORMAT.format(self.format_date(timestamp), name, version))
 
-    def sync_item(self, timestamp: int):
+    def sync_item(self, timestamp: str):
         """Prints a sync item
         realizes: R-OUTPUT-009"""
         print(self.SYNC_FORMAT.format(self.format_date(timestamp)))
 
-    def merge_time_item(self, timestamp: int, name: str, version: str, duration: int):
+    def merge_time_item(self, timestamp: str, name: str, version: str, duration: int):
         """Prints a merge time item
         realizes: R-OUTPUT-011"""
         print(self.MERGE_TIME_FORMAT.format(self.format_date(timestamp), name, version, self.format_duration(duration)))
