@@ -62,12 +62,12 @@ def test_02b_output_date_formatting():
     """Tests that dates are formatted according to the current locale (here POSIX).
     tests: R-OUTPUT-005"""
     out = Output()
-    assert out.format_date(0) == "Wed Dec 31 19:00:00 1969"
+    assert out.format_date("0") == "Wed Dec 31 19:00:00 1969"
     out.configure(utc=True)
-    assert out.format_date(0) == "Thu Jan  1 00:00:00 1970"
-    assert out.format_date(1342421337) == "Mon Jul 16 06:48:57 2012"
+    assert out.format_date("0") == "Thu Jan  1 00:00:00 1970"
+    assert out.format_date("1342421337") == "Mon Jul 16 06:48:57 2012"
     out.configure(utc=False)
-    assert out.format_date(1342421337) == "Mon Jul 16 02:48:57 2012"
+    assert out.format_date("1342421337") == "Mon Jul 16 02:48:57 2012"
 
 
 def test_03_output_message():
@@ -88,7 +88,7 @@ def test_04_output_merge_item():
     tests: R-OUTPUT-007"""
     with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
-        ts = 0
+        ts = "0"
         name = "cat/package"
         version = "1.33.7"
         with patch("builtins.print") as mock:
@@ -104,7 +104,7 @@ def test_05_output_unmerge_item():
     tests: R-OUTPUT-008"""
     with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
-        ts = 0
+        ts = "0"
         name = "cat/package"
         version = "1.33.7"
         with patch("builtins.print") as mock:
@@ -120,7 +120,7 @@ def test_06_output_sync_item():
     tests: R-OUTPUT-009"""
     with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
-        ts = 0
+        ts = "0"
         with patch("builtins.print") as mock:
             out.sync_item(ts)
 
@@ -149,7 +149,7 @@ def test_08_output_merge_time_item():
     tests: R-OUTPUT-011"""
     with patch.object(Output, "format_date", return_value="") as mock_format_date:
         out = Output()
-        ts = 0
+        ts = "0"
         name = "cat/package"
         version = "1.33.7"
         with patch("builtins.print") as mock:
