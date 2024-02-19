@@ -105,5 +105,5 @@ select = [
     "YTT", # flake8-2020
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["genloppy"]
