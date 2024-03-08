@@ -59,7 +59,7 @@ def test_05_pretend_processing_simple():
         atom_base="cat/package",
         atom_version="3.2.1",
         count_n="11",
-        count_m="23"
+        count_m="23",
     )
     pretend.process(merge_properties._asdict(), duration)
     pretend.post_process()
@@ -86,7 +86,10 @@ def test_08_pretend_processing_one_unknown():
     m.format_duration_estimation.return_value = "mocked duration estimation"
     duration = 3677820
 
-    pretend = Pretend(output=m, pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3\n" "[ebuild   N    ] dog/package-4.0.3\n"))
+    pretend = Pretend(
+        output=m,
+        pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3\n" "[ebuild   N    ] dog/package-4.0.3\n"),
+    )
     pretend.pre_process()
     merge_properties = MergeProperties(
         timestamp=3679157,
@@ -94,7 +97,7 @@ def test_08_pretend_processing_one_unknown():
         atom_base="cat/package",
         atom_version="3.2.1",
         count_n="11",
-        count_m="23"
+        count_m="23",
     )
     pretend.process(merge_properties._asdict(), duration)
     pretend.post_process()

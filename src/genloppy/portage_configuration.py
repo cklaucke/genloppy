@@ -2,6 +2,7 @@
 Portage configuration accessor implementation
 realizes: R-PORTAGE-CONFIG-001
 """
+
 import os.path
 import subprocess
 from typing import Final
@@ -13,8 +14,7 @@ DEFAULT_LOG_DIR: Final = os.path.join("var", "log")
 DEFAULT_LOG_FILENAME: Final = "emerge.log"
 
 
-class PortageConfigurationError(Exception):
-    ...
+class PortageConfigurationError(Exception): ...
 
 
 def _get_portage_env_var(environment_variable: str) -> str:

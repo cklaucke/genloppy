@@ -20,7 +20,7 @@ authors = [
 genloppy = "genloppy.main:main"
 
 [tool.black]
-line-length = 140
+line-length = 120
 target-version = ['py311']
 
 [tool.check-manifest]
@@ -82,7 +82,7 @@ addopts = """
     --tb=short"""
 
 [tool.ruff]
-line-length = 140
+line-length = 120
 src = ["src"]
 
 [tool.ruff.lint]

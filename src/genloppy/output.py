@@ -151,7 +151,12 @@ class Output(Interface):
     def package_duration_header(self, max_package_name_len: int):
         print(
             self.PKG_DURATION_HEADER.format(
-                self.PKG_NAME_HEADING, "min", "avg", "max", "recently", max_package_name_len=self._max_package_length(max_package_name_len)
+                self.PKG_NAME_HEADING,
+                "min",
+                "avg",
+                "max",
+                "recently",
+                max_package_name_len=self._max_package_length(max_package_name_len),
             )
         )
 

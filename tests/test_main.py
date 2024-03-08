@@ -85,20 +85,15 @@ class _MockOutput(Interface):
     def configure(self, **kwargs):
         self.kwargs = kwargs
 
-    def message(self, message):
-        ...
+    def message(self, message): ...
 
-    def merge_item(self, timestamp, name, version):
-        ...
+    def merge_item(self, timestamp, name, version): ...
 
-    def unmerge_item(self, timestamp, name, version):
-        ...
+    def unmerge_item(self, timestamp, name, version): ...
 
-    def sync_item(self, timestamp):
-        ...
+    def sync_item(self, timestamp): ...
 
-    def merge_time_item(self, timestamp, name, version, duration):
-        ...
+    def merge_time_item(self, timestamp, name, version, duration): ...
 
 
 def test_01_main_execution():
@@ -157,7 +152,7 @@ def test_01_main_execution():
     rc = genloppy.main.RuntimeConfiguration(
         configuration=_create_configuration(),
         elog_tokenizer=mock_elog_parser,
-        output=mock_output
+        output=mock_output,
     )
     m = genloppy.main.Main(rc)
     with patch("genloppy.main.get_default_emerge_log_file") as default_log_file_mock:
@@ -166,8 +161,7 @@ def test_01_main_execution():
             m.run()
 
     assert exception.value.args[0] == (
-        "Could not determine path to default emerge log file. "
-        "Please specify the path at the command line."
+        "Could not determine path to default emerge log file. Please specify the path at the command line."
     )
 
 

@@ -156,7 +156,9 @@ def test_08_output_merge_time_item():
             out.merge_time_item(ts, name, version, 100)
 
     mock_format_date.assert_called_once_with(ts)
-    mock.assert_called_with(5 * " " + " >>> " + name + "-" + version + "\n" + 7 * " " + "merge time: 1 minute and 40 seconds.\n")
+    mock.assert_called_with(
+        5 * " " + " >>> " + name + "-" + version + "\n" + 7 * " " + "merge time: 1 minute and 40 seconds.\n"
+    )
 
 
 def test_09_package_duration_header():
@@ -190,4 +192,6 @@ def test_10_package_duration():
 def test_11_format_duration_estimation():
     out = Output()
 
-    assert out.format_duration_estimation(Durations(1, 2, 3, 4)) == "2 seconds (-1 second/+1 second), recently: 4 seconds"
+    assert (
+        out.format_duration_estimation(Durations(1, 2, 3, 4)) == "2 seconds (-1 second/+1 second), recently: 4 seconds"
+    )
