@@ -88,7 +88,7 @@ def test_08_pretend_processing_one_unknown():
 
     pretend = Pretend(
         output=m,
-        pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3\n" "[ebuild   N    ] dog/package-4.0.3\n"),
+        pretend_stream=StringIO("[ebuild   N    ] cat/package-4.0.3\n[ebuild   N    ] dog/package-4.0.3\n"),
     )
     pretend.pre_process()
     merge_properties = MergeProperties(

@@ -15,7 +15,7 @@ def test_01a_unknown_file_format_raises():
     with pytest.raises(RuntimeError) as exception:
         LogFiles(log_files)
 
-    assert exception.value.args[0] == "The format of the following log file(s) is unexpected: " f"'{log_files[0]}'."
+    assert exception.value.args[0] == f"The format of the following log file(s) is unexpected: '{log_files[0]}'."
 
 
 def test01b_malformed_log_files_raises():
@@ -45,7 +45,7 @@ def test_01c_non_existent_log_file_raises():
     with pytest.raises(RuntimeError) as exception:
         LogFiles(log_files)
 
-    assert exception.value.args[0] == "The following log file(s) were not found: " f"'{log_files[0]}'."
+    assert exception.value.args[0] == f"The following log file(s) were not found: '{log_files[0]}'."
 
 
 def test_02a_order_single_log_file_succeeds():
