@@ -35,7 +35,7 @@ def test_03_merge_end_mismatch():
         atom_base="cat/package",
         atom_version="3.2.1",
         count_n="11",
-        count_m="23"
+        count_m="23",
     )
     merge_ends = [
         MergeProperties(
@@ -44,7 +44,7 @@ def test_03_merge_end_mismatch():
             atom_base="dog/package",
             atom_version="3.2.1",
             count_n="11",
-            count_m="23"
+            count_m="23",
         ),
         MergeProperties(
             timestamp=0,
@@ -52,7 +52,7 @@ def test_03_merge_end_mismatch():
             atom_base="cat/package",
             atom_version="3.2.2",
             count_n="11",
-            count_m="23"
+            count_m="23",
         ),
         MergeProperties(
             timestamp=0,
@@ -60,7 +60,7 @@ def test_03_merge_end_mismatch():
             atom_base="cat/package",
             atom_version="3.2.1",
             count_n="12",
-            count_m="23"
+            count_m="23",
         ),
         MergeProperties(
             timestamp=0,
@@ -68,7 +68,7 @@ def test_03_merge_end_mismatch():
             atom_base="cat/package",
             atom_version="3.2.1",
             count_n="11",
-            count_m="22"
+            count_m="22",
         ),
     ]
     for merge_end in merge_ends:
@@ -90,7 +90,7 @@ def test_04_merge_end_orphaned_merge_end():
         atom_base="cat/package",
         atom_version="3.2.1",
         count_n="11",
-        count_m="23"
+        count_m="23",
     )
     duration.callbacks["merge_end"](merge_end._asdict())
     assert not m.method_calls
@@ -109,7 +109,7 @@ def test_05_duration_calculation_success():
             atom_base="cat/package",
             atom_version="3.2.1",
             count_n="11",
-            count_m="23"
+            count_m="23",
         ),
         mp._replace(timestamp=3677820),
     ]
@@ -119,6 +119,6 @@ def test_05_duration_calculation_success():
     assert m.method_calls == [
         call.callback(
             merge_properties[1]._asdict(),
-            merge_properties[1].timestamp - merge_properties[0].timestamp
+            merge_properties[1].timestamp - merge_properties[0].timestamp,
         )
     ]

@@ -15,7 +15,7 @@ def test_01a_unknown_file_format_raises():
     with pytest.raises(RuntimeError) as exception:
         LogFiles(log_files)
 
-    assert exception.value.args[0] == "The format of the following log file(s) is unexpected: " f"'{log_files[0]}'."
+    assert exception.value.args[0] == f"The format of the following log file(s) is unexpected: '{log_files[0]}'."
 
 
 def test01b_malformed_log_files_raises():
@@ -23,8 +23,8 @@ def test01b_malformed_log_files_raises():
     tests: R-LOG-FILES-001
     tests: R-LOG-FILES-003"""
     log_files = [
-        join(dirname(__file__), TEST_DATA_DIR, file) for file in
-        ["malformed.log", "malformed.log.gz", "malformed.log.bz2", "malformed.log.lzma"]
+        join(dirname(__file__), TEST_DATA_DIR, file)
+        for file in ["malformed.log", "malformed.log.gz", "malformed.log.bz2", "malformed.log.lzma"]
     ]
 
     with pytest.raises(RuntimeError) as exception:
@@ -45,7 +45,7 @@ def test_01c_non_existent_log_file_raises():
     with pytest.raises(RuntimeError) as exception:
         LogFiles(log_files)
 
-    assert exception.value.args[0] == "The following log file(s) were not found: " f"'{log_files[0]}'."
+    assert exception.value.args[0] == f"The following log file(s) were not found: '{log_files[0]}'."
 
 
 def test_02a_order_single_log_file_succeeds():
@@ -62,8 +62,14 @@ def test_02b_order_multiple_log_file_succeeds():
     """Tests that multiple file are ordered chronologically (ascending)
     tests: R-LOG-FILES-001
     tests: R-LOG-FILES-004"""
-    log_files_ordered = [join(dirname(__file__), TEST_DATA_DIR, "good.1.log"), join(dirname(__file__), TEST_DATA_DIR, "good.2.log")]
-    log_files_unordered = [join(dirname(__file__), TEST_DATA_DIR, "good.2.log"), join(dirname(__file__), TEST_DATA_DIR, "good.1.log")]
+    log_files_ordered = [
+        join(dirname(__file__), TEST_DATA_DIR, "good.1.log"),
+        join(dirname(__file__), TEST_DATA_DIR, "good.2.log"),
+    ]
+    log_files_unordered = [
+        join(dirname(__file__), TEST_DATA_DIR, "good.2.log"),
+        join(dirname(__file__), TEST_DATA_DIR, "good.1.log"),
+    ]
 
     lf = LogFiles(log_files_ordered)
     fd = list(lf)

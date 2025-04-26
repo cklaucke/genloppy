@@ -107,7 +107,7 @@ class CommandLine:
                 dest="sub_commands",
                 action="append_const",
                 const=PROCESSORS.MERGE,
-                help="prints the history of merges"
+                help="prints the history of merges",
             ),
         ),
         _CommandLineArgument(
@@ -125,7 +125,7 @@ class CommandLine:
                 dest="sub_commands",
                 action="append_const",
                 const=PROCESSORS.SYNC,
-                help="prints the history of syncs"
+                help="prints the history of syncs",
             ),
         ),
         _CommandLineArgument(
@@ -134,7 +134,7 @@ class CommandLine:
                 dest="sub_commands",
                 action="append_const",
                 const=PROCESSORS.TIME,
-                help="calculates and prints the merge time"
+                help="calculates and prints the merge time",
             ),
         ),
         _CommandLineArgument(
@@ -143,7 +143,7 @@ class CommandLine:
                 dest="sub_commands",
                 action="append_const",
                 const=PROCESSORS.UNMERGE,
-                help=" which prints the history of unmerges"
+                help=" which prints the history of unmerges",
             ),
         ),
         _CommandLineArgument(
@@ -152,7 +152,7 @@ class CommandLine:
                 dest="sub_commands",
                 action="append_const",
                 const=PROCESSORS.VERSION,
-                help="prints the version information"
+                help="prints the version information",
             ),
         ),
         # key-value options
@@ -174,7 +174,7 @@ class CommandLine:
                 metavar="logfile",
                 dest="logfile",
                 action="append",
-                help="parses the given logfile(s)"
+                help="parses the given logfile(s)",
             ),
         ),
         _CommandLineArgument(
@@ -182,7 +182,7 @@ class CommandLine:
             _CommandLineOptions(
                 metavar="regex",
                 action="append",
-                help="takes regular expression(s) as value to be used for package searches"
+                help="takes regular expression(s) as value to be used for package searches",
             ),
         ),
         # flags
@@ -191,7 +191,7 @@ class CommandLine:
             _CommandLineOptions(
                 dest="utc",
                 action="store_true",
-                help="sets the display time format to GMT/UTC"
+                help="sets the display time format to GMT/UTC",
             ),
         ),
         _CommandLineArgument(
@@ -200,7 +200,7 @@ class CommandLine:
                 dest="color",
                 action="store_false",
                 default=True,
-                help="disables the colored output"
+                help="disables the colored output",
             ),
         ),
         _CommandLineArgument(
@@ -208,7 +208,7 @@ class CommandLine:
             _CommandLineOptions(
                 dest="query",
                 action="store_true",
-                help="queries the gentoo.linuxhowtos.org database if no local emerge was found"
+                help="queries the gentoo.linuxhowtos.org database if no local emerge was found",
             ),
         ),
         _CommandLineArgument(
@@ -216,8 +216,8 @@ class CommandLine:
             _CommandLineOptions(
                 dest="case_sensitive",
                 action="store_true",
-                help="enables case sensitive matching"
-            )
+                help="enables case sensitive matching",
+            ),
         ),
     )
 
@@ -246,7 +246,8 @@ class CommandLine:
     def _validate_arguments(self, parsed_args):
         if not parsed_args.sub_commands:
             raise KeyError(
-                "At least one sub-command argument (one of '-c', '-l', '-i', '-p', '-r', '-t', '-u' or '-v') needed.")
+                "At least one sub-command argument (one of '-c', '-l', '-i', '-p', '-r', '-t', '-u' or '-v') needed."
+            )
 
         processor_name = self._get_processor(parsed_args.sub_commands)
 

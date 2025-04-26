@@ -87,7 +87,7 @@ def test_05_search_mode():
         atom_base="cat/package",
         atom_version="3.2.1",
         count_n="11",
-        count_m="23"
+        count_m="23",
     )
     time.process_search(merge_properties._asdict(), 3677820)
     time.post_process()
@@ -97,7 +97,7 @@ def test_05_search_mode():
             merge_properties.timestamp,
             merge_properties.atom_base,
             merge_properties.atom_version,
-            3677820
+            3677820,
         )
     ]
 
@@ -115,7 +115,7 @@ def test_06_package_mode():
             atom_base="cat/package",
             atom_version="3.2.1",
             count_n="11",
-            count_m="23"
+            count_m="23",
         ),
         MergeProperties(
             timestamp=2,
@@ -123,7 +123,7 @@ def test_06_package_mode():
             atom_base="abc/package",
             atom_version="0.47.11",
             count_n="7",
-            count_m="9"
+            count_m="9",
         ),
         MergeProperties(
             timestamp=3,
@@ -131,7 +131,7 @@ def test_06_package_mode():
             atom_base="cat/package",
             atom_version="3.1.1",
             count_n="1",
-            count_m="1"
+            count_m="1",
         ),
     ]
 
