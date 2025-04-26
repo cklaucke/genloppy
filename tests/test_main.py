@@ -111,9 +111,8 @@ def test_01_main_execution():
     content = "1337:\n1338: alpha\n"
     temp_file = None
     try:
-        temp_file = NamedTemporaryFile(delete=False)
-        temp_file.write(content.encode())
-        temp_file.close()
+        with NamedTemporaryFile(delete=False) as temp_file:
+            temp_file.write(content.encode())
 
         rc = genloppy.main.RuntimeConfiguration(
             configuration=_create_configuration([temp_file.name]),
