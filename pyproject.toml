@@ -8,7 +8,8 @@ version = "0.2.3"
 description = "genlop drop in purely written in python"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { file = "LICENSE" }
+license = "GPL-2.0-only"
+license-files = ["LICENSE"]
 authors = [
     { name = "cklaucke", email = "33376323+cklaucke@users.noreply.github.com" }
 ]
