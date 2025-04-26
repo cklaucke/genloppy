@@ -12,6 +12,21 @@ license = { file = "LICENSE" }
 authors = [
     { name = "cklaucke", email = "33376323+cklaucke@users.noreply.github.com" }
 ]
+dependencies = [
+    "black==25.1.0",
+    "build==1.2.2.post1",
+    "mypy==1.15.0",
+    "mypy-extensions==1.1.0",
+    "pytest==8.3.5",
+    "pyupgrade==3.19.1",
+    "ruff==0.11.7",
+    "setuptools==79.0.1",
+    "tox==4.25.0",
+    "types-colorama==0.4.15.20240311",
+    "types-docutils==0.21.0.20241128",
+    "types-pygments==2.19.0.20250305",
+    "types-setuptools==79.0.0.20250422",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/cklaucke/genloppy"
