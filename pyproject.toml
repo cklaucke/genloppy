@@ -37,7 +37,7 @@ genloppy = "genloppy.main:main"
 
 [tool.black]
 line-length = 120
-target-version = ['py312']
+target-version = ['py313']
 
 [tool.check-manifest]
 ignore = [
