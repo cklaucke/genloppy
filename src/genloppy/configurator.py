@@ -239,7 +239,7 @@ class CommandLine:
     def _get_processor(self, sub_commands: list[str]) -> str:
         if len(sub_commands) == 1:
             return sub_commands[0]
-        elif set(sub_commands) == {self.PROCESSORS.MERGE, self.PROCESSORS.UNMERGE}:
+        if set(sub_commands) == {self.PROCESSORS.MERGE, self.PROCESSORS.UNMERGE}:
             return self.PROCESSORS.MERGE_UNMERGE
         msg = "Not more than one sub-command allowed at the same time (except '--merge' and '--unmerge')."
         raise KeyError(msg)

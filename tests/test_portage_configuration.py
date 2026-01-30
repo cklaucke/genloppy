@@ -19,6 +19,7 @@ def test_01_get_default_emerge_log_file_with_emerge_log_dir():
         assert args[0][1] == "envvar"
         if args[0][2] == "EMERGE_LOG_DIR":
             return CompletedProcess("", 0, stdout=emerge_log_dir)
+        return None
 
     with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
@@ -38,8 +39,9 @@ def test_02_get_default_emerge_log_file_without_emerge_log_dir():
         assert args[0][1] == "envvar"
         if args[0][2] == "EMERGE_LOG_DIR":
             return CompletedProcess("", 1, stdout=None)
-        elif args[0][2] == "EPREFIX":
+        if args[0][2] == "EPREFIX":
             return CompletedProcess("", 0, stdout=e_prefix)
+        return None
 
     with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
@@ -59,6 +61,7 @@ def test_03_get_default_emerge_log_file_without_eprefix_fails():
         assert first_arg[1] == "envvar"
         if first_arg[2] == "EMERGE_LOG_DIR" or first_arg[2] == "EPREFIX":
             return CompletedProcess("", 1, stdout=None)
+        return None
 
     with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects

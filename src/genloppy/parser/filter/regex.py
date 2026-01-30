@@ -48,5 +48,4 @@ class RegexFilter(EntryHandlerWrapper):
         atom = properties.get("atom")
         if atom:
             return any(regex.search(atom) for regex in self.regexes)
-        else:
-            return False
+        return False

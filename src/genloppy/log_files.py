@@ -50,9 +50,9 @@ def _get_log_entry_timestamp(log_entry: str) -> int:
     m = RE_LOG_ENTRY.match(log_entry)
     if m:
         return int(m.group("timestamp"))
-    else:
-        msg = "Malformed log file."
-        raise ValueError(msg)
+
+    msg = "Malformed log file."
+    raise ValueError(msg)
 
 
 def _check_log_files(log_files: Iterable[str]):

@@ -50,8 +50,7 @@ class Main:
         extra_config = dataclasses.asdict(self.configuration.filter_extra)
         filter_config = dataclasses.asdict(self.configuration.filter)
         filters = (parser_filter.create(k, v, **extra_config) for k, v in filter_config.items() if v)
-        entry_handler = reduce(lambda _entry_handler, _filter: _filter(_entry_handler), filters, entry_handler)
-        return entry_handler
+        return reduce(lambda _entry_handler, _filter: _filter(_entry_handler), filters, entry_handler)
 
     def _setup_tokenizer(self):
         parser_configuration = dataclasses.asdict(self.configuration.parser)
