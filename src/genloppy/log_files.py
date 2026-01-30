@@ -38,7 +38,8 @@ def _get_opener(filename) -> Callable:
             return opener.callback
         except opener.exception:
             continue
-    raise RuntimeError("Unknown file format.")
+    msg = "Unknown file format."
+    raise RuntimeError(msg)
 
 
 def _open_log_file(filename: str) -> TextIO:
@@ -50,7 +51,8 @@ def _get_log_entry_timestamp(log_entry: str) -> int:
     if m:
         return int(m.group("timestamp"))
     else:
-        raise ValueError("Malformed log file.")
+        msg = "Malformed log file."
+        raise ValueError(msg)
 
 
 def _check_log_files(log_files: Iterable[str]):

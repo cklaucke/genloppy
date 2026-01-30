@@ -30,7 +30,8 @@ def _get_portage_env_var(environment_variable: str) -> str:
     if cp.returncode == 0:
         return cp.stdout.strip()
 
-    raise PortageConfigurationError(f"Cannot query environment variable '{env_var}'.")
+    msg = f"Cannot query environment variable '{env_var}'."
+    raise PortageConfigurationError(msg)
 
 
 def get_default_emerge_log_file() -> str:

@@ -241,28 +241,32 @@ class CommandLine:
             return sub_commands[0]
         elif set(sub_commands) == {self.PROCESSORS.MERGE, self.PROCESSORS.UNMERGE}:
             return self.PROCESSORS.MERGE_UNMERGE
-        raise KeyError("Not more than one sub-command allowed at the same time (except '--merge' and '--unmerge').")
+        msg = "Not more than one sub-command allowed at the same time (except '--merge' and '--unmerge')."
+        raise KeyError(msg)
 
     def _validate_arguments(self, parsed_args):
         if not parsed_args.sub_commands:
-            raise KeyError(
-                "At least one sub-command argument (one of '-c', '-l', '-i', '-p', '-r', '-t', '-u' or '-v') needed."
-            )
+            msg = "At least one sub-command argument (one of '-c', '-l', '-i', '-p', '-r', '-t', '-u' or '-v') needed."
+            raise KeyError(msg)
 
         processor_name = self._get_processor(parsed_args.sub_commands)
 
         if parsed_args.query and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_QUERY:
-            raise KeyError(f"Query flag '-q' not allowed for '{processor_name}'.")
+            msg = f"Query flag '-q' not allowed for '{processor_name}'."
+            raise KeyError(msg)
 
         if (parsed_args.name or parsed_args.search) and processor_name not in self.PROCESSORS.PROCESSORS_ALLOW_NAME:
-            raise KeyError(f"Package name(s) or search arguments '-s' not allowed for '{processor_name}'.")
+            msg = f"Package name(s) or search arguments '-s' not allowed for '{processor_name}'."
+            raise KeyError(msg)
 
         if not (parsed_args.name or parsed_args.search) and processor_name in self.PROCESSORS.PROCESSORS_REQUIRE_NAME:
-            raise KeyError(f"At least one package name(s) or search arguments '-s' required for '{processor_name}'.")
+            msg = f"At least one package name(s) or search arguments '-s' required for '{processor_name}'."
+            raise KeyError(msg)
 
         date_count = len(parsed_args.date) if parsed_args.date else 0
         if date_count > 2:
-            raise KeyError(f"Up to two dates ('--date') may be given. Got {date_count}.")
+            msg = f"Up to two dates ('--date') may be given. Got {date_count}."
+            raise KeyError(msg)
 
     def parse_arguments(self) -> Configuration:
         """

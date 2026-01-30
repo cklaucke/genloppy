@@ -55,12 +55,14 @@ class Tokenizer:
         """
 
         if self.entry_handler is None:
-            raise TokenizerError("Entry entry_handler not given!")
+            msg = "Entry entry_handler not given!"
+            raise TokenizerError(msg)
 
         listened_entry_types = set(self.entry_handler.listener.keys())
         unknown_entry_types = listened_entry_types.difference(self._entry_type_pattern.keys())
         if unknown_entry_types:
-            raise TokenizerError("Unknown registered entry type")
+            msg = "Unknown registered entry type"
+            raise TokenizerError(msg)
 
         entry_type_pattern = dict(item for item in self._entry_type_pattern.items() if item[0] in listened_entry_types)
 

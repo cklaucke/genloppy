@@ -108,6 +108,7 @@ select = [
     "B", # flake8-bugbear
     "C", # flake8-comprehensions
     "E", # pycodestyle errors
+    "EM", # flake8-errmsg
     "ERA", # flake8-eradicate/eradicate
     "F", # pyflakes
     "FBT", # flake8-boolean-trap

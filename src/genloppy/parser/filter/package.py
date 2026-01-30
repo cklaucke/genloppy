@@ -42,7 +42,8 @@ class PackageFilter(EntryHandlerWrapper):
             bucket.append(package)
 
         if malformed_packages:
-            raise RuntimeError("Malformed packages given: '{}'. Aborting!".format(", ".join(malformed_packages)))
+            msg = "Malformed packages given: '{}'. Aborting!".format(", ".join(malformed_packages))
+            raise RuntimeError(msg)
 
         def _adjust_case(iterable: Iterable[str]) -> list[str]:
             return list(iterable if case_sensitive else (i.lower() for i in iterable))
