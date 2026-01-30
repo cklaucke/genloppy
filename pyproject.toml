@@ -14,7 +14,6 @@ authors = [
     { name = "cklaucke", email = "33376323+cklaucke@users.noreply.github.com" }
 ]
 dependencies = [
-    "black>=25.9.0,<26.0.0",
     "build>=1.3.0,<2.0.0",
     "mypy>=1.18.2,<2.0.0",
     "mypy-extensions>=1.1.0,<2.0.0",
