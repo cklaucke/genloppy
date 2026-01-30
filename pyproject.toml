@@ -117,6 +117,7 @@ select = [
     "N", # pep8-naming
     "PIE", # flake8-pie
     "PGH", # pygrep
+    "PL", # Pylint
     "PTH", # flake8-use-pathlib
     "RET", # flake8-return
     "RUF", # ruff checks
@@ -126,6 +127,9 @@ select = [
     "UP", # pyupgrade
     "W", # pycodestyle warnings
     "YTT", # flake8-2020
+]
+ignore = [
+    "PLR2004",
 ]
 
 [tool.ruff.lint.isort]

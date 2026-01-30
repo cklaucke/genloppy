@@ -31,7 +31,7 @@ class MockedEntryHandler:
         return {"merge_begin": None, "merge_end": None, "sync": None, "unmerge": None}
 
 
-def test_01a_good_elog_parses_successful():
+def test_01a_good_elog_parses_successful():  # noqa: PLR0915
     """
     Tests that the parser matches the entry types and delegates to the given entry_handler for a proper emerge log.
 
