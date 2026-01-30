@@ -4,6 +4,7 @@ import signal
 import sys
 from dataclasses import dataclass
 from functools import reduce
+from pathlib import Path
 
 from genloppy import processor
 from genloppy.configurator import CommandLine as CommandLineConfigurator
@@ -65,16 +66,14 @@ class Main:
         """Retrieves the log file names or tries to get the default emerge log file name if no log files were given.
 
         realizes: R-LOG-FILES-002"""
-        file_names = self.configuration.parser.file_names
-        if not file_names:
-            try:
-                file_names = [get_default_emerge_log_file()]
-            except PortageConfigurationError as exc:
-                msg = (
-                    "Could not determine path to default emerge log file. Please specify the path at the command line."
-                )
-                raise RuntimeError(msg) from exc
-        return file_names
+        if self.configuration.parser.file_names:
+            return [Path(fn) for fn in self.configuration.parser.file_names]
+
+        try:
+            return [get_default_emerge_log_file()]
+        except PortageConfigurationError as exc:
+            msg = "Could not determine path to default emerge log file. Please specify the path at the command line."
+            raise RuntimeError(msg) from exc
 
     def _config_feature_check(self):
         """Checks for configuration feature availability."""

@@ -1,4 +1,4 @@
-import os.path
+from pathlib import Path
 from subprocess import CompletedProcess
 from unittest.mock import patch
 
@@ -24,7 +24,7 @@ def test_01_get_default_emerge_log_file_with_emerge_log_dir():
     with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
 
-        assert get_default_emerge_log_file() == os.path.join(emerge_log_dir, "emerge.log")
+        assert get_default_emerge_log_file() == Path(emerge_log_dir) / "emerge.log"
 
 
 def test_02_get_default_emerge_log_file_without_emerge_log_dir():
@@ -46,7 +46,7 @@ def test_02_get_default_emerge_log_file_without_emerge_log_dir():
     with patch("subprocess.run") as subprocess_run_mock:
         subprocess_run_mock.side_effect = run_side_effects
 
-        assert get_default_emerge_log_file() == os.path.join(os.sep, e_prefix, "var", "log", "emerge.log")
+        assert get_default_emerge_log_file() == Path("/") / e_prefix / "var" / "log" / "emerge.log"
 
 
 def test_03_get_default_emerge_log_file_without_eprefix_fails():

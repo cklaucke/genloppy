@@ -1,5 +1,5 @@
 from io import StringIO
-from os.path import dirname, join
+from pathlib import Path
 
 import pytest
 
@@ -46,7 +46,7 @@ def test_01a_good_elog_parses_successful():
 
     elp = Tokenizer(EMERGE_LOG_ENTRY_TYPES, MockedEntryHandler())
 
-    with open(join(dirname(__file__), "good_emerge.log")) as fh:
+    with (Path(__file__).parent / "good_emerge.log").open() as fh:
         elp.tokenize(fh)
 
     entries = elp.entry_handler.entries
@@ -116,7 +116,7 @@ def test_01b_missing_handler_raises():
     """
     elp = Tokenizer({}, None)
 
-    with open(join(dirname(__file__), "good_emerge.log")) as fh, pytest.raises(TokenizerError):
+    with (Path(__file__).parent / "good_emerge.log").open() as fh, pytest.raises(TokenizerError):
         elp.tokenize(fh)
 
 
