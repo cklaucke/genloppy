@@ -7,7 +7,7 @@ class Base(ProcessorInterface):
     realizes: R-PROCESSOR-BASE-001
     """
 
-    def __init__(self, callbacks=None, **kwargs):
+    def __init__(self, callbacks=None, **_kwargs):
         self._callbacks = dict(callbacks) if callbacks else {}
 
     @property

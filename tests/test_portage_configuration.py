@@ -14,7 +14,7 @@ def test_01_get_default_emerge_log_file_with_emerge_log_dir():
     """
     emerge_log_dir = "/foo"
 
-    def run_side_effects(*args, **kwargs):
+    def run_side_effects(*args, **_kwargs):
         assert args[0][0] == "portageq"
         assert args[0][1] == "envvar"
         if args[0][2] == "EMERGE_LOG_DIR":
@@ -34,7 +34,7 @@ def test_02_get_default_emerge_log_file_without_emerge_log_dir():
     """
     e_prefix = "prefix"
 
-    def run_side_effects(*args, **kwargs):
+    def run_side_effects(*args, **_kwargs):
         assert args[0][0] == "portageq"
         assert args[0][1] == "envvar"
         if args[0][2] == "EMERGE_LOG_DIR":
@@ -55,7 +55,7 @@ def test_03_get_default_emerge_log_file_without_eprefix_fails():
     tests: R-PORTAGE-CONFIG-002
     """
 
-    def run_side_effects(*args, **kwargs):
+    def run_side_effects(*args, **_kwargs):
         first_arg = args[0]
         assert first_arg[0] == "portageq"
         assert first_arg[1] == "envvar"
@@ -78,7 +78,7 @@ def test_04_get_default_emerge_log_file_without_portageq_fails():
     tests: R-PORTAGE-CONFIG-002
     """
 
-    def run_side_effects(*args, **kwargs):
+    def run_side_effects(*_args, **_kwargs):
         return CompletedProcess("", 127)
 
     with patch("subprocess.run") as subprocess_run_mock:

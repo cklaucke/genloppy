@@ -105,6 +105,7 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = [
+    "ARG", # flake8-unused-arguments
     "B", # flake8-bugbear
     "C", # flake8-comprehensions
     "E", # pycodestyle errors
