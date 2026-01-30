@@ -105,31 +105,65 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = [
+    "A", # flake8-builtins
+    # "ANN", # flake8-annotations
     "ARG", # flake8-unused-arguments
+    "ASYNC", # flake8-async
     "B", # flake8-bugbear
+    "BLE", # flake8-blind-except
     "C", # flake8-comprehensions
+    "C4", # flake8-comprehensions
+    "COM", # flake8-commas
+    # "D", # pydocstyle
+    # "DOC", # pydoclint
+    "DTZ", # flake8-datetimez
     "E", # pycodestyle errors
     "EM", # flake8-errmsg
     "ERA", # flake8-eradicate/eradicate
+    # "EXE", # flake8-executable
     "F", # pyflakes
+    "FA", # flake8-future-annotations
     "FBT", # flake8-boolean-trap
+    # "FIX", # flake8-fixme
+    "FLY", # flynt
+    "FURB", # refurb
+    "G", # flake8-logging-format
     "I", # isort
+    "ICN", # flake8-import-conventions
+    "INP", # flake8-no-pep420
+    "ISC", # flake8-implicit-str-concat
+    "LOG", # flake8-logging
     "N", # pep8-naming
+    "PERF", # Perflint
     "PIE", # flake8-pie
     "PGH", # pygrep
     "PL", # Pylint
+    "PT", # flake8-pytest-style
     "PTH", # flake8-use-pathlib
+    "PYI", # flake8-pyi
+    "Q", # flake8-quotes
     "RET", # flake8-return
+    "RSE", # flake8-raise
     "RUF", # ruff checks
+    "S", # flake8-bandit
     "SIM", # flake8-simplify
+    "SLF", # flake8-self
+    "SLOT", # flake8-slots
+    # "T20", # flake8-print
+    "TC", # flake8-type-checking
     "TCH", # flake8-type-checking
     "TID", # flake8-tidy-imports
+    # "TD", # flake8-todos
+    "TRY", # tryceratops
     "UP", # pyupgrade
     "W", # pycodestyle warnings
     "YTT", # flake8-2020
 ]
 ignore = [
+    "COM812", # missing-trailing-comma; intentionally disabled to not conflict w/ ruff format
     "PLR2004",
+    "S101",
+    "TRY300",
 ]
 
 [tool.ruff.lint.isort]
@@ -141,3 +175,4 @@ project-includes = [
     "tests",
 ]
 search-path = ["src"]
+errors.redundant-condition = "error"
