@@ -19,10 +19,10 @@ class PackageFilter(EntryHandlerWrapper):
         """
         super().__init__(packages, **kwargs)
         self.case_sensitive = kwargs.get("case_sensitive", False)
-        self.atom_bases, self.package_names = self._store_packages(set(packages), self.case_sensitive)
+        self.atom_bases, self.package_names = self._store_packages(set(packages), case_sensitive=self.case_sensitive)
 
     @staticmethod
-    def _store_packages(packages: Iterable[str], case_sensitive: bool = False) -> tuple[list[str], list[str]]:
+    def _store_packages(packages: Iterable[str], *, case_sensitive: bool = False) -> tuple[list[str], list[str]]:
         # both pattern are case-insensitive due to their nature: no need to set re.I
         atom_matcher = re.compile(ATOM_PATTERN)
         atom_base_matcher = re.compile(ATOM_BASE_PATTERN)

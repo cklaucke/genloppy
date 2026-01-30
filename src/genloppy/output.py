@@ -92,7 +92,7 @@ class Output(Interface):
         realizes: R-OUTPUT-005"""
         return self.DATE_FORMAT.format(datetime.fromtimestamp(int(timestamp), tz=self.tz))
 
-    def format_duration(self, duration: int, condensed=False):
+    def format_duration(self, duration: int, *, condensed=False):
         """Formats durations.
         realizes: R-OUTPUT-010
         :param duration: a duration in seconds

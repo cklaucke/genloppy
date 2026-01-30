@@ -15,7 +15,7 @@ class Tokenizer:
     realizes: R-PARSER-TOKENIZER-003
     """
 
-    def __init__(self, entry_type_pattern, entry_handler=None, echo=False):
+    def __init__(self, entry_type_pattern, entry_handler=None, *, echo=False):
         self._entry_type_pattern = dict(entry_type_pattern)
         self._entry_handler = entry_handler
         self.echo = echo

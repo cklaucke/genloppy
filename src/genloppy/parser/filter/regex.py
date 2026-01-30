@@ -18,10 +18,10 @@ class RegexFilter(EntryHandlerWrapper):
         """
         super().__init__(regular_expressions, **kwargs)
         self.case_sensitive: bool = kwargs.get("case_sensitive", False)
-        self.regexes = self._store_regexes(set(regular_expressions), self.case_sensitive)
+        self.regexes = self._store_regexes(set(regular_expressions), case_sensitive=self.case_sensitive)
 
     @staticmethod
-    def _store_regexes(regular_expressions: Iterable[str], case_sensitive: bool = False) -> list[re.Pattern[str]]:
+    def _store_regexes(regular_expressions: Iterable[str], *, case_sensitive: bool = False) -> list[re.Pattern[str]]:
         regexes = []
         malformed_regexes: list[str] = []
 

@@ -110,6 +110,7 @@ select = [
     "E", # pycodestyle errors
     "ERA", # flake8-eradicate/eradicate
     "F", # pyflakes
+    "FBT", # flake8-boolean-trap
     "I", # isort
     "N", # pep8-naming
     "PIE", # flake8-pie
