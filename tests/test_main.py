@@ -5,6 +5,7 @@ from unittest.mock import call, patch
 import pytest
 
 import genloppy.main
+from genloppy import processor
 from genloppy.configurator import (
     Configuration,
     FilterConfiguration,
@@ -103,7 +104,7 @@ def test_01_main_execution():
     tests: R-MAIN-002
     """
 
-    genloppy.processor.PROCESSORS = {"mock": _MockProcessor}
+    processor.PROCESSORS = {"mock": _MockProcessor}
     mock_entry_handler = _MockEntryHandler()
     mock_elog_parser = _MockTokenizer(mock_entry_handler)
     mock_output = _MockOutput()

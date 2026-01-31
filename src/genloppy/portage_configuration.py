@@ -27,7 +27,7 @@ def _get_portage_env_var(environment_variable: str) -> str:
                 PortageConfigurationError will be raised
     """
     env_var = environment_variable
-    cp = subprocess.run([PORTAGEQ, "envvar", env_var], stdout=subprocess.PIPE, text=True)
+    cp = subprocess.run([PORTAGEQ, "envvar", env_var], stdout=subprocess.PIPE, text=True, check=False)  # noqa: S603 # called with fixed strings as parameters only
     if cp.returncode == 0:
         return cp.stdout.strip()
 

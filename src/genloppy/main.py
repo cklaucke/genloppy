@@ -122,7 +122,7 @@ def main(argv=None):
         )
         m = Main(runtime)
         m.run()
-    except BaseException as e:
+    except BaseException as e:  # noqa: BLE001  # catches all unhandled exception and terminates
         print(f"Error: {e}", file=sys.stderr)
         configurator.print_help()
         sys.exit(1)

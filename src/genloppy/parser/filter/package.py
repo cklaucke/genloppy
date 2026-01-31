@@ -23,7 +23,7 @@ class PackageFilter(EntryHandlerWrapper):
 
     @staticmethod
     def _store_packages(packages: Iterable[str], *, case_sensitive: bool = False) -> tuple[list[str], list[str]]:
-        # both pattern are case-insensitive due to their nature: no need to set re.I
+        # both patterns are case-insensitive due to their nature: no need to set re.I
         atom_matcher = re.compile(ATOM_PATTERN)
         atom_base_matcher = re.compile(ATOM_BASE_PATTERN)
         package_name_matcher = re.compile(PACKAGE_NAME_PATTERN)
