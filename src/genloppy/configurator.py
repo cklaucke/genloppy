@@ -278,7 +278,7 @@ class CommandLine:
         self._validate_arguments(parsed_args)
 
         filter_configuration = FilterConfiguration(
-            package_names=parsed_args.name if parsed_args.name else None,
+            package_names=parsed_args.name or None,
             search_reg_exps=parsed_args.search,
             dates=parsed_args.date,
         )
