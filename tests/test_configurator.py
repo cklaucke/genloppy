@@ -1,6 +1,6 @@
 import pytest
 
-import genloppy.processor as processor
+from genloppy import processor
 from genloppy.configurator import (
     CommandLine,
     Configuration,

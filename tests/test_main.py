@@ -1,10 +1,11 @@
-from os import unlink
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 from unittest.mock import call, patch
 
 import pytest
 
 import genloppy.main
+from genloppy import processor
 from genloppy.configurator import (
     Configuration,
     FilterConfiguration,
@@ -103,7 +104,7 @@ def test_01_main_execution():
     tests: R-MAIN-002
     """
 
-    genloppy.processor.PROCESSORS = {"mock": _MockProcessor}
+    processor.PROCESSORS = {"mock": _MockProcessor}
     mock_entry_handler = _MockEntryHandler()
     mock_elog_parser = _MockTokenizer(mock_entry_handler)
     mock_output = _MockOutput()
@@ -123,7 +124,7 @@ def test_01_main_execution():
         m.run()
     finally:
         if temp_file is not None:
-            unlink(temp_file.name)
+            Path(temp_file.name).unlink(missing_ok=True)
 
     mock_processor = m.processor
     assert mock_processor is not None  # needed to get type right

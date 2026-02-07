@@ -5,12 +5,13 @@ realizes: R-PORTAGE-CONFIG-001
 
 import os.path
 import subprocess
+from pathlib import Path
 from typing import Final
 
 PORTAGEQ: Final = "portageq"
 ENV_EMERGE_LOG_DIR: Final = "EMERGE_LOG_DIR"
 ENV_EPREFIX: Final = "EPREFIX"
-DEFAULT_LOG_DIR: Final = os.path.join("var", "log")
+DEFAULT_LOG_DIR: Final = Path("var") / "log"
 DEFAULT_LOG_FILENAME: Final = "emerge.log"
 
 
@@ -26,14 +27,15 @@ def _get_portage_env_var(environment_variable: str) -> str:
                 PortageConfigurationError will be raised
     """
     env_var = environment_variable
-    cp = subprocess.run([PORTAGEQ, "envvar", env_var], stdout=subprocess.PIPE, text=True)
+    cp = subprocess.run([PORTAGEQ, "envvar", env_var], stdout=subprocess.PIPE, text=True, check=False)  # noqa: S603 # called with fixed strings as parameters only
     if cp.returncode == 0:
         return cp.stdout.strip()
 
-    raise PortageConfigurationError(f"Cannot query environment variable '{env_var}'.")
+    msg = f"Cannot query environment variable '{env_var}'."
+    raise PortageConfigurationError(msg)
 
 
-def get_default_emerge_log_file() -> str:
+def get_default_emerge_log_file() -> Path:
     """
     Gets the system's default emerge log file by querying portage.
 
@@ -42,9 +44,9 @@ def get_default_emerge_log_file() -> str:
     realizes: R-PORTAGE-CONFIG-002
     """
     try:
-        emerge_log_dir = _get_portage_env_var(ENV_EMERGE_LOG_DIR)
+        emerge_log_dir = Path(_get_portage_env_var(ENV_EMERGE_LOG_DIR))
     except PortageConfigurationError:
         e_prefix = _get_portage_env_var(ENV_EPREFIX).lstrip(os.sep)
-        emerge_log_dir = os.path.join(os.sep, e_prefix, DEFAULT_LOG_DIR)
+        emerge_log_dir = Path("/") / e_prefix / DEFAULT_LOG_DIR
 
-    return os.path.join(emerge_log_dir, DEFAULT_LOG_FILENAME)
+    return emerge_log_dir / DEFAULT_LOG_FILENAME

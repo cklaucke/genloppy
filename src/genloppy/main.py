@@ -4,6 +4,7 @@ import signal
 import sys
 from dataclasses import dataclass
 from functools import reduce
+from pathlib import Path
 
 from genloppy import processor
 from genloppy.configurator import CommandLine as CommandLineConfigurator
@@ -50,8 +51,7 @@ class Main:
         extra_config = dataclasses.asdict(self.configuration.filter_extra)
         filter_config = dataclasses.asdict(self.configuration.filter)
         filters = (parser_filter.create(k, v, **extra_config) for k, v in filter_config.items() if v)
-        entry_handler = reduce(lambda _entry_handler, _filter: _filter(_entry_handler), filters, entry_handler)
-        return entry_handler
+        return reduce(lambda _entry_handler, _filter: _filter(_entry_handler), filters, entry_handler)
 
     def _setup_tokenizer(self):
         parser_configuration = dataclasses.asdict(self.configuration.parser)
@@ -66,15 +66,14 @@ class Main:
         """Retrieves the log file names or tries to get the default emerge log file name if no log files were given.
 
         realizes: R-LOG-FILES-002"""
-        file_names = self.configuration.parser.file_names
-        if not file_names:
-            try:
-                file_names = [get_default_emerge_log_file()]
-            except PortageConfigurationError as exc:
-                raise RuntimeError(
-                    "Could not determine path to default emerge log file. Please specify the path at the command line."
-                ) from exc
-        return file_names
+        if self.configuration.parser.file_names:
+            return [Path(fn) for fn in self.configuration.parser.file_names]
+
+        try:
+            return [get_default_emerge_log_file()]
+        except PortageConfigurationError as exc:
+            msg = "Could not determine path to default emerge log file. Please specify the path at the command line."
+            raise RuntimeError(msg) from exc
 
     def _config_feature_check(self):
         """Checks for configuration feature availability."""
@@ -123,7 +122,7 @@ def main(argv=None):
         )
         m = Main(runtime)
         m.run()
-    except BaseException as e:
+    except BaseException as e:  # noqa: BLE001  # catches all unhandled exception and terminates
         print(f"Error: {e}", file=sys.stderr)
         configurator.print_help()
         sys.exit(1)

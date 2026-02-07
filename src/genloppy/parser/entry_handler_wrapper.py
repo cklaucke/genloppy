@@ -10,7 +10,7 @@ class EntryHandlerWrapper(EntryHandlerInterface):
     realizes: R-PARSER-ENTRY-HANDLER-WRAPPER-001
     """
 
-    def __init__(self, config: Iterable[str], **kwargs):
+    def __init__(self, _config: Iterable[str], **_kwargs):
         self.entry_handler = None
 
     def __call__(self, entry_handler):

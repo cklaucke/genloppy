@@ -5,13 +5,13 @@ import gzip
 import lzma
 import re
 from dataclasses import dataclass
-from pathlib import Path
 from typing import TYPE_CHECKING, TextIO
 
 from genloppy.parser.pms import LOG_ENTRY_PATTERN
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable, Iterator
+    from pathlib import Path
 
 RE_LOG_ENTRY = re.compile(LOG_ENTRY_PATTERN)
 
@@ -38,10 +38,11 @@ def _get_opener(filename) -> Callable:
             return opener.callback
         except opener.exception:
             continue
-    raise RuntimeError("Unknown file format.")
+    msg = "Unknown file format."
+    raise RuntimeError(msg)
 
 
-def _open_log_file(filename: str) -> TextIO:
+def _open_log_file(filename: Path) -> TextIO:
     return _get_opener(filename)(filename, mode="rt")
 
 
@@ -49,15 +50,16 @@ def _get_log_entry_timestamp(log_entry: str) -> int:
     m = RE_LOG_ENTRY.match(log_entry)
     if m:
         return int(m.group("timestamp"))
-    else:
-        raise ValueError("Malformed log file.")
+
+    msg = "Malformed log file."
+    raise ValueError(msg)
 
 
-def _check_log_files(log_files: Iterable[str]):
-    not_found_log_files = [filename for filename in log_files if not Path(filename).is_file()]
-    malformed_log_files: list[str] = []
+def _check_log_files(log_files: Iterable[Path]):
+    not_found_log_files = [filename for filename in log_files if not filename.is_file()]
+    malformed_log_files: list[Path] = []
 
-    def _well_formed_log_file(filename: str):
+    def _well_formed_log_file(filename: Path) -> None:
         try:
             with _open_log_file(filename) as f:
                 _get_log_entry_timestamp(f.readline())
@@ -67,7 +69,7 @@ def _check_log_files(log_files: Iterable[str]):
     for filename in filter(lambda f: f not in not_found_log_files, log_files):
         _well_formed_log_file(filename)
 
-    messages = []
+    messages: list[str] = []
     if not_found_log_files:
         _not_found_log_files_as_str = ", ".join(f"'{x}'" for x in not_found_log_files)
         messages.append(f"The following log file(s) were not found: {_not_found_log_files_as_str}.")
@@ -80,14 +82,14 @@ def _check_log_files(log_files: Iterable[str]):
 
 @dataclass
 class _LogFileTimeStamp:
-    filename: str
+    filename: Path
     timestamp: int
 
     def __lt__(self, other: _LogFileTimeStamp) -> bool:
         return self.timestamp < other.timestamp
 
 
-def _order_log_files(log_files: list[str]) -> list[str]:
+def _order_log_files(log_files: list[Path]) -> list[Path]:
     if len(log_files) == 1:
         return log_files
 
@@ -105,7 +107,7 @@ class LogFiles:
     realizes: R-LOG-FILES-001
     """
 
-    def __init__(self, file_names: Iterable[str]) -> None:
+    def __init__(self, file_names: Iterable[Path]) -> None:
         """Validates and orders the provided log file names.
         realizes: R-LOG-FILES-003
         realizes: R-LOG-FILES-004
