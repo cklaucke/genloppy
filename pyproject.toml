@@ -13,7 +13,10 @@ license-files = ["LICENSE"]
 authors = [
     { name = "cklaucke", email = "33376323+cklaucke@users.noreply.github.com" }
 ]
-dependencies = [
+dependencies = []
+
+[dependency-groups]
+dev = [
     "build>=1.3.0,<2.0.0",
     "mypy>=1.18.2,<2.0.0",
     "mypy-extensions>=1.1.0,<2.0.0",
