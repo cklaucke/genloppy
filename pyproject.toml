@@ -7,7 +7,7 @@ name = "genloppy"
 version = "0.2.6"
 description = "genlop drop in purely written in python"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 license = "GPL-2.0-only"
 license-files = ["LICENSE"]
 authors = [
