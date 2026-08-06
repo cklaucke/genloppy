@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class EntryHandlerInterface:
     """
     Provides the API for handling entry events
@@ -16,7 +19,7 @@ class EntryHandlerInterface:
         raise NotImplementedError
 
     @property
-    def listener(self):
+    def listener(self) -> dict[Any, list]:
         """Gets the registered listener.
 
         :return: the registered listener

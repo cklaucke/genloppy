@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Any
 
 from genloppy.parser.entry_handler_api import EntryHandlerInterface
 
@@ -11,7 +12,7 @@ class EntryHandler(EntryHandlerInterface):
     """
 
     def __init__(self):
-        self._listener = defaultdict(list)
+        self._listener: dict[Any, list] = defaultdict(list)
 
     def register_listener(self, callback, entry_type):
         """Registers a listener for entry events
