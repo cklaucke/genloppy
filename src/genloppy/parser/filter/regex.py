@@ -1,7 +1,10 @@
 import re
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class RegexFilter(EntryHandlerWrapper):

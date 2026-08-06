@@ -63,7 +63,7 @@ def _check_log_files(log_files: Iterable[Path]):
         try:
             with _open_log_file(filename) as f:
                 _get_log_entry_timestamp(f.readline())
-        except (AttributeError, RuntimeError, ValueError, IndexError):
+        except AttributeError, RuntimeError, ValueError, IndexError:
             malformed_log_files.append(filename)
 
     for filename in filter(lambda f: f not in not_found_log_files, log_files):

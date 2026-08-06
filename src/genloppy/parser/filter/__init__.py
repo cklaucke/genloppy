@@ -1,6 +1,10 @@
-from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
+from typing import TYPE_CHECKING
+
 from genloppy.parser.filter.package import PackageFilter
 from genloppy.parser.filter.regex import RegexFilter
+
+if TYPE_CHECKING:
+    from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
 
 FILTER: dict[str, type[EntryHandlerWrapper]] = {"package_names": PackageFilter, "search_reg_exps": RegexFilter}
 
