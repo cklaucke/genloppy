@@ -1,8 +1,11 @@
 import re
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from genloppy.parser.entry_handler_wrapper import EntryHandlerWrapper
 from genloppy.parser.pms import ATOM_BASE_PATTERN, ATOM_PATTERN, PACKAGE_NAME_PATTERN, VERSION_PATTERN
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class PackageFilter(EntryHandlerWrapper):

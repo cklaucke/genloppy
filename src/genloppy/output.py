@@ -2,8 +2,10 @@ import dataclasses
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
-from genloppy.processor.pretend import Durations
+if TYPE_CHECKING:
+    from genloppy.processor.pretend import Durations
 
 
 class Interface(ABC):
