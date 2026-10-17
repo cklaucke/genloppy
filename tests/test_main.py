@@ -66,9 +66,9 @@ class _MockTokenizer(Tokenizer):
     def entry_handler(self, handler):
         self._handler = handler
 
-    def tokenize(self, f):
+    def tokenize(self, stream):
         self.parse_called_count += 1
-        self.content = f.read()
+        self.content = stream.read()
 
 
 class _MockEntryHandler:
